@@ -1,0 +1,8 @@
+{
+  "name": "decodama",
+  "version": "0.0.1",
+  "description": "A declarative, composable data manipulation library for Solid",
+  "main": "dist/index.js",
+  "author": "Vincent <git@vincenttunru.com>",
+  "license": "MIT"
+}
