@@ -1,5 +1,6 @@
-import { TripleDocument, fetchDocument as fetchTripleDocument, TripleSubject } from 'tripledoc';
-import { VirtualSubject, internal_isFromRef, SubjectSelecter, FromRef, internal_isEnsureWithRefs, EnsureWithRefs, internal_isGetWithRefs, GetWithRefs } from '../virtual/subject';
+import { fetchDocument as fetchTripleDocument, TripleSubject } from 'tripledoc';
+import { VirtualSubject } from '../virtual/subject';
+import { internal_isByRef, internal_isIsFoundIn, internal_isIsEnsuredIn, SubjectDescriptor, ByRef, IsFoundIn, IsEnsuredIn } from '../descriptors/subject';
 import { fetchDocument } from './document';
 
 export async function fetchSubject(virtualSubject: VirtualSubject): Promise<TripleSubject | null> {
@@ -8,9 +9,9 @@ export async function fetchSubject(virtualSubject: VirtualSubject): Promise<Trip
   }
 
   const promise =
-    internal_isFromRef(virtualSubject) ? fetchByRef(virtualSubject) :
-    internal_isGetWithRefs(virtualSubject) ? getWithRefs(virtualSubject) :
-    internal_isEnsureWithRefs(virtualSubject) ? ensureWithRefs(virtualSubject) :
+    internal_isByRef(virtualSubject) ? fetchByRef(virtualSubject) :
+    internal_isIsFoundIn(virtualSubject) ? getWithRefs(virtualSubject) :
+    internal_isIsEnsuredIn(virtualSubject) ? ensureWithRefs(virtualSubject) :
     Promise.reject(new Error('This type of Virtual Subject can not be processed yet.'));
 
   virtualSubject.promise = promise;
@@ -18,23 +19,30 @@ export async function fetchSubject(virtualSubject: VirtualSubject): Promise<Trip
   return promise;
 }
 
-type SubjectFetcher<Selecter extends SubjectSelecter> =
+type SubjectFetcher<Selecter extends SubjectDescriptor> =
   (virtualSubject: VirtualSubject<Selecter>) => Promise<TripleSubject | null>;
 
 
-const fetchByRef: SubjectFetcher<FromRef> = async (virtualSubject) => {
-  const document = await fetchTripleDocument(virtualSubject.internalRepresentation().reference);
-  return document.getSubject(virtualSubject.internalRepresentation().reference);
+const fetchByRef: SubjectFetcher<ByRef> = async (virtualSubject) => {
+  const document = await fetchTripleDocument(virtualSubject.internal_descriptor.reference);
+  return document.getSubject(virtualSubject.internal_descriptor.reference);
 };
 
-const getWithRefs: SubjectFetcher<GetWithRefs> = async (virtualSubject) => {
-  const document = await fetchDocument(virtualSubject.internalRepresentation().document);
+const getWithRefs: SubjectFetcher<IsFoundIn> = async (virtualSubject) => {
+  const document = await fetchDocument(virtualSubject.internal_descriptor.document);
 
   if (document === null) {
     return null;
   }
 
-  const references = virtualSubject.internalRepresentation().references;
+  const references = virtualSubject.internal_descriptor.references;
+
+  if (references.length === 0) {
+    // TODO: Support just fetching one of the Subjects in this Document, if any
+    //       (This requires an update on Tripledoc.)
+    throw new Error('Please specify at least one property to identify this subject with.');
+  }
+
   const subjectsMatchingFirstRef = document.findSubjects(
     references[0].predicate,
     references[0].object,
@@ -50,14 +58,21 @@ const getWithRefs: SubjectFetcher<GetWithRefs> = async (virtualSubject) => {
   return matchingSubjects[0];
 };
 
-const ensureWithRefs: SubjectFetcher<EnsureWithRefs> = async (virtualSubject) => {
-  const document = await fetchDocument(virtualSubject.internalRepresentation().document);
+const ensureWithRefs: SubjectFetcher<IsEnsuredIn> = async (virtualSubject) => {
+  const document = await fetchDocument(virtualSubject.internal_descriptor.document);
 
   if (document === null) {
     return null;
   }
 
-  const references = virtualSubject.internalRepresentation().references;
+  const references = virtualSubject.internal_descriptor.references;
+
+  if (references.length === 0) {
+    // TODO: Support just fetching one of the Subjects in this Document, if any
+    //       (This requires an update on Tripledoc.)
+    throw new Error('Please specify at least one property to identify this subject with.');
+  }
+
   const subjectsMatchingFirstRef = document.findSubjects(
     references[0].predicate,
     references[0].object,
