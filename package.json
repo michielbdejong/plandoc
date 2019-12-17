@@ -21,6 +21,12 @@
     ]
   },
   "author": "Vincent Tunru <npm@vincenttunru.com> (https://VincentTunru.com)",
+  "homepage": "https://gitlab.com/vincenttunru/plandoc",
+  "bugs": "https://gitlab.com/vincenttunru/plandoc/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/vincenttunru/plandoc.git"
+  },
   "license": "MIT",
   "dependencies": {
     "tripledoc": "^3.0.1"
