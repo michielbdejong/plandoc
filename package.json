@@ -9,7 +9,18 @@
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
-  "author": "Vincent <git@vincenttunru.com>",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,js,css,json,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "author": "Vincent Tunru <npm@vincenttunru.com> (https://VincentTunru.com)",
   "license": "MIT",
   "dependencies": {
     "tripledoc": "^3.0.1"
@@ -25,15 +36,10 @@
     "ts-jest": "^24.2.0",
     "typescript": "^3.7.3"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.{ts,js,css,json,md}": [
-      "prettier --write",
-      "git add"
-    ]
-  }
+  "keywords": [
+    "rdf",
+    "solid",
+    "linked data",
+    "turtle"
+  ]
 }
