@@ -16,10 +16,24 @@
   },
   "devDependencies": {
     "@types/jest": "^24.0.23",
+    "husky": ">=1",
     "jest": "^24.9.0",
+    "lint-staged": ">=8",
+    "prettier": "^1.19.1",
     "rollup": "^1.27.11",
     "rollup-plugin-typescript2": "^0.25.3",
     "ts-jest": "^24.2.0",
     "typescript": "^3.7.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,js,css,json,md}": [
+      "prettier --write",
+      "git add"
+    ]
   }
 }
