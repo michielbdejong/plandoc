@@ -1,8 +1,25 @@
 {
-  "name": "decodama",
+  "name": "plandoc",
   "version": "0.0.1",
   "description": "A declarative, composable data manipulation library for Solid",
+  "scripts": {
+    "test": "jest",
+    "build": "rollup --config rollup.config.js"
+  },
   "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
   "author": "Vincent <git@vincenttunru.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "tripledoc": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.23",
+    "jest": "^24.9.0",
+    "rollup": "^1.27.11",
+    "rollup-plugin-typescript2": "^0.25.3",
+    "ts-jest": "^24.2.0",
+    "typescript": "^3.7.3"
+  }
 }
