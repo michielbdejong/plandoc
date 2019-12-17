@@ -1,4 +1,4 @@
-import { selectSubjectFromRef } from "../virtual/subject";
+import { describeSubject } from "../virtual/subject";
 import { fetchSubject } from "./subject";
 
 jest.mock("tripledoc", () => ({
@@ -8,7 +8,7 @@ jest.mock("tripledoc", () => ({
 describe("fetchSubject", () => {
   it("should pass on a direct reference to Tripledoc", () => {
     const tripledoc = jest.requireMock("tripledoc");
-    const virtualSubject = selectSubjectFromRef(
+    const virtualSubject = describeSubject().byRef(
       "https://arbitrary.doc/resource.ttl#subject"
     );
 
@@ -22,7 +22,7 @@ describe("fetchSubject", () => {
 
   it("should re-use cached responses", () => {
     const tripledoc = jest.requireMock("tripledoc");
-    const virtualSubject = selectSubjectFromRef(
+    const virtualSubject = describeSubject().byRef(
       "https://arbitrary.doc/resource.ttl#subject"
     );
 
@@ -35,7 +35,7 @@ describe("fetchSubject", () => {
   it("should re-use in-progress requests", () => {
     const tripledoc = jest.requireMock("tripledoc");
     tripledoc.fetchDocument.mockReturnValueOnce(new Promise(() => undefined));
-    const virtualSubject = selectSubjectFromRef(
+    const virtualSubject = describeSubject().byRef(
       "https://arbitrary.doc/resource.ttl#subject"
     );
 
@@ -47,10 +47,10 @@ describe("fetchSubject", () => {
 
   it("should not share caches over different virtual Subjects", () => {
     const tripledoc = jest.requireMock("tripledoc");
-    const virtualSubject1 = selectSubjectFromRef(
+    const virtualSubject1 = describeSubject().byRef(
       "https://arbitrary.doc/resource.ttl#subject"
     );
-    const virtualSubject2 = selectSubjectFromRef(
+    const virtualSubject2 = describeSubject().byRef(
       "https://arbitrary.doc/resource.ttl#subject"
     );
 
