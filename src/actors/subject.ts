@@ -33,8 +33,8 @@ export async function fetchSubject(
   return promise;
 }
 
-type SubjectFetcher<Selecter extends SubjectDescriptor> = (
-  virtualSubject: VirtualSubject<Selecter>
+type SubjectFetcher<Descriptor extends SubjectDescriptor> = (
+  virtualSubject: VirtualSubject<Descriptor>
 ) => Promise<TripleSubject | null>;
 
 const fetchByRef: SubjectFetcher<ByRef> = async virtualSubject => {
