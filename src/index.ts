@@ -1,3 +1,9 @@
+export {
+  TripleDocument,
+  TripleSubject,
+  LiteralTypes,
+  Reference
+} from "tripledoc";
 export * from "./virtual/document";
 export * from "./actors/document";
 export * from "./virtual/subject";
