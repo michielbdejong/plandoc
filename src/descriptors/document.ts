@@ -1,6 +1,7 @@
 import { Reference } from "tripledoc";
 import { VirtualDocument } from "../virtual/document";
 import { VirtualSubject } from "../virtual/subject";
+import { VirtualContainer } from "../virtual/container";
 
 export type DocumentDescriptor = ByRef | IsAclFor | IsFoundOn | IsEnsuredOn;
 
@@ -48,7 +49,7 @@ export interface IsEnsuredOn {
   type: "IsEnsuredOn";
   subject: VirtualSubject;
   predicate: Reference;
-  fallbackReference: Reference;
+  fallbackContainer: VirtualContainer;
 }
 /**
  * @ignore

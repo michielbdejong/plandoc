@@ -1,5 +1,6 @@
 import { Reference, TripleDocument } from "tripledoc";
 import { VirtualSubject } from "./subject";
+import { VirtualContainer } from "./container";
 import {
   DocumentDescriptor,
   ByRef,
@@ -17,8 +18,8 @@ export function describeDocument() {
     isEnsuredOn: (
       subject: VirtualSubject,
       predicate: Reference,
-      fallbackReference: Reference
-    ) => isEnsuredOn(subject, predicate, fallbackReference)
+      fallbackContainer: VirtualContainer
+    ) => isEnsuredOn(subject, predicate, fallbackContainer)
   };
 }
 
@@ -60,20 +61,20 @@ export function isFoundOn(
 export function isEnsuredOn(
   subject: VirtualSubject,
   predicate: Reference,
-  fallbackReference: Reference
+  fallbackContainer: VirtualContainer
 ): VirtualDocument<IsEnsuredOn> {
   return generateVirtualDocument({
     type: "IsEnsuredOn",
     subject: subject,
     predicate: predicate,
-    fallbackReference: fallbackReference
+    fallbackContainer: fallbackContainer
   });
 }
 
 function generateVirtualDocument<Descriptor extends DocumentDescriptor>(
-  locater: Descriptor
+  descriptor: Descriptor
 ): VirtualDocument<Descriptor> {
   return {
-    internal_descriptor: locater
+    internal_descriptor: descriptor
   };
 }

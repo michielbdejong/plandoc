@@ -4206,10 +4206,10 @@ tr46@^1.0.1:
   dependencies:
     punycode "^2.1.0"
 
-tripledoc@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/tripledoc/-/tripledoc-3.0.1.tgz#80f4507fe48d794cf1814f45c76ca91515ced8ea"
-  integrity sha512-WaDbUqgrfBeFn7lYkVUeM0JzQMRG+ZuVNKTZ0z7AyG70XJcr6tAzW85hMxRQl52QAQPX7STogQiwBcGfEO2uzA==
+tripledoc@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/tripledoc/-/tripledoc-4.0.0.tgz#42baaa4acdf60c8ccc69634dfa6afa5ff4293882"
+  integrity sha512-AXKD3BUy7l9oJW7pj+65vIhVnoOMl3o3ksz09kkrtItsW5iTC7Rrjg13AEcpHj4O+EMoBauXq4sPfiJofRYRaQ==
   dependencies:
     "@types/http-link-header" "^1.0.0"
     "@types/solid-auth-client" "^2.3.1"

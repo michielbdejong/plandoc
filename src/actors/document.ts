@@ -1,7 +1,8 @@
 import {
   TripleDocument,
   fetchDocument as fetchTripleDocument,
-  createDocument
+  createDocument,
+  createDocumentInContainer
 } from "tripledoc";
 import { VirtualDocument } from "../virtual/document";
 import {
@@ -16,6 +17,7 @@ import {
   IsEnsuredOn
 } from "../descriptors/document";
 import { fetchSubject } from "./subject";
+import { fetchContainer } from "./container";
 
 export async function fetchDocument(
   virtualDoc: VirtualDocument
@@ -41,8 +43,8 @@ export async function fetchDocument(
   return promise;
 }
 
-type DocumentFetcher<Locater extends DocumentDescriptor> = (
-  virtualDoc: VirtualDocument<Locater>
+type DocumentFetcher<Descriptor extends DocumentDescriptor> = (
+  virtualDoc: VirtualDocument<Descriptor>
 ) => Promise<TripleDocument | null>;
 
 const fetchByRef: DocumentFetcher<ByRef> = async virtualDoc => {
@@ -85,14 +87,22 @@ const ensureForRef: DocumentFetcher<IsEnsuredOn> = async virtualDoc => {
     return fetchTripleDocument(reference);
   }
 
-  const newDocument = createDocument(
-    virtualDoc.internal_descriptor.fallbackReference
+  const container = await fetchContainer(
+    virtualDoc.internal_descriptor.fallbackContainer
   );
-  await newDocument.save();
+  if (!container) {
+    return null;
+  }
 
-  subject.setRef(virtualDoc.internal_descriptor.predicate, newDocument.asRef());
+  const newDocument = createDocumentInContainer(container);
+  const savedDocument = await newDocument.save();
+
+  subject.setRef(
+    virtualDoc.internal_descriptor.predicate,
+    savedDocument.asRef()
+  );
   const subjectDoc = subject.getDocument();
   await subjectDoc.save([subject]);
 
-  return newDocument;
+  return savedDocument;
 };
