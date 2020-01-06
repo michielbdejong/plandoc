@@ -4,7 +4,10 @@ import {
   SubjectDescriptor,
   ByRef,
   IsFoundIn,
-  IsEnsuredIn
+  IsEnsuredIn,
+  SubjectLocator,
+  WithRefLocator,
+  AsRefLocator
 } from "../descriptors/subject";
 
 export function describeSubject() {
@@ -30,66 +33,153 @@ function byRef(reference: Reference): VirtualSubject<ByRef> {
     reference: reference,
     type: "ByRef"
   };
-  return generateVirtualSubject(descriptor);
+  return {
+    internal_descriptor: descriptor
+  };
 }
 
-interface WithReferences<Descriptor extends IsFoundIn | IsEnsuredIn>
-  extends VirtualSubject<Descriptor> {
-  withRef: (
-    predicate: Reference,
-    object: Reference
-  ) => WithReferences<Descriptor>;
-}
-
-function generateRefAdder<Descriptor extends IsFoundIn | IsEnsuredIn>(
-  virtualSubject: VirtualSubject<Descriptor>
-): (predicate: Reference, object: Reference) => WithReferences<Descriptor> {
+function generateIsFoundIn_WithRef_VirtualSubject(
+  descriptor:
+    | IsFoundIn<WithRefLocator>
+    | Omit<IsFoundIn<SubjectLocator>, "locator">
+): (
+  predicate: Reference,
+  object: Reference
+) => IsFoundIn_WithRef_VirtualSubject {
   return (predicate: Reference, object: Reference) => {
-    const newReferences = virtualSubject.internal_descriptor.references.concat({
+    const locator: WithRefLocator = (descriptor as IsFoundIn<WithRefLocator>)
+      .locator ?? { references: [] };
+    const newReferences = locator.references.concat({
       predicate: predicate,
       object: object
     });
-    const newDescriptor = {
-      ...virtualSubject.internal_descriptor,
-      references: newReferences
+    const newDescriptor: IsFoundIn<WithRefLocator> = {
+      ...descriptor,
+      locator: { references: newReferences }
     };
-    const newSubject = generateVirtualSubject(newDescriptor);
 
+    const subjectWithRefAdder: IsFoundIn_WithRef_VirtualSubject = {
+      internal_descriptor: newDescriptor,
+      withRef: generateIsFoundIn_WithRef_VirtualSubject(newDescriptor)
+    };
+
+    return subjectWithRefAdder;
+  };
+}
+function generateIsFoundIn_AsRef_VirtualSubject(
+  bareDescriptor: Omit<IsFoundIn<SubjectLocator>, "locator">
+): (reference: Reference) => IsFoundIn_AsRef_VirtualSubject {
+  return (reference: Reference) => {
+    const descriptor: IsFoundIn<AsRefLocator> = {
+      ...bareDescriptor,
+      locator: {
+        reference: reference
+      }
+    };
     return {
-      ...newSubject,
-      withRef: generateRefAdder(newSubject)
+      internal_descriptor: descriptor
     };
   };
 }
-function isFoundIn(document: VirtualDocument): WithReferences<IsFoundIn> {
-  const descriptor: IsFoundIn = {
-    type: "IsFoundIn",
-    document: document,
-    references: []
-  };
-  const rawSubject = generateVirtualSubject(descriptor);
-  return {
-    ...rawSubject,
-    withRef: generateRefAdder(rawSubject)
-  };
+interface IsFoundIn_WithRef_VirtualSubject
+  extends VirtualSubject<IsFoundIn<WithRefLocator>> {
+  withRef: (
+    predicate: Reference,
+    object: Reference
+  ) => IsFoundIn_WithRef_VirtualSubject;
 }
-function isEnsuredIn(document: VirtualDocument): WithReferences<IsEnsuredIn> {
-  const descriptor: IsEnsuredIn = {
-    type: "IsEnsuredIn",
-    document: document,
-    references: []
+type IsFoundIn_AsRef_VirtualSubject = VirtualSubject<IsFoundIn<AsRefLocator>>;
+interface IsFoundIn_Bare_VirtualSubject {
+  internal_descriptor: Omit<IsFoundIn<SubjectLocator>, "locator">;
+  withRef: (
+    predicate: Reference,
+    object: Reference
+  ) => IsFoundIn_WithRef_VirtualSubject;
+  asRef: (reference: Reference) => IsFoundIn_AsRef_VirtualSubject;
+}
+function isFoundIn(document: VirtualDocument): IsFoundIn_Bare_VirtualSubject {
+  const bareDescriptor: Omit<IsFoundIn<SubjectLocator>, "locator"> = {
+    type: "IsFoundIn",
+    document: document
   };
-  const rawSubject = generateVirtualSubject(descriptor);
   return {
-    ...rawSubject,
-    withRef: generateRefAdder(rawSubject)
+    internal_descriptor: bareDescriptor,
+    withRef: generateIsFoundIn_WithRef_VirtualSubject(bareDescriptor),
+    asRef: generateIsFoundIn_AsRef_VirtualSubject(bareDescriptor)
   };
 }
 
-function generateVirtualSubject<Descriptor extends SubjectDescriptor>(
-  descriptor: Descriptor
-): VirtualSubject<Descriptor> {
+function generateIsEnsuredIn_WithRef_VirtualSubject(
+  descriptor:
+    | IsEnsuredIn<WithRefLocator>
+    | Omit<IsEnsuredIn<SubjectLocator>, "locator">
+): (
+  predicate: Reference,
+  object: Reference
+) => IsEnsuredIn_WithRef_VirtualSubject {
+  return (predicate: Reference, object: Reference) => {
+    const locator: WithRefLocator = (descriptor as IsEnsuredIn<WithRefLocator>)
+      .locator ?? { references: [] };
+    const newReferences = locator.references.concat({
+      predicate: predicate,
+      object: object
+    });
+    const newDescriptor: IsEnsuredIn<WithRefLocator> = {
+      ...descriptor,
+      locator: { references: newReferences }
+    };
+
+    const subjectWithRefAdder: IsEnsuredIn_WithRef_VirtualSubject = {
+      internal_descriptor: newDescriptor,
+      withRef: generateIsEnsuredIn_WithRef_VirtualSubject(newDescriptor)
+    };
+
+    return subjectWithRefAdder;
+  };
+}
+function generateIsEnsuredIn_AsRef_VirtualSubject(
+  bareDescriptor: Omit<IsEnsuredIn<SubjectLocator>, "locator">
+): (reference: Reference) => IsEnsuredIn_AsRef_VirtualSubject {
+  return (reference: Reference) => {
+    const descriptor: IsEnsuredIn<AsRefLocator> = {
+      ...bareDescriptor,
+      locator: {
+        reference: reference
+      }
+    };
+    return {
+      internal_descriptor: descriptor
+    };
+  };
+}
+interface IsEnsuredIn_WithRef_VirtualSubject
+  extends VirtualSubject<IsEnsuredIn<WithRefLocator>> {
+  withRef: (
+    predicate: Reference,
+    object: Reference
+  ) => IsEnsuredIn_WithRef_VirtualSubject;
+}
+type IsEnsuredIn_AsRef_VirtualSubject = VirtualSubject<
+  IsEnsuredIn<AsRefLocator>
+>;
+interface IsEnsuredIn_Bare_VirtualSubject {
+  internal_descriptor: Omit<IsEnsuredIn<SubjectLocator>, "locator">;
+  withRef: (
+    predicate: Reference,
+    object: Reference
+  ) => IsEnsuredIn_WithRef_VirtualSubject;
+  asRef: (reference: Reference) => IsEnsuredIn_AsRef_VirtualSubject;
+}
+function isEnsuredIn(
+  document: VirtualDocument
+): IsEnsuredIn_Bare_VirtualSubject {
+  const bareDescriptor: Omit<IsEnsuredIn<SubjectLocator>, "locator"> = {
+    type: "IsEnsuredIn",
+    document: document
+  };
   return {
-    internal_descriptor: descriptor
+    internal_descriptor: bareDescriptor,
+    withRef: generateIsEnsuredIn_WithRef_VirtualSubject(bareDescriptor),
+    asRef: generateIsEnsuredIn_AsRef_VirtualSubject(bareDescriptor)
   };
 }

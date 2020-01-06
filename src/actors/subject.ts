@@ -1,4 +1,8 @@
-import { fetchDocument as fetchTripleDocument, TripleSubject } from "tripledoc";
+import {
+  fetchDocument as fetchTripleDocument,
+  TripleSubject,
+  TripleDocument
+} from "tripledoc";
 import { VirtualSubject } from "../virtual/subject";
 import {
   internal_isByRef,
@@ -7,7 +11,12 @@ import {
   SubjectDescriptor,
   ByRef,
   IsFoundIn,
-  IsEnsuredIn
+  IsEnsuredIn,
+  SubjectLocator,
+  WithRefLocator,
+  internal_isWithRefLocator,
+  internal_isAsRefLocator,
+  AsRefLocator
 } from "../descriptors/subject";
 import { fetchDocument } from "./document";
 
@@ -44,7 +53,9 @@ const fetchByRef: SubjectFetcher<ByRef> = async virtualSubject => {
   return document.getSubject(virtualSubject.internal_descriptor.reference);
 };
 
-const getWithRefs: SubjectFetcher<IsFoundIn> = async virtualSubject => {
+const getWithRefs: SubjectFetcher<IsFoundIn<
+  SubjectLocator
+>> = async virtualSubject => {
   const document = await fetchDocument(
     virtualSubject.internal_descriptor.document
   );
@@ -53,7 +64,20 @@ const getWithRefs: SubjectFetcher<IsFoundIn> = async virtualSubject => {
     return null;
   }
 
-  const references = virtualSubject.internal_descriptor.references;
+  const locator = virtualSubject.internal_descriptor.locator;
+  if (internal_isWithRefLocator(locator)) {
+    return getWithRefsFromDoc(document, locator);
+  } else if (internal_isAsRefLocator(locator)) {
+    return getAsRefFromDoc(document, locator);
+  }
+  throw new Error("This type of Locator can not be processed yet.");
+};
+
+function getWithRefsFromDoc(
+  document: TripleDocument,
+  locator: WithRefLocator
+): TripleSubject | null {
+  const references = locator.references;
 
   if (references.length === 0) {
     // TODO: Support just fetching one of the Subjects in this Document, if any
@@ -78,9 +102,17 @@ const getWithRefs: SubjectFetcher<IsFoundIn> = async virtualSubject => {
   }
 
   return matchingSubjects[0];
-};
+}
+function getAsRefFromDoc(
+  document: TripleDocument,
+  locator: AsRefLocator
+): TripleSubject | null {
+  return document.getSubject(locator.reference);
+}
 
-const ensureWithRefs: SubjectFetcher<IsEnsuredIn> = async virtualSubject => {
+const ensureWithRefs: SubjectFetcher<IsEnsuredIn<
+  SubjectLocator
+>> = async virtualSubject => {
   const document = await fetchDocument(
     virtualSubject.internal_descriptor.document
   );
@@ -89,8 +121,19 @@ const ensureWithRefs: SubjectFetcher<IsEnsuredIn> = async virtualSubject => {
     return null;
   }
 
-  const references = virtualSubject.internal_descriptor.references;
-
+  const locator = virtualSubject.internal_descriptor.locator;
+  if (internal_isWithRefLocator(locator)) {
+    return ensureWithRefsInDoc(document, locator);
+  } else if (internal_isAsRefLocator(locator)) {
+    return ensureAsRefInDoc(document, locator);
+  }
+  throw new Error("This type of Locator can not be processed yet.");
+};
+async function ensureWithRefsInDoc(
+  document: TripleDocument,
+  locator: WithRefLocator
+): Promise<TripleSubject | null> {
+  const references = locator.references;
   if (references.length === 0) {
     // TODO: Support just fetching one of the Subjects in this Document, if any
     //       (This requires an update on Tripledoc.)
@@ -121,4 +164,24 @@ const ensureWithRefs: SubjectFetcher<IsEnsuredIn> = async virtualSubject => {
 
   const updatedDocument = await document.save([newSubject]);
   return updatedDocument.getSubject(newSubject.asRef());
-};
+}
+function ensureAsRefInDoc(
+  document: TripleDocument,
+  locator: AsRefLocator
+): TripleSubject | null {
+  const subject = document.getSubject(locator.reference);
+  if (subject !== null) {
+    return subject;
+  }
+
+  // Usually, the reference will be a full URL, from which we only need the hash
+  // (but without the leading `#`).
+  // In case it's just the identifier, we first convert it to a full URL
+  // relative to the Document, and then take the hash of that.
+  const subjectRef = new URL(
+    locator.reference,
+    document.asRef()
+  ).hash.substring(1);
+  const newSubject = document.addSubject({ identifier: subjectRef });
+  return newSubject;
+}
