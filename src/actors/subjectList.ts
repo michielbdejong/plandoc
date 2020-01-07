@@ -85,6 +85,9 @@ const getOnSubject: SubjectListFetcher<IsFoundOn> = async virtualSubjectList => 
       return document.getSubject(reference);
     })
   );
+  const localSubjects = subject.getAllLocalSubjects(
+    virtualSubjectList.internal_descriptor.predicate
+  );
 
-  return subjectList;
+  return subjectList.concat(localSubjects);
 };
