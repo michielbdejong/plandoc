@@ -1,10 +1,16 @@
 import { Reference, TripleSubject } from "tripledoc";
 import { VirtualDocument } from "./document";
-import { SubjectListDescriptor, IsFoundIn } from "../descriptors/subjectList";
+import {
+  SubjectListDescriptor,
+  IsFoundIn,
+  IsFoundOn
+} from "../descriptors/subjectList";
+import { VirtualSubject } from "./subject";
 
 export function describeSubjectList() {
   return {
-    isFoundIn: (document: VirtualDocument) => isFoundIn(document)
+    isFoundIn: isFoundIn,
+    isFoundOn: isFoundOn
   };
 }
 
@@ -26,25 +32,22 @@ interface WithReferences<Descriptor extends IsFoundIn>
   ) => WithReferences<Descriptor>;
 }
 
-function generateRefAdder<Descriptor extends IsFoundIn>(
-  virtualSubjectList: VirtualSubjectList<Descriptor>
-): (predicate: Reference, object: Reference) => WithReferences<Descriptor> {
+function generateRefAdder(
+  descriptor: IsFoundIn
+): (predicate: Reference, object: Reference) => WithReferences<IsFoundIn> {
   return (predicate: Reference, object: Reference) => {
-    const newReferences = virtualSubjectList.internal_descriptor.references.concat(
-      {
-        predicate: predicate,
-        object: object
-      }
-    );
+    const newReferences = descriptor.references.concat({
+      predicate: predicate,
+      object: object
+    });
     const newDescriptor = {
-      ...virtualSubjectList.internal_descriptor,
+      ...descriptor,
       references: newReferences
     };
-    const newSubjectList = generateVirtualSubjectList(newDescriptor);
 
     return {
-      ...newSubjectList,
-      withRef: generateRefAdder(newSubjectList)
+      internal_descriptor: newDescriptor,
+      withRef: generateRefAdder(newDescriptor)
     };
   };
 }
@@ -54,16 +57,21 @@ function isFoundIn(document: VirtualDocument): WithReferences<IsFoundIn> {
     document: document,
     references: []
   };
-  const rawSubjectList = generateVirtualSubjectList(descriptor);
   return {
-    ...rawSubjectList,
-    withRef: generateRefAdder(rawSubjectList)
+    internal_descriptor: descriptor,
+    withRef: generateRefAdder(descriptor)
   };
 }
 
-function generateVirtualSubjectList<Descriptor extends SubjectListDescriptor>(
-  descriptor: Descriptor
-): VirtualSubjectList<Descriptor> {
+function isFoundOn(
+  subject: VirtualSubject,
+  predicate: Reference
+): VirtualSubjectList<IsFoundOn> {
+  const descriptor: IsFoundOn = {
+    type: "IsFoundOn",
+    subject: subject,
+    predicate: predicate
+  };
   return {
     internal_descriptor: descriptor
   };

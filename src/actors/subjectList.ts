@@ -1,11 +1,14 @@
-import { TripleSubject } from "tripledoc";
+import { fetchDocument as fetchTripleDocument, TripleSubject } from "tripledoc";
 import { VirtualSubjectList } from "../virtual/subjectList";
 import {
   internal_isIsFoundIn,
   SubjectListDescriptor,
-  IsFoundIn
+  IsFoundIn,
+  internal_isIsFoundOn,
+  IsFoundOn
 } from "../descriptors/subjectList";
 import { fetchDocument } from "./document";
+import { fetchSubject } from "./subject";
 
 export async function fetchSubjectList(
   virtualSubjectList: VirtualSubjectList
@@ -16,6 +19,8 @@ export async function fetchSubjectList(
 
   const promise = internal_isIsFoundIn(virtualSubjectList)
     ? getWithRefs(virtualSubjectList)
+    : internal_isIsFoundOn(virtualSubjectList)
+    ? getOnSubject(virtualSubjectList)
     : Promise.reject(
         new Error("This type of Virtual Subject List can not be processed yet.")
       );
@@ -59,4 +64,27 @@ const getWithRefs: SubjectListFetcher<IsFoundIn> = async virtualSubjectList => {
   });
 
   return matchingSubjects;
+};
+
+const getOnSubject: SubjectListFetcher<IsFoundOn> = async virtualSubjectList => {
+  const subject = await fetchSubject(
+    virtualSubjectList.internal_descriptor.subject
+  );
+
+  if (subject === null) {
+    return null;
+  }
+
+  const references = subject.getAllRefs(
+    virtualSubjectList.internal_descriptor.predicate
+  );
+
+  const subjectList = await Promise.all(
+    references.map(async reference => {
+      const document = await fetchTripleDocument(reference);
+      return document.getSubject(reference);
+    })
+  );
+
+  return subjectList;
 };
