@@ -4,6 +4,8 @@ import { VirtualDocument } from "../virtual/document";
 
 export type SubjectDescriptor =
   | ByRef
+  | IsFoundOn
+  | IsEnsuredOn
   | IsFoundIn<SubjectLocator>
   | IsEnsuredIn<SubjectLocator>;
 
@@ -15,6 +17,28 @@ export function internal_isByRef(
   virtualSubject: VirtualSubject
 ): virtualSubject is VirtualSubject<ByRef> {
   return virtualSubject.internal_descriptor.type === "ByRef";
+}
+
+export interface IsFoundOn {
+  type: "IsFoundOn";
+  subject: VirtualSubject;
+  predicate: Reference;
+}
+export function internal_isIsFoundOn(
+  virtualSubject: VirtualSubject
+): virtualSubject is VirtualSubject<IsFoundOn> {
+  return virtualSubject.internal_descriptor.type === "IsFoundOn";
+}
+
+export interface IsEnsuredOn {
+  type: "IsEnsuredOn";
+  subject: VirtualSubject;
+  predicate: Reference;
+}
+export function internal_isIsEnsuredOn(
+  virtualSubject: VirtualSubject
+): virtualSubject is VirtualSubject<IsEnsuredOn> {
+  return virtualSubject.internal_descriptor.type === "IsEnsuredOn";
 }
 
 export interface WithRefLocator {

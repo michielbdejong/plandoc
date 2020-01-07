@@ -7,14 +7,18 @@ import {
   IsEnsuredIn,
   SubjectLocator,
   WithRefLocator,
-  AsRefLocator
+  AsRefLocator,
+  IsFoundOn,
+  IsEnsuredOn
 } from "../descriptors/subject";
 
 export function describeSubject() {
   return {
-    byRef: (reference: Reference) => byRef(reference),
-    isFoundIn: (document: VirtualDocument) => isFoundIn(document),
-    isEnsuredIn: (document: VirtualDocument) => isEnsuredIn(document)
+    byRef: byRef,
+    isFoundOn: isFoundOn,
+    isEnsuredOn: isEnsuredOn,
+    isFoundIn: isFoundIn,
+    isEnsuredIn: isEnsuredIn
   };
 }
 
@@ -32,6 +36,34 @@ function byRef(reference: Reference): VirtualSubject<ByRef> {
   const descriptor: ByRef = {
     reference: reference,
     type: "ByRef"
+  };
+  return {
+    internal_descriptor: descriptor
+  };
+}
+
+function isFoundOn(
+  subject: VirtualSubject,
+  predicate: Reference
+): VirtualSubject<IsFoundOn> {
+  const descriptor: IsFoundOn = {
+    predicate: predicate,
+    subject: subject,
+    type: "IsFoundOn"
+  };
+  return {
+    internal_descriptor: descriptor
+  };
+}
+
+function isEnsuredOn(
+  subject: VirtualSubject,
+  predicate: Reference
+): VirtualSubject<IsEnsuredOn> {
+  const descriptor: IsEnsuredOn = {
+    predicate: predicate,
+    subject: subject,
+    type: "IsEnsuredOn"
   };
   return {
     internal_descriptor: descriptor

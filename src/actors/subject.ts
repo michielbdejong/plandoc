@@ -16,7 +16,11 @@ import {
   WithRefLocator,
   internal_isWithRefLocator,
   internal_isAsRefLocator,
-  AsRefLocator
+  AsRefLocator,
+  IsFoundOn,
+  internal_isIsFoundOn,
+  internal_isIsEnsuredOn,
+  IsEnsuredOn
 } from "../descriptors/subject";
 import { fetchDocument } from "./document";
 
@@ -29,6 +33,10 @@ export async function fetchSubject(
 
   const promise = internal_isByRef(virtualSubject)
     ? fetchByRef(virtualSubject)
+    : internal_isIsFoundOn(virtualSubject)
+    ? getOnSubject(virtualSubject)
+    : internal_isIsEnsuredOn(virtualSubject)
+    ? ensureOnSubject(virtualSubject)
     : internal_isIsFoundIn(virtualSubject)
     ? getWithRefs(virtualSubject)
     : internal_isIsEnsuredIn(virtualSubject)
@@ -51,6 +59,47 @@ const fetchByRef: SubjectFetcher<ByRef> = async virtualSubject => {
     virtualSubject.internal_descriptor.reference
   );
   return document.getSubject(virtualSubject.internal_descriptor.reference);
+};
+
+const getOnSubject: SubjectFetcher<IsFoundOn> = async virtualSubject => {
+  const sourceSubject = await fetchSubject(
+    virtualSubject.internal_descriptor.subject
+  );
+  if (sourceSubject === null) {
+    return null;
+  }
+  const subjectRef = sourceSubject.getRef(
+    virtualSubject.internal_descriptor.predicate
+  );
+  if (subjectRef === null) {
+    return null;
+  }
+  return sourceSubject.getDocument().getSubject(subjectRef);
+};
+
+const ensureOnSubject: SubjectFetcher<IsEnsuredOn> = async virtualSubject => {
+  const sourceSubject = await fetchSubject(
+    virtualSubject.internal_descriptor.subject
+  );
+  if (sourceSubject === null) {
+    return null;
+  }
+  const subjectRef = sourceSubject.getRef(
+    virtualSubject.internal_descriptor.predicate
+  );
+  if (typeof subjectRef === "string") {
+    return sourceSubject.getDocument().getSubject(subjectRef);
+  }
+
+  // No Subject is listed, so add a new one:
+  const sourceDoc = sourceSubject.getDocument();
+  const newSubject = sourceDoc.addSubject();
+  sourceSubject.addRef(
+    virtualSubject.internal_descriptor.predicate,
+    newSubject.asRef()
+  );
+  const updatedDoc = await sourceDoc.save([sourceSubject, newSubject]);
+  return updatedDoc.getSubject(newSubject.asRef());
 };
 
 const getWithRefs: SubjectFetcher<IsFoundIn<
