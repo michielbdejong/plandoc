@@ -1,11 +1,14 @@
-import { Reference } from "tripledoc";
+import { Reference, createDocument } from "tripledoc";
+import SolidAuth from "solid-auth-client";
 import { VirtualContainer } from "../virtual/container";
 import {
   internal_isByRef,
   internal_isIsFoundOn,
   ContainerDescriptor,
   ByRef,
-  IsFoundOn
+  IsFoundOn,
+  IsContainedIn,
+  internal_isIsContainedIn
 } from "../descriptors/container";
 import { fetchSubject } from "./subject";
 
@@ -21,8 +24,10 @@ export async function fetchContainer(
     ? fetchByRef(virtualContainer)
     : internal_isIsFoundOn(virtualContainer)
     ? getForRef(virtualContainer)
+    : internal_isIsContainedIn(virtualContainer)
+    ? ensureInContainer(virtualContainer)
     : Promise.reject(
-        new Error("This type of Virtual Document can not be processed yet.")
+        new Error("This type of Virtual Container can not be processed yet.")
       );
 
   virtualContainer.promise = promise;
@@ -50,4 +55,24 @@ const getForRef: ContainerFetcher<IsFoundOn> = async virtualContainer => {
     virtualContainer.internal_descriptor.predicate
   );
   return reference;
+};
+
+const ensureInContainer: ContainerFetcher<IsContainedIn> = async virtualContainer => {
+  const parentContainer = await fetchContainer(
+    virtualContainer.internal_descriptor.container
+  );
+  if (parentContainer === null) {
+    return null;
+  }
+
+  const containerRef =
+    parentContainer.replace(/\/$/, "") + '/' +
+    virtualContainer.internal_descriptor.name.replace(/\/$/, "");
+  const dummyFileRef = containerRef + "/.dummy";
+
+  await createDocument(dummyFileRef).save();
+  // TODO Consider adding deletion to Tripledoc?
+  await SolidAuth.fetch(dummyFileRef, { method: "DELETE" });
+
+  return containerRef;
 };

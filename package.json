@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "@types/jest": "^24.0.23",
+    "@types/solid-auth-client": "^2.3.1",
     "husky": ">=1",
     "jest": "^24.9.0",
     "jest-junit": "^10.0.0",
@@ -40,6 +41,7 @@
     "prettier": "^1.19.1",
     "rollup": "^1.27.11",
     "rollup-plugin-typescript2": "^0.25.3",
+    "solid-auth-client": "^2.4.1",
     "ts-jest": "^24.2.0",
     "typescript": "^3.7.3"
   },

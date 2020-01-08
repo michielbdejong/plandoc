@@ -3,14 +3,15 @@ import { VirtualSubject } from "./subject";
 import {
   ContainerDescriptor,
   ByRef,
-  IsFoundOn
+  IsFoundOn,
+  IsContainedIn
 } from "../descriptors/container";
 
 export function describeContainer() {
   return {
-    byRef: (reference: Reference) => byRef(reference),
-    isFoundOn: (subject: VirtualSubject, predicate: Reference) =>
-      isFoundOn(subject, predicate)
+    byRef: byRef,
+    isFoundOn: isFoundOn,
+    isContainedIn: isContainedIn
   };
 }
 
@@ -26,27 +27,36 @@ export interface VirtualContainer<
 }
 
 export function byRef(reference: Reference): VirtualContainer<ByRef> {
-  return generateVirtualContainer({
-    type: "ByRef",
-    reference: reference
-  });
+  return {
+    internal_descriptor: {
+      type: "ByRef",
+      reference: reference
+    }
+  };
 }
 
 export function isFoundOn(
   subject: VirtualSubject,
   predicate: Reference
 ): VirtualContainer<IsFoundOn> {
-  return generateVirtualContainer({
-    type: "IsFoundOn",
-    subject: subject,
-    predicate: predicate
-  });
+  return {
+    internal_descriptor: {
+      type: "IsFoundOn",
+      subject: subject,
+      predicate: predicate
+    }
+  };
 }
 
-function generateVirtualContainer<Descriptor extends ContainerDescriptor>(
-  descriptor: Descriptor
-): VirtualContainer<Descriptor> {
+export function isContainedIn(
+  container: VirtualContainer,
+  name: string
+): VirtualContainer<IsContainedIn> {
   return {
-    internal_descriptor: descriptor
+    internal_descriptor: {
+      type: "IsContainedIn",
+      container: container,
+      name: name
+    }
   };
 }
