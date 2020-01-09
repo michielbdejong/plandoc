@@ -29,6 +29,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "rdf-namespaces": "^1.7.0",
     "tripledoc": "^4.0.0"
   },
   "devDependencies": {

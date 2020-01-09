@@ -6,7 +6,8 @@ import {
   ByRef,
   IsAclFor,
   IsFoundOn,
-  IsEnsuredOn
+  IsEnsuredOn,
+  AclSettings
 } from "../descriptors/document";
 
 export function describeDocument() {
@@ -34,28 +35,34 @@ export interface VirtualDocument<
 }
 
 export function byRef(reference: Reference): VirtualDocument<ByRef> {
-  return generateVirtualDocument({
-    type: "ByRef",
-    reference: reference
-  });
+  return {
+    internal_descriptor: {
+      type: "ByRef",
+      reference: reference
+    }
+  };
 }
 
 export function isAclFor(document: VirtualDocument): VirtualDocument<IsAclFor> {
-  return generateVirtualDocument({
-    type: "IsAclFor",
-    document: document
-  });
+  return {
+    internal_descriptor: {
+      type: "IsAclFor",
+      document: document
+    }
+  };
 }
 
 export function isFoundOn(
   subject: VirtualSubject,
   predicate: Reference
 ): VirtualDocument<IsFoundOn> {
-  return generateVirtualDocument({
-    type: "IsFoundOn",
-    subject: subject,
-    predicate: predicate
-  });
+  return {
+    internal_descriptor: {
+      type: "IsFoundOn",
+      subject: subject,
+      predicate: predicate
+    }
+  };
 }
 
 export function isEnsuredOn(
@@ -63,18 +70,48 @@ export function isEnsuredOn(
   predicate: Reference,
   fallbackContainer: VirtualContainer
 ): VirtualDocument<IsEnsuredOn> {
-  return generateVirtualDocument({
+  const descriptor: IsEnsuredOn = {
     type: "IsEnsuredOn",
     subject: subject,
     predicate: predicate,
-    fallbackContainer: fallbackContainer
-  });
+    fallbackContainer: fallbackContainer,
+    acl: {}
+  };
+
+  return generateEnsuredVirtualDocument(descriptor);
 }
 
-function generateVirtualDocument<Descriptor extends DocumentDescriptor>(
-  descriptor: Descriptor
-): VirtualDocument<Descriptor> {
+interface EnsuredVirtualDocument extends VirtualDocument<IsEnsuredOn> {
+  isReadableByEveryone: () => EnsuredVirtualDocument;
+  isAppendableByEveryone: () => EnsuredVirtualDocument;
+  isWritableByEveryone: () => EnsuredVirtualDocument;
+  isControllableByEveryone: () => EnsuredVirtualDocument;
+}
+function generateEnsuredVirtualDocument(
+  descriptor: IsEnsuredOn
+): EnsuredVirtualDocument {
   return {
-    internal_descriptor: descriptor
+    internal_descriptor: descriptor,
+    isReadableByEveryone: generateSetPublicAcl(descriptor, "read"),
+    isAppendableByEveryone: generateSetPublicAcl(descriptor, "append"),
+    isWritableByEveryone: generateSetPublicAcl(descriptor, "write"),
+    isControllableByEveryone: generateSetPublicAcl(descriptor, "control")
+  };
+}
+
+function generateSetPublicAcl(
+  descriptor: IsEnsuredOn,
+  accessMode: "read" | "append" | "write" | "control"
+): () => EnsuredVirtualDocument {
+  return () => {
+    const acl: AclSettings = descriptor.acl ?? {};
+    acl.public = acl.public ?? {};
+    acl.public[accessMode] = true;
+    const newDescriptor: IsEnsuredOn = {
+      ...descriptor,
+      acl: acl
+    };
+
+    return generateEnsuredVirtualDocument(newDescriptor);
   };
 }

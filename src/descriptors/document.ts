@@ -45,11 +45,35 @@ export function internal_isIsFoundOn(
   return virtualDocument.internal_descriptor.type === "IsFoundOn";
 }
 
+// TODO: Add option to suggest a file name
+export interface AclSettings {
+  public?: {
+    read?: boolean;
+    append?: boolean;
+    write?: boolean;
+    control?: boolean;
+  };
+  origins?: Array<{
+    origin: Reference;
+    read?: boolean;
+    append?: boolean;
+    write?: boolean;
+    control?: boolean;
+  }>;
+  agents?: Array<{
+    origin: Reference;
+    read?: boolean;
+    append?: boolean;
+    write?: boolean;
+    control?: boolean;
+  }>;
+}
 export interface IsEnsuredOn {
   type: "IsEnsuredOn";
   subject: VirtualSubject;
   predicate: Reference;
   fallbackContainer: VirtualContainer;
+  acl: AclSettings;
 }
 /**
  * @ignore

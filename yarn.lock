@@ -3633,6 +3633,11 @@ rdf-namespaces@^1.3.0:
   resolved "https://registry.yarnpkg.com/rdf-namespaces/-/rdf-namespaces-1.6.0.tgz#12bdf166e24fba17970e5ed1a39024d8fc1d52e7"
   integrity sha512-YB2IAr3F+STs+wT75H6xx2Tf2qRA/mn3XtqYqkIVK4r0gOyJCUxkZQMNaXA4pI9tv9cHKynW56HXI+dEYFxdeQ==
 
+rdf-namespaces@^1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/rdf-namespaces/-/rdf-namespaces-1.7.0.tgz#c8ca4fa25d535e28671ff161c98680e224ebe137"
+  integrity sha512-t8cvZRjRRd61ZSQl+zyNcwXy+xAU/WzCRZZaC6+s9Na47F+hvt1hZge7Qkr4Di5TI6em7QYWTSiPbDc5d9EZDw==
+
 react-is@^16.8.4:
   version "16.12.0"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.12.0.tgz#2cc0fe0fba742d97fd527c42a13bec4eeb06241c"
