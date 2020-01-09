@@ -135,8 +135,9 @@ const ensureForRef: DocumentFetcher<IsEnsuredOn> = async virtualDoc => {
         : // If the ACL doesn't exist on the Pod yet, just add a new Subject:
           aclDoc.addSubject();
 
-      authSubject.addRef(rdf.type, acl.Authorization);
-      authSubject.addRef(acl.accessTo, savedDocument.asRef());
+      authSubject.setRef(rdf.type, acl.Authorization);
+      authSubject.setRef(acl.accessTo, savedDocument.asRef());
+      authSubject.setRef(acl.agentClass, foaf.Agent);
 
       if (publicAclSettings.read) {
         authSubject.addRef(acl.mode, acl.Read);
@@ -162,8 +163,9 @@ const ensureForRef: DocumentFetcher<IsEnsuredOn> = async virtualDoc => {
           : // If the ACL doesn't exist on the Pod yet, just add a new Subject:
             aclDoc.addSubject();
 
-        authSubject.addRef(rdf.type, acl.Authorization);
-        authSubject.addRef(acl.accessTo, savedDocument.asRef());
+        authSubject.setRef(rdf.type, acl.Authorization);
+        authSubject.setRef(acl.accessTo, savedDocument.asRef());
+        authSubject.setRef(acl.agent, agent);
 
         if (agentAclSettings[agent].read) {
           authSubject.addRef(acl.mode, acl.Read);
