@@ -21,6 +21,7 @@ import {
 } from "../descriptors/document";
 import { fetchSubject } from "./subject";
 import { fetchContainer } from "./container";
+import { hasAclSettings, configureAcl } from "../services/acl";
 
 export async function fetchDocument(
   virtualDoc: VirtualDocument
@@ -107,131 +108,19 @@ const ensureForRef: DocumentFetcher<IsEnsuredOn> = async virtualDoc => {
   const subjectDoc = subject.getDocument();
   await subjectDoc.save([subject]);
 
-  if (configuresAcl(virtualDoc.internal_descriptor)) {
+  if (hasAclSettings(virtualDoc.internal_descriptor.acl)) {
     const aclRef = savedDocument.getAclRef();
     if (aclRef === null) {
       throw new Error(
         "Could not find a location for the Access Control List of this Document."
       );
     }
-    let aclDoc: TripleDocument | LocalTripleDocument;
-    try {
-      aclDoc = await fetchTripleDocument(aclRef);
-    } catch (e) {
-      aclDoc = createDocument(aclRef);
-    }
-    if (aclDoc === undefined) {
-      throw new Error(
-        "Could not fetch the Access Control List of this Document."
-      );
-    }
-
-    const publicAclSettings = virtualDoc.internal_descriptor.acl.public;
-    if (publicAclSettings !== undefined) {
-      const authSubject = isSavedToPod(aclDoc)
-        ? // If the ACL exists on the Pod, use an existing Subject for public ACL access if present,
-          // or add a new Subject otherwise:
-          aclDoc.findSubject(acl.agentClass, foaf.Agent) ?? aclDoc.addSubject()
-        : // If the ACL doesn't exist on the Pod yet, just add a new Subject:
-          aclDoc.addSubject();
-
-      authSubject.setRef(rdf.type, acl.Authorization);
-      authSubject.setRef(acl.accessTo, savedDocument.asRef());
-      authSubject.setRef(acl.agentClass, foaf.Agent);
-
-      if (publicAclSettings.read) {
-        authSubject.addRef(acl.mode, acl.Read);
-      }
-      if (publicAclSettings.append) {
-        authSubject.addRef(acl.mode, acl.Append);
-      }
-      if (publicAclSettings.write) {
-        authSubject.addRef(acl.mode, acl.Write);
-      }
-      if (publicAclSettings.control) {
-        authSubject.addRef(acl.mode, acl.Control);
-      }
-    }
-
-    const agentAclSettings = virtualDoc.internal_descriptor.acl.agents;
-    if (agentAclSettings !== undefined) {
-      Object.keys(agentAclSettings).forEach(agent => {
-        const authSubject = isSavedToPod(aclDoc)
-          ? // If the ACL exists on the Pod, use an existing Subject for agent-specific ACL access
-            //if present, or add a new Subject otherwise:
-            aclDoc.findSubject(acl.agent, agent) ?? aclDoc.addSubject()
-          : // If the ACL doesn't exist on the Pod yet, just add a new Subject:
-            aclDoc.addSubject();
-
-        authSubject.setRef(rdf.type, acl.Authorization);
-        authSubject.setRef(acl.accessTo, savedDocument.asRef());
-        authSubject.setRef(acl.agent, agent);
-
-        if (agentAclSettings[agent].read) {
-          authSubject.addRef(acl.mode, acl.Read);
-        }
-        if (agentAclSettings[agent].append) {
-          authSubject.addRef(acl.mode, acl.Append);
-        }
-        if (agentAclSettings[agent].write) {
-          authSubject.addRef(acl.mode, acl.Write);
-        }
-        if (agentAclSettings[agent].control) {
-          authSubject.addRef(acl.mode, acl.Control);
-        }
-      });
-    }
-
-    const originAclSettings = virtualDoc.internal_descriptor.acl.origins;
-    if (originAclSettings !== undefined) {
-      Object.keys(originAclSettings).forEach(origin => {
-        Object.keys(originAclSettings[origin]).forEach(agent => {
-          // If the ACL Doc existed already, try to find a Subject referring to both
-          // the given origin and the given agent.
-          const agentSubjects = !isSavedToPod(aclDoc)
-            ? []
-            : aclDoc.findSubjects(acl.agent, agent);
-          const existingAgentSubjects = agentSubjects.filter(
-            agentSubject => agentSubject.getRef(acl.origin) === origin
-          );
-
-          // If a Subject with this origin and agent was found, use it. Otherwise, create a new one:
-          const authSubject =
-            existingAgentSubjects.length > 0
-              ? existingAgentSubjects[0]
-              : aclDoc.addSubject();
-
-          authSubject.setRef(rdf.type, acl.Authorization);
-          authSubject.setRef(acl.accessTo, savedDocument.asRef());
-          authSubject.setRef(acl.origin, origin);
-          authSubject.setRef(acl.agent, agent);
-
-          if (originAclSettings[origin][agent].read) {
-            authSubject.addRef(acl.mode, acl.Read);
-          }
-          if (originAclSettings[origin][agent].append) {
-            authSubject.addRef(acl.mode, acl.Append);
-          }
-          if (originAclSettings[origin][agent].write) {
-            authSubject.addRef(acl.mode, acl.Write);
-          }
-          if (originAclSettings[origin][agent].control) {
-            authSubject.addRef(acl.mode, acl.Control);
-          }
-        });
-      });
-    }
-
-    await aclDoc.save();
+    await configureAcl(
+      savedDocument.asRef(),
+      aclRef,
+      virtualDoc.internal_descriptor.acl
+    );
   }
 
   return savedDocument;
 };
-
-function configuresAcl(descriptor: IsEnsuredOn): boolean {
-  return (
-    descriptor.acl.public !== undefined ||
-    descriptor.acl.origins !== undefined ||
-    descriptor.acl.agents !== undefined
-  );
-}

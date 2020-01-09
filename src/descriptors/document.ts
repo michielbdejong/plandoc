@@ -2,6 +2,7 @@ import { Reference } from "tripledoc";
 import { VirtualDocument } from "../virtual/document";
 import { VirtualSubject } from "../virtual/subject";
 import { VirtualContainer } from "../virtual/container";
+import { AclSettings } from "../services/acl";
 
 export type DocumentDescriptor = ByRef | IsAclFor | IsFoundOn | IsEnsuredOn;
 
@@ -46,32 +47,6 @@ export function internal_isIsFoundOn(
 }
 
 // TODO: Add option to suggest a file name
-export interface AclSettings {
-  public?: {
-    read?: boolean;
-    append?: boolean;
-    write?: boolean;
-    control?: boolean;
-  };
-  agents?: {
-    [agent: string]: {
-      read?: boolean;
-      append?: boolean;
-      write?: boolean;
-      control?: boolean;
-    };
-  };
-  origins?: {
-    [origin: string]: {
-      [agent: string]: {
-        read?: boolean;
-        append?: boolean;
-        write?: boolean;
-        control?: boolean;
-      };
-    };
-  };
-}
 export interface IsEnsuredOn {
   type: "IsEnsuredOn";
   subject: VirtualSubject;

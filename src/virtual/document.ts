@@ -7,8 +7,8 @@ import {
   IsAclFor,
   IsFoundOn,
   IsEnsuredOn,
-  AclSettings
 } from "../descriptors/document";
+import { AclSettings } from "../services/acl";
 
 export function describeDocument() {
   return {
