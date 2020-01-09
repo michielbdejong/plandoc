@@ -90,6 +90,22 @@ interface EnsuredVirtualDocument extends VirtualDocument<IsEnsuredOn> {
   isAppendableByAgent: (agent: Reference) => EnsuredVirtualDocument;
   isWritableByAgent: (agent: Reference) => EnsuredVirtualDocument;
   isControllableByAgent: (agent: Reference) => EnsuredVirtualDocument;
+  isReadableByOrigin: (
+    origin: Reference,
+    agent: Reference
+  ) => EnsuredVirtualDocument;
+  isAppendableByOrigin: (
+    origin: Reference,
+    agent: Reference
+  ) => EnsuredVirtualDocument;
+  isWritableByOrigin: (
+    origin: Reference,
+    agent: Reference
+  ) => EnsuredVirtualDocument;
+  isControllableByOrigin: (
+    origin: Reference,
+    agent: Reference
+  ) => EnsuredVirtualDocument;
 }
 function generateEnsuredVirtualDocument(
   descriptor: IsEnsuredOn
@@ -103,7 +119,30 @@ function generateEnsuredVirtualDocument(
     isReadableByAgent: generateSetAgentAcl(descriptor, "read"),
     isAppendableByAgent: generateSetAgentAcl(descriptor, "append"),
     isWritableByAgent: generateSetAgentAcl(descriptor, "write"),
-    isControllableByAgent: generateSetAgentAcl(descriptor, "control")
+    isControllableByAgent: generateSetAgentAcl(descriptor, "control"),
+    isReadableByOrigin: generateSetOriginAcl(descriptor, "read"),
+    isAppendableByOrigin: generateSetOriginAcl(descriptor, "append"),
+    isWritableByOrigin: generateSetOriginAcl(descriptor, "write"),
+    isControllableByOrigin: generateSetOriginAcl(descriptor, "control")
+  };
+}
+
+function generateSetOriginAcl(
+  descriptor: IsEnsuredOn,
+  accessMode: "read" | "append" | "write" | "control"
+): (origin: Reference, agent: Reference) => EnsuredVirtualDocument {
+  return (origin: Reference, agent: Reference) => {
+    const acl: AclSettings = descriptor.acl ?? {};
+    acl.origins = acl.origins ?? {};
+    acl.origins[origin] = acl.origins[origin] ?? {};
+    acl.origins[origin][agent] = acl.origins[origin][agent] ?? {};
+    acl.origins[origin][agent][accessMode] = true;
+    const newDescriptor: IsEnsuredOn = {
+      ...descriptor,
+      acl: acl
+    };
+
+    return generateEnsuredVirtualDocument(newDescriptor);
   };
 }
 

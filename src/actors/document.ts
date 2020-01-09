@@ -181,7 +181,46 @@ const ensureForRef: DocumentFetcher<IsEnsuredOn> = async virtualDoc => {
         }
       });
     }
-    // TODO: ACL settings for origins
+
+    const originAclSettings = virtualDoc.internal_descriptor.acl.origins;
+    if (originAclSettings !== undefined) {
+      Object.keys(originAclSettings).forEach(origin => {
+        Object.keys(originAclSettings[origin]).forEach(agent => {
+          // If the ACL Doc existed already, try to find a Subject referring to both
+          // the given origin and the given agent.
+          const agentSubjects = !isSavedToPod(aclDoc)
+            ? []
+            : aclDoc.findSubjects(acl.agent, agent);
+          const existingAgentSubjects = agentSubjects.filter(
+            agentSubject => agentSubject.getRef(acl.origin) === origin
+          );
+
+          // If a Subject with this origin and agent was found, use it. Otherwise, create a new one:
+          const authSubject =
+            existingAgentSubjects.length > 0
+              ? existingAgentSubjects[0]
+              : aclDoc.addSubject();
+
+          authSubject.setRef(rdf.type, acl.Authorization);
+          authSubject.setRef(acl.accessTo, savedDocument.asRef());
+          authSubject.setRef(acl.origin, origin);
+          authSubject.setRef(acl.agent, agent);
+
+          if (originAclSettings[origin][agent].read) {
+            authSubject.addRef(acl.mode, acl.Read);
+          }
+          if (originAclSettings[origin][agent].append) {
+            authSubject.addRef(acl.mode, acl.Append);
+          }
+          if (originAclSettings[origin][agent].write) {
+            authSubject.addRef(acl.mode, acl.Write);
+          }
+          if (originAclSettings[origin][agent].control) {
+            authSubject.addRef(acl.mode, acl.Control);
+          }
+        });
+      });
+    }
 
     await aclDoc.save();
   }
