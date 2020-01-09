@@ -17,8 +17,7 @@ import {
   internal_isIsEnsuredOn,
   IsAclFor,
   IsFoundOn,
-  IsEnsuredOn,
-  AclSettings
+  IsEnsuredOn
 } from "../descriptors/document";
 import { fetchSubject } from "./subject";
 import { fetchContainer } from "./container";
@@ -153,8 +152,34 @@ const ensureForRef: DocumentFetcher<IsEnsuredOn> = async virtualDoc => {
       }
     }
 
+    const agentAclSettings = virtualDoc.internal_descriptor.acl.agents;
+    if (agentAclSettings !== undefined) {
+      Object.keys(agentAclSettings).forEach(agent => {
+        const authSubject = isSavedToPod(aclDoc)
+          ? // If the ACL exists on the Pod, use an existing Subject for agent-specific ACL access
+            //if present, or add a new Subject otherwise:
+            aclDoc.findSubject(acl.agent, agent) ?? aclDoc.addSubject()
+          : // If the ACL doesn't exist on the Pod yet, just add a new Subject:
+            aclDoc.addSubject();
+
+        authSubject.addRef(rdf.type, acl.Authorization);
+        authSubject.addRef(acl.accessTo, savedDocument.asRef());
+
+        if (agentAclSettings[agent].read) {
+          authSubject.addRef(acl.mode, acl.Read);
+        }
+        if (agentAclSettings[agent].append) {
+          authSubject.addRef(acl.mode, acl.Append);
+        }
+        if (agentAclSettings[agent].write) {
+          authSubject.addRef(acl.mode, acl.Write);
+        }
+        if (agentAclSettings[agent].control) {
+          authSubject.addRef(acl.mode, acl.Control);
+        }
+      });
+    }
     // TODO: ACL settings for origins
-    // TODO: ACL settings for agents
 
     await aclDoc.save();
   }
@@ -165,8 +190,7 @@ const ensureForRef: DocumentFetcher<IsEnsuredOn> = async virtualDoc => {
 function configuresAcl(descriptor: IsEnsuredOn): boolean {
   return (
     descriptor.acl.public !== undefined ||
-    (Array.isArray(descriptor.acl.agents) &&
-      descriptor.acl.agents.length > 0) ||
-    (Array.isArray(descriptor.acl.origins) && descriptor.acl.origins.length > 0)
+    descriptor.acl.origins !== undefined ||
+    descriptor.acl.agents !== undefined
   );
 }

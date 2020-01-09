@@ -86,6 +86,10 @@ interface EnsuredVirtualDocument extends VirtualDocument<IsEnsuredOn> {
   isAppendableByEveryone: () => EnsuredVirtualDocument;
   isWritableByEveryone: () => EnsuredVirtualDocument;
   isControllableByEveryone: () => EnsuredVirtualDocument;
+  isReadableByAgent: (agent: Reference) => EnsuredVirtualDocument;
+  isAppendableByAgent: (agent: Reference) => EnsuredVirtualDocument;
+  isWritableByAgent: (agent: Reference) => EnsuredVirtualDocument;
+  isControllableByAgent: (agent: Reference) => EnsuredVirtualDocument;
 }
 function generateEnsuredVirtualDocument(
   descriptor: IsEnsuredOn
@@ -95,7 +99,29 @@ function generateEnsuredVirtualDocument(
     isReadableByEveryone: generateSetPublicAcl(descriptor, "read"),
     isAppendableByEveryone: generateSetPublicAcl(descriptor, "append"),
     isWritableByEveryone: generateSetPublicAcl(descriptor, "write"),
-    isControllableByEveryone: generateSetPublicAcl(descriptor, "control")
+    isControllableByEveryone: generateSetPublicAcl(descriptor, "control"),
+    isReadableByAgent: generateSetAgentAcl(descriptor, "read"),
+    isAppendableByAgent: generateSetAgentAcl(descriptor, "append"),
+    isWritableByAgent: generateSetAgentAcl(descriptor, "write"),
+    isControllableByAgent: generateSetAgentAcl(descriptor, "control")
+  };
+}
+
+function generateSetAgentAcl(
+  descriptor: IsEnsuredOn,
+  accessMode: "read" | "append" | "write" | "control"
+): (agent: Reference) => EnsuredVirtualDocument {
+  return (agent: Reference) => {
+    const acl: AclSettings = descriptor.acl ?? {};
+    acl.agents = acl.agents ?? {};
+    acl.agents[agent] = acl.agents[agent] ?? {};
+    acl.agents[agent][accessMode] = true;
+    const newDescriptor: IsEnsuredOn = {
+      ...descriptor,
+      acl: acl
+    };
+
+    return generateEnsuredVirtualDocument(newDescriptor);
   };
 }
 

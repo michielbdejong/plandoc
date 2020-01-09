@@ -53,20 +53,24 @@ export interface AclSettings {
     write?: boolean;
     control?: boolean;
   };
-  origins?: Array<{
-    origin: Reference;
-    read?: boolean;
-    append?: boolean;
-    write?: boolean;
-    control?: boolean;
-  }>;
-  agents?: Array<{
-    origin: Reference;
-    read?: boolean;
-    append?: boolean;
-    write?: boolean;
-    control?: boolean;
-  }>;
+  agents?: {
+    [agent: string]: {
+      read?: boolean;
+      append?: boolean;
+      write?: boolean;
+      control?: boolean;
+    };
+  };
+  origins?: {
+    [origin: string]: {
+      [agent: string]: {
+        read?: boolean;
+        append?: boolean;
+        write?: boolean;
+        control?: boolean;
+      };
+    };
+  };
 }
 export interface IsEnsuredOn {
   type: "IsEnsuredOn";
