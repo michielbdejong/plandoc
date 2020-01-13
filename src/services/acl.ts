@@ -4,7 +4,8 @@ import {
   LocalTripleDocument,
   fetchDocument as fetchTripleDocument,
   createDocument,
-  isSavedToPod
+  isSavedToPod,
+  TripleSubject
 } from "tripledoc";
 import { acl, foaf, rdf } from "rdf-namespaces";
 
@@ -62,12 +63,23 @@ export async function configureAcl(
 
   const publicAclSettings = aclSettings.public;
   if (publicAclSettings !== undefined) {
-    const authSubject = isSavedToPod(aclDoc)
-      ? // If the ACL exists on the Pod, use an existing Subject for public ACL access if present,
-        // or add a new Subject otherwise:
-        aclDoc.findSubject(acl.agentClass, foaf.Agent) ?? aclDoc.addSubject()
-      : // If the ACL doesn't exist on the Pod yet, just add a new Subject:
-        aclDoc.addSubject();
+    let authSubject: TripleSubject;
+    if (isSavedToPod(aclDoc)) {
+      const potentialSubjects = aclDoc
+        .findSubjects(acl.accessTo, documentRef)
+        .filter(potentialSubject => {
+          return (
+            potentialSubject.getRef(rdf.type) === acl.Authorization &&
+            potentialSubject.getRef(acl.agentClass) === foaf.Agent
+          );
+        });
+      authSubject =
+        potentialSubjects.length === 1
+          ? potentialSubjects[1]
+          : aclDoc.addSubject();
+    } else {
+      authSubject = aclDoc.addSubject();
+    }
 
     authSubject.setRef(rdf.type, acl.Authorization);
     authSubject.setRef(acl.accessTo, documentRef);
@@ -90,12 +102,25 @@ export async function configureAcl(
   const agentAclSettings = aclSettings.agents;
   if (agentAclSettings !== undefined) {
     Object.keys(agentAclSettings).forEach(agent => {
-      const authSubject = isSavedToPod(aclDoc)
-        ? // If the ACL exists on the Pod, use an existing Subject for agent-specific ACL access
-          //if present, or add a new Subject otherwise:
-          aclDoc.findSubject(acl.agent, agent) ?? aclDoc.addSubject()
-        : // If the ACL doesn't exist on the Pod yet, just add a new Subject:
-          aclDoc.addSubject();
+      let authSubject: TripleSubject;
+      if (isSavedToPod(aclDoc)) {
+        const potentialSubjects = aclDoc
+          .findSubjects(acl.accessTo, documentRef)
+          .filter(potentialSubject => {
+            return (
+              potentialSubject.getRef(rdf.type) === acl.Authorization &&
+              potentialSubject.getRef(acl.agent) === agent &&
+              // Make sure that this Subject is not restricted to a specific Origin
+              potentialSubject.getRef(acl.origin) === null
+            );
+          });
+        authSubject =
+          potentialSubjects.length === 1
+            ? potentialSubjects[1]
+            : aclDoc.addSubject();
+      } else {
+        authSubject = aclDoc.addSubject();
+      }
 
       authSubject.setRef(rdf.type, acl.Authorization);
       authSubject.setRef(acl.accessTo, documentRef);
@@ -120,20 +145,24 @@ export async function configureAcl(
   if (originAclSettings !== undefined) {
     Object.keys(originAclSettings).forEach(origin => {
       Object.keys(originAclSettings[origin]).forEach(agent => {
-        // If the ACL Doc existed already, try to find a Subject referring to both
-        // the given origin and the given agent.
-        const agentSubjects = !isSavedToPod(aclDoc)
-          ? []
-          : aclDoc.findSubjects(acl.agent, agent);
-        const existingAgentSubjects = agentSubjects.filter(
-          agentSubject => agentSubject.getRef(acl.origin) === origin
-        );
-
-        // If a Subject with this origin and agent was found, use it. Otherwise, create a new one:
-        const authSubject =
-          existingAgentSubjects.length > 0
-            ? existingAgentSubjects[0]
-            : aclDoc.addSubject();
+        let authSubject: TripleSubject;
+        if (isSavedToPod(aclDoc)) {
+          const potentialSubjects = aclDoc
+            .findSubjects(acl.accessTo, documentRef)
+            .filter(potentialSubject => {
+              return (
+                potentialSubject.getRef(rdf.type) === acl.Authorization &&
+                potentialSubject.getRef(acl.agent) === agent &&
+                potentialSubject.getRef(acl.origin) === origin
+              );
+            });
+          authSubject =
+            potentialSubjects.length === 1
+              ? potentialSubjects[1]
+              : aclDoc.addSubject();
+        } else {
+          authSubject = aclDoc.addSubject();
+        }
 
         authSubject.setRef(rdf.type, acl.Authorization);
         authSubject.setRef(acl.accessTo, documentRef);
