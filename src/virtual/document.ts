@@ -6,7 +6,7 @@ import {
   ByRef,
   IsAclFor,
   IsFoundOn,
-  IsEnsuredOn,
+  IsEnsuredOn
 } from "../descriptors/document";
 import { AclSettings } from "../services/acl";
 
@@ -69,7 +69,7 @@ export function isEnsuredOn(
   subject: VirtualSubject,
   predicate: Reference,
   fallbackContainer: VirtualContainer
-): VirtualDocument<IsEnsuredOn> {
+): EnsuredVirtualDocument {
   const descriptor: IsEnsuredOn = {
     type: "IsEnsuredOn",
     subject: subject,
