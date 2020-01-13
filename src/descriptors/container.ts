@@ -1,6 +1,7 @@
 import { Reference } from "tripledoc";
 import { VirtualContainer } from "../virtual/container";
 import { VirtualSubject } from "../virtual/subject";
+import { AclSettings } from "../services/acl";
 
 export type ContainerDescriptor = ByRef | IsFoundOn | IsContainedIn;
 
@@ -35,6 +36,7 @@ export interface IsContainedIn {
   type: "IsContainedIn";
   container: VirtualContainer;
   name: string;
+  acl: AclSettings;
 }
 /**
  * @ignore

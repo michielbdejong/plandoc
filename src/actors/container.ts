@@ -1,4 +1,8 @@
-import { Reference, createDocument } from "tripledoc";
+import {
+  Reference,
+  createDocument,
+  fetchDocument as fetchTripleDocument
+} from "tripledoc";
 import SolidAuth from "solid-auth-client";
 import { VirtualContainer } from "../virtual/container";
 import {
@@ -11,6 +15,7 @@ import {
   internal_isIsContainedIn
 } from "../descriptors/container";
 import { fetchSubject } from "./subject";
+import { hasAclSettings, configureAcl } from "../services/acl";
 
 export async function fetchContainer(
   virtualContainer: VirtualContainer
@@ -66,13 +71,31 @@ const ensureInContainer: ContainerFetcher<IsContainedIn> = async virtualContaine
   }
 
   const containerRef =
-    parentContainer.replace(/\/$/, "") + '/' +
-    virtualContainer.internal_descriptor.name.replace(/\/$/, "");
-  const dummyFileRef = containerRef + "/.dummy";
+    parentContainer.replace(/\/$/, "") +
+    "/" +
+    virtualContainer.internal_descriptor.name.replace(/\/$/, "") +
+    "/";
+  const dummyFileRef = containerRef + ".dummy";
 
   await createDocument(dummyFileRef).save();
   // TODO Consider adding deletion to Tripledoc?
   await SolidAuth.fetch(dummyFileRef, { method: "DELETE" });
+
+  const containerDocument = await fetchTripleDocument(containerRef);
+
+  if (hasAclSettings(virtualContainer.internal_descriptor.acl)) {
+    const aclRef = containerDocument.getAclRef();
+    if (aclRef === null) {
+      throw new Error(
+        "Could not find a location for the Access Control List of this Container."
+      );
+    }
+    await configureAcl(
+      containerRef,
+      aclRef,
+      virtualContainer.internal_descriptor.acl
+    );
+  }
 
   return containerRef;
 };
