@@ -459,6 +459,14 @@
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
   integrity sha512-tHq6qdbT9U1IRSGf14CL0pUlULksvY9OZ+5eEgl1N7t+OA3tGvNpxJCzuKQlsNgCVwbAs670L1vcVQi8j9HjnA==
 
+"@types/n3@^1.1.1":
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@types/n3/-/n3-1.1.3.tgz#5120043a9e2a6456c3b220dd54407a89d42ceec6"
+  integrity sha512-A55mhIyIHQjl0QK6tlD8UTMp9gf4JxfYK7hakhc2Mv/eEwFxu+M0ER4v1Uz0qabI9pWajaYb0z7MGXb6VieacA==
+  dependencies:
+    "@types/node" "*"
+    "@types/rdf-js" "*"
+
 "@types/node@*":
   version "12.12.17"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.17.tgz#191b71e7f4c325ee0fb23bc4a996477d92b8c39b"
@@ -468,6 +476,13 @@
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.0.tgz#e486d0d97396d79beedd0a6e33f4534ff6b4973e"
   integrity sha512-f5j5b/Gf71L+dbqxIpQ4Z2WlmI/mPJ0fOkGGmFgtb6sAu97EPczzbS3/tJKxmcYDj55OX6ssqwDAWOHIYDRDGA==
+
+"@types/rdf-js@*":
+  version "2.0.7"
+  resolved "https://registry.yarnpkg.com/@types/rdf-js/-/rdf-js-2.0.7.tgz#b1963e636af101711e896eff8f8dc41475c0fd1d"
+  integrity sha512-VJjcUbg+BKJj273lmiO5mqd5A2Eb5HEdd/DJHZP9h4PgLu+BV6/6zs3OcwiK7OCHpMjP5j/SM7gY8hyX0KIw3Q==
+  dependencies:
+    "@types/node" "*"
 
 "@types/solid-auth-client@^2.3.1":
   version "2.3.1"
@@ -4410,12 +4425,13 @@ tr46@^1.0.1:
   dependencies:
     punycode "^2.1.0"
 
-tripledoc@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/tripledoc/-/tripledoc-4.0.0.tgz#42baaa4acdf60c8ccc69634dfa6afa5ff4293882"
-  integrity sha512-AXKD3BUy7l9oJW7pj+65vIhVnoOMl3o3ksz09kkrtItsW5iTC7Rrjg13AEcpHj4O+EMoBauXq4sPfiJofRYRaQ==
+tripledoc@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/tripledoc/-/tripledoc-4.0.1.tgz#7d4d4d5c566fcbd1c1ae8b7e3f48eb8ea22f29a4"
+  integrity sha512-+V2Sy0N3XUnrR+JlkII7Vj5vSxjD2Iia/FTJrr0tF/1ANpk32ivfhuWuwy/QwpC34f6yHyV4efilEAMmdAsJJA==
   dependencies:
     "@types/http-link-header" "^1.0.0"
+    "@types/n3" "^1.1.1"
     "@types/solid-auth-client" "^2.3.1"
     http-link-header "^1.0.2"
     n3 "^1.2.1"
