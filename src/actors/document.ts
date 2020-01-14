@@ -1,12 +1,8 @@
 import {
   TripleDocument,
   fetchDocument as fetchTripleDocument,
-  createDocument,
-  createDocumentInContainer,
-  LocalTripleDocument,
-  isSavedToPod
+  createDocumentInContainer
 } from "tripledoc";
-import { foaf, acl, rdf } from "rdf-namespaces";
 import { VirtualDocument } from "../virtual/document";
 import {
   internal_isByRef,
