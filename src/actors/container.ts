@@ -93,7 +93,8 @@ const ensureInContainer: ContainerFetcher<IsContainedIn> = async virtualContaine
     await configureAcl(
       containerRef,
       aclRef,
-      virtualContainer.internal_descriptor.acl
+      virtualContainer.internal_descriptor.acl,
+      { default: true }
     );
   }
 

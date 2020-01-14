@@ -44,10 +44,15 @@ export function hasAclSettings(aclSettings: AclSettings): boolean {
   );
 }
 
+type AclConfigOptions = {
+  /** Assuming [[documentRef]] is a Container, whether these settings should also apply to its children */
+  default: boolean;
+};
 export async function configureAcl(
   documentRef: Reference,
   aclRef: Reference,
-  aclSettings: AclSettings
+  aclSettings: AclSettings,
+  options: Partial<AclConfigOptions> = {}
 ): Promise<TripleDocument> {
   let aclDoc: TripleDocument | LocalTripleDocument;
   try {
@@ -84,6 +89,12 @@ export async function configureAcl(
     authSubject.setRef(rdf.type, acl.Authorization);
     authSubject.setRef(acl.accessTo, documentRef);
     authSubject.setRef(acl.agentClass, foaf.Agent);
+
+    if (options.default) {
+      authSubject.addRef(acl.default__workaround, documentRef);
+      // Deprecated, but included for backwards compatibility:
+      authSubject.addRef(acl.defaultForNew, documentRef);
+    }
 
     if (publicAclSettings.read) {
       authSubject.addRef(acl.mode, acl.Read);
@@ -125,6 +136,12 @@ export async function configureAcl(
       authSubject.setRef(rdf.type, acl.Authorization);
       authSubject.setRef(acl.accessTo, documentRef);
       authSubject.setRef(acl.agent, agent);
+
+      if (options.default) {
+        authSubject.addRef(acl.default__workaround, documentRef);
+        // Deprecated, but included for backwards compatibility:
+        authSubject.addRef(acl.defaultForNew, documentRef);
+      }
 
       if (agentAclSettings[agent].read) {
         authSubject.addRef(acl.mode, acl.Read);
@@ -168,6 +185,12 @@ export async function configureAcl(
         authSubject.setRef(acl.accessTo, documentRef);
         authSubject.setRef(acl.origin, origin);
         authSubject.setRef(acl.agent, agent);
+
+        if (options.default) {
+          authSubject.addRef(acl.default__workaround, documentRef);
+          // Deprecated, but included for backwards compatibility:
+          authSubject.addRef(acl.defaultForNew, documentRef);
+        }
 
         if (originAclSettings[origin][agent].read) {
           authSubject.addRef(acl.mode, acl.Read);
