@@ -5,8 +5,8 @@ import {
 } from "tripledoc";
 import { VirtualDocument } from "../virtual/document";
 import {
-  internal_isByRef,
-  ByRef,
+  internal_isIsFoundAt,
+  IsFoundAt,
   DocumentDescriptor,
   internal_isIsAclFor,
   internal_isIsFoundOn,
@@ -26,7 +26,7 @@ export async function fetchDocument(
     return virtualDoc.promise;
   }
 
-  const promise = internal_isByRef(virtualDoc)
+  const promise = internal_isIsFoundAt(virtualDoc)
     ? fetchByRef(virtualDoc)
     : internal_isIsAclFor(virtualDoc)
     ? getFromAcl(virtualDoc)
@@ -47,7 +47,7 @@ type DocumentFetcher<Descriptor extends DocumentDescriptor> = (
   virtualDoc: VirtualDocument<Descriptor>
 ) => Promise<TripleDocument | null>;
 
-const fetchByRef: DocumentFetcher<ByRef> = async virtualDoc => {
+const fetchByRef: DocumentFetcher<IsFoundAt> = async virtualDoc => {
   return fetchTripleDocument(virtualDoc.internal_descriptor.reference);
 };
 

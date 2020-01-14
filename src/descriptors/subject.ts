@@ -3,20 +3,20 @@ import { VirtualSubject } from "../virtual/subject";
 import { VirtualDocument } from "../virtual/document";
 
 export type SubjectDescriptor =
-  | ByRef
+  | IsFoundAt
   | IsFoundOn
   | IsEnsuredOn
   | IsFoundIn<SubjectLocator>
   | IsEnsuredIn<SubjectLocator>;
 
-export interface ByRef {
-  type: "ByRef";
+export interface IsFoundAt {
+  type: "IsFoundAt";
   reference: Reference;
 }
-export function internal_isByRef(
+export function internal_isIsFoundAt(
   virtualSubject: VirtualSubject
-): virtualSubject is VirtualSubject<ByRef> {
-  return virtualSubject.internal_descriptor.type === "ByRef";
+): virtualSubject is VirtualSubject<IsFoundAt> {
+  return virtualSubject.internal_descriptor.type === "IsFoundAt";
 }
 
 export interface IsFoundOn {

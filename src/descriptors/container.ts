@@ -3,19 +3,19 @@ import { VirtualContainer } from "../virtual/container";
 import { VirtualSubject } from "../virtual/subject";
 import { AclSettings } from "../services/acl";
 
-export type ContainerDescriptor = ByRef | IsFoundOn | IsContainedIn;
+export type ContainerDescriptor = IsFoundAt | IsFoundOn | IsContainedIn;
 
-export interface ByRef {
-  type: "ByRef";
+export interface IsFoundAt {
+  type: "IsFoundAt";
   reference: Reference;
 }
 /**
  * @ignore
  */
-export function internal_isByRef(
+export function internal_isIsFoundAt(
   virtualContainer: VirtualContainer
-): virtualContainer is VirtualContainer<ByRef> {
-  return virtualContainer.internal_descriptor.type === "ByRef";
+): virtualContainer is VirtualContainer<IsFoundAt> {
+  return virtualContainer.internal_descriptor.type === "IsFoundAt";
 }
 
 export interface IsFoundOn {

@@ -8,7 +8,7 @@ jest.mock("tripledoc", () => ({
 describe("fetchDocument", () => {
   it("should pass on a direct reference to Tripledoc", () => {
     const tripledoc = jest.requireMock("tripledoc");
-    const virtualDocument = describeDocument().byRef(
+    const virtualDocument = describeDocument().isFoundAt(
       "https://arbitrary.doc/resource.ttl"
     );
 
@@ -22,7 +22,7 @@ describe("fetchDocument", () => {
 
   it("should re-use cached responses", () => {
     const tripledoc = jest.requireMock("tripledoc");
-    const virtualDocument = describeDocument().byRef(
+    const virtualDocument = describeDocument().isFoundAt(
       "https://arbitrary.doc/resource.ttl"
     );
 
@@ -35,7 +35,7 @@ describe("fetchDocument", () => {
   it("should re-use in-progress requests", () => {
     const tripledoc = jest.requireMock("tripledoc");
     tripledoc.fetchDocument.mockReturnValueOnce(new Promise(() => undefined));
-    const virtualDocument = describeDocument().byRef(
+    const virtualDocument = describeDocument().isFoundAt(
       "https://arbitrary.doc/resource.ttl"
     );
 
@@ -47,10 +47,10 @@ describe("fetchDocument", () => {
 
   it("should not share caches over different virtual Documents", () => {
     const tripledoc = jest.requireMock("tripledoc");
-    const virtualDocument1 = describeDocument().byRef(
+    const virtualDocument1 = describeDocument().isFoundAt(
       "https://arbitrary.doc/resource.ttl"
     );
-    const virtualDocument2 = describeDocument().byRef(
+    const virtualDocument2 = describeDocument().isFoundAt(
       "https://arbitrary.doc/resource.ttl"
     );
 

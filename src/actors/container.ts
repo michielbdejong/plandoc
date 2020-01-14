@@ -6,10 +6,10 @@ import {
 import SolidAuth from "solid-auth-client";
 import { VirtualContainer } from "../virtual/container";
 import {
-  internal_isByRef,
+  internal_isIsFoundAt,
   internal_isIsFoundOn,
   ContainerDescriptor,
-  ByRef,
+  IsFoundAt,
   IsFoundOn,
   IsContainedIn,
   internal_isIsContainedIn
@@ -25,7 +25,7 @@ export async function fetchContainer(
     return virtualContainer.promise;
   }
 
-  const promise = internal_isByRef(virtualContainer)
+  const promise = internal_isIsFoundAt(virtualContainer)
     ? fetchByRef(virtualContainer)
     : internal_isIsFoundOn(virtualContainer)
     ? getForRef(virtualContainer)
@@ -44,7 +44,7 @@ type ContainerFetcher<Descriptor extends ContainerDescriptor> = (
   virtualContainer: VirtualContainer<Descriptor>
 ) => Promise<Reference | null>;
 
-const fetchByRef: ContainerFetcher<ByRef> = async virtualContainer => {
+const fetchByRef: ContainerFetcher<IsFoundAt> = async virtualContainer => {
   return virtualContainer.internal_descriptor.reference;
 };
 

@@ -2,7 +2,7 @@ import { Reference } from "tripledoc";
 import { VirtualSubject } from "./subject";
 import {
   ContainerDescriptor,
-  ByRef,
+  IsFoundAt,
   IsFoundOn,
   IsContainedIn
 } from "../descriptors/container";
@@ -10,7 +10,7 @@ import { AclSettings } from "../services/acl";
 
 export function describeContainer() {
   return {
-    byRef: byRef,
+    isFoundAt: isFoundAt,
     isFoundOn: isFoundOn,
     isContainedIn: isContainedIn
   };
@@ -27,10 +27,10 @@ export interface VirtualContainer<
   internal_descriptor: Descriptor;
 }
 
-export function byRef(reference: Reference): VirtualContainer<ByRef> {
+export function isFoundAt(reference: Reference): VirtualContainer<IsFoundAt> {
   return {
     internal_descriptor: {
-      type: "ByRef",
+      type: "IsFoundAt",
       reference: reference
     }
   };

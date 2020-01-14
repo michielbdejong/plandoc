@@ -2,7 +2,7 @@ import { Reference, TripleSubject } from "tripledoc";
 import { VirtualDocument } from "./document";
 import {
   SubjectDescriptor,
-  ByRef,
+  IsFoundAt,
   IsFoundIn,
   IsEnsuredIn,
   SubjectLocator,
@@ -14,7 +14,7 @@ import {
 
 export function describeSubject() {
   return {
-    byRef: byRef,
+    isFoundAt: isFoundAt,
     isFoundOn: isFoundOn,
     isEnsuredOn: isEnsuredOn,
     isFoundIn: isFoundIn,
@@ -32,10 +32,10 @@ export interface VirtualSubject<
   internal_descriptor: Descriptor;
 }
 
-function byRef(reference: Reference): VirtualSubject<ByRef> {
-  const descriptor: ByRef = {
+function isFoundAt(reference: Reference): VirtualSubject<IsFoundAt> {
+  const descriptor: IsFoundAt = {
     reference: reference,
-    type: "ByRef"
+    type: "IsFoundAt"
   };
   return {
     internal_descriptor: descriptor

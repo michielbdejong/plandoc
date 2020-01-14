@@ -3,7 +3,7 @@ import { VirtualSubject } from "./subject";
 import { VirtualContainer } from "./container";
 import {
   DocumentDescriptor,
-  ByRef,
+  IsFoundAt,
   IsAclFor,
   IsFoundOn,
   IsEnsuredOn
@@ -12,7 +12,7 @@ import { AclSettings } from "../services/acl";
 
 export function describeDocument() {
   return {
-    byRef: (reference: Reference) => byRef(reference),
+    isFoundAt: (reference: Reference) => isFoundAt(reference),
     isAclFor: (document: VirtualDocument) => isAclFor(document),
     isFoundOn: (subject: VirtualSubject, predicate: Reference) =>
       isFoundOn(subject, predicate),
@@ -34,10 +34,10 @@ export interface VirtualDocument<
   internal_descriptor: Descriptor;
 }
 
-export function byRef(reference: Reference): VirtualDocument<ByRef> {
+export function isFoundAt(reference: Reference): VirtualDocument<IsFoundAt> {
   return {
     internal_descriptor: {
-      type: "ByRef",
+      type: "IsFoundAt",
       reference: reference
     }
   };

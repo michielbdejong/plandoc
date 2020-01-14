@@ -5,11 +5,11 @@ import {
 } from "tripledoc";
 import { VirtualSubject } from "../virtual/subject";
 import {
-  internal_isByRef,
+  internal_isIsFoundAt,
   internal_isIsFoundIn,
   internal_isIsEnsuredIn,
   SubjectDescriptor,
-  ByRef,
+  IsFoundAt,
   IsFoundIn,
   IsEnsuredIn,
   SubjectLocator,
@@ -31,7 +31,7 @@ export async function fetchSubject(
     return virtualSubject.promise;
   }
 
-  const promise = internal_isByRef(virtualSubject)
+  const promise = internal_isIsFoundAt(virtualSubject)
     ? fetchByRef(virtualSubject)
     : internal_isIsFoundOn(virtualSubject)
     ? getOnSubject(virtualSubject)
@@ -54,7 +54,7 @@ type SubjectFetcher<Descriptor extends SubjectDescriptor> = (
   virtualSubject: VirtualSubject<Descriptor>
 ) => Promise<TripleSubject | null>;
 
-const fetchByRef: SubjectFetcher<ByRef> = async virtualSubject => {
+const fetchByRef: SubjectFetcher<IsFoundAt> = async virtualSubject => {
   const document = await fetchTripleDocument(
     virtualSubject.internal_descriptor.reference
   );

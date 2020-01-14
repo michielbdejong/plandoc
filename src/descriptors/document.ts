@@ -4,19 +4,19 @@ import { VirtualSubject } from "../virtual/subject";
 import { VirtualContainer } from "../virtual/container";
 import { AclSettings } from "../services/acl";
 
-export type DocumentDescriptor = ByRef | IsAclFor | IsFoundOn | IsEnsuredOn;
+export type DocumentDescriptor = IsFoundAt | IsAclFor | IsFoundOn | IsEnsuredOn;
 
-export interface ByRef {
-  type: "ByRef";
+export interface IsFoundAt {
+  type: "IsFoundAt";
   reference: Reference;
 }
 /**
  * @ignore
  */
-export function internal_isByRef(
+export function internal_isIsFoundAt(
   virtualDocument: VirtualDocument
-): virtualDocument is VirtualDocument<ByRef> {
-  return virtualDocument.internal_descriptor.type === "ByRef";
+): virtualDocument is VirtualDocument<IsFoundAt> {
+  return virtualDocument.internal_descriptor.type === "IsFoundAt";
 }
 
 export interface IsAclFor {
