@@ -23,6 +23,7 @@ function initialiseMocks() {
     getSubject: jest.fn(() => mockSubject),
     findSubjects: jest.fn(() => [mockSubject]),
     addSubject: jest.fn(),
+    asRef: jest.fn(),
     save: jest.fn(() => Promise.resolve(mockDocument))
   };
 }
@@ -97,6 +98,16 @@ describe("fetchSubject", () => {
     );
     expect(tripledoc.fetchDocument.mock.calls[1][0]).toBe(
       "https://arbitrary.doc/resource.ttl#subject"
+    );
+  });
+
+  it("should error when the type of Virtual Subject is unsupported", async () => {
+    const virtualSubject = {
+      internal_descriptor: { type: "Some unsupported type of Virtual Subject" }
+    };
+
+    await expect(fetchSubject(virtualSubject as any)).rejects.toThrowError(
+      "This type of Virtual Subject can not be processed yet."
     );
   });
 
@@ -267,10 +278,10 @@ describe("fetchSubject", () => {
         .isFoundIn(mockContainingDocument)
         .withRef(
           "https://mock-vocab.example/#some-predicate",
-          "https:/arbitrary-other.doc/resource.ttl#some-object"
+          "https://arbitrary-other.doc/resource.ttl#some-object"
         );
       mockSubject.getRef.mockReturnValueOnce(
-        "https:/arbitrary-other.doc/resource.ttl#some-object"
+        "https://arbitrary-other.doc/resource.ttl#some-object"
       );
       mockDocument.findSubjects.mockReturnValueOnce([mockSubject]);
 
@@ -282,7 +293,7 @@ describe("fetchSubject", () => {
         "https://mock-vocab.example/#some-predicate"
       );
       expect(mockDocument.findSubjects.mock.calls[0][1]).toBe(
-        "https:/arbitrary-other.doc/resource.ttl#some-object"
+        "https://arbitrary-other.doc/resource.ttl#some-object"
       );
     });
 
@@ -294,17 +305,17 @@ describe("fetchSubject", () => {
         .isFoundIn(mockContainingDocument)
         .withRef(
           "https://mock-vocab.example/#some-predicate",
-          "https:/arbitrary-other.doc/resource.ttl#some-object"
+          "https://arbitrary-other.doc/resource.ttl#some-object"
         )
         .withRef(
           "https://mock-vocab.example/#some-other-predicate",
-          "https:/arbitrary-other.doc/resource.ttl#some-other-object"
+          "https://arbitrary-other.doc/resource.ttl#some-other-object"
         );
       mockSubject.getRef.mockReturnValueOnce(
-        "https:/arbitrary-other.doc/resource.ttl#some-object"
+        "https://arbitrary-other.doc/resource.ttl#some-object"
       );
       mockSubject.getRef.mockReturnValueOnce(
-        "https:/arbitrary-other.doc/resource.ttl#some-other-object"
+        "https://arbitrary-other.doc/resource.ttl#some-other-object"
       );
       mockDocument.findSubjects.mockReturnValueOnce([mockSubject]);
 
@@ -316,7 +327,7 @@ describe("fetchSubject", () => {
         "https://mock-vocab.example/#some-predicate"
       );
       expect(mockDocument.findSubjects.mock.calls[0][1]).toBe(
-        "https:/arbitrary-other.doc/resource.ttl#some-object"
+        "https://arbitrary-other.doc/resource.ttl#some-object"
       );
     });
 
@@ -328,14 +339,14 @@ describe("fetchSubject", () => {
         .isFoundIn(mockContainingDocument)
         .withRef(
           "https://mock-vocab.example/#some-predicate",
-          "https:/arbitrary-other.doc/resource.ttl#some-object"
+          "https://arbitrary-other.doc/resource.ttl#some-object"
         )
         .withRef(
           "https://mock-vocab.example/#some-other-predicate",
-          "https:/arbitrary-other.doc/resource.ttl#some-other-object"
+          "https://arbitrary-other.doc/resource.ttl#some-other-object"
         );
       mockSubject.getRef.mockReturnValueOnce(
-        "https:/arbitrary-other.doc/resource.ttl#some-object"
+        "https://arbitrary-other.doc/resource.ttl#some-object"
       );
       mockDocument.findSubjects.mockReturnValueOnce([mockSubject]);
 
@@ -347,11 +358,11 @@ describe("fetchSubject", () => {
         "https://mock-vocab.example/#some-predicate"
       );
       expect(mockDocument.findSubjects.mock.calls[0][1]).toBe(
-        "https:/arbitrary-other.doc/resource.ttl#some-object"
+        "https://arbitrary-other.doc/resource.ttl#some-object"
       );
     });
 
-    it("should not be able to find it when only the second predicate matches", async () => {
+    it("should not be able to find it when the first predicate already does not match", async () => {
       const mockContainingDocument = describeDocument().isFoundAt(
         "https://arbitrary.doc/resource.ttl"
       );
@@ -359,17 +370,14 @@ describe("fetchSubject", () => {
         .isFoundIn(mockContainingDocument)
         .withRef(
           "https://mock-vocab.example/#some-predicate",
-          "https:/arbitrary-other.doc/resource.ttl#some-object"
+          "https://arbitrary-other.doc/resource.ttl#some-object"
         )
         .withRef(
           "https://mock-vocab.example/#some-other-predicate",
-          "https:/arbitrary-other.doc/resource.ttl#some-other-object"
+          "https://arbitrary-other.doc/resource.ttl#some-other-object"
         );
       mockSubject.getRef.mockReturnValueOnce(
-        "https:/arbitrary-other.doc/resource.ttl#arbitrary-invalid-object"
-      );
-      mockSubject.getRef.mockReturnValueOnce(
-        "https:/arbitrary-other.doc/resource.ttl#some-other-object"
+        "https://arbitrary-other.doc/resource.ttl#arbitrary-invalid-object"
       );
       mockDocument.findSubjects.mockReturnValueOnce([mockSubject]);
 
@@ -381,7 +389,7 @@ describe("fetchSubject", () => {
         "https://mock-vocab.example/#some-predicate"
       );
       expect(mockDocument.findSubjects.mock.calls[0][1]).toBe(
-        "https:/arbitrary-other.doc/resource.ttl#some-object"
+        "https://arbitrary-other.doc/resource.ttl#some-object"
       );
     });
 
@@ -393,7 +401,7 @@ describe("fetchSubject", () => {
         .isFoundIn(mockContainingDocument)
         .withRef(
           "https://mock-vocab.example/#arbitrary-predicate",
-          "https:/arbitrary-other.doc/resource.ttl#arbitrary-object"
+          "https://arbitrary-other.doc/resource.ttl#arbitrary-object"
         );
       const mockVirtualDocument = require.requireMock("./document.ts");
       mockVirtualDocument.fetchDocument.mockReturnValueOnce(
@@ -413,7 +421,7 @@ describe("fetchSubject", () => {
         .isFoundIn(mockContainingDocument)
         .withRef(
           "https://mock-vocab.example/#predicate-that-will-be-removed",
-          "https:/arbitrary-other.doc/resource.ttl#object-that-will-be-removed"
+          "https://arbitrary-other.doc/resource.ttl#object-that-will-be-removed"
         );
       // The typings disallow creating a VirtualSubject without enumerating the desired Predicates,
       // but we can manually manipulate the data structure to remove them again:
@@ -444,12 +452,294 @@ describe("fetchSubject", () => {
       );
     });
 
+    it("should not find it if it does not exist", async () => {
+      const mockContainingDocument = describeDocument().isFoundAt(
+        "https://arbitrary.doc/resource.ttl"
+      );
+      const virtualSubject = describeSubject()
+        .isFoundIn(mockContainingDocument)
+        .asRef("https://arbitrary.doc/resource.ttl#some-subject");
+      mockDocument.getSubject.mockReturnValueOnce(null);
+
+      const fetchedSubject = await fetchSubject(virtualSubject);
+
+      expect(fetchedSubject).toBeNull();
+      expect(mockDocument.getSubject.mock.calls.length).toBe(1);
+      expect(mockDocument.getSubject.mock.calls[0][0]).toBe(
+        "https://arbitrary.doc/resource.ttl#some-subject"
+      );
+    });
+
     it("should not retrieve it if an invalid Locator was given", async () => {
       const mockContainingDocument = describeDocument().isFoundAt(
         "https://arbitrary.doc/resource.ttl"
       );
       const virtualSubject = describeSubject()
         .isFoundIn(mockContainingDocument)
+        .asRef("https://arbitrary.doc/resource.ttl#some-subject");
+      // The typings disallow creating a VirtualSubject without a Locator,
+      // but we can manually manipulate the data structure to change it:
+      virtualSubject.internal_descriptor.locator = {
+        arbitrary: "invalid Locator"
+      } as any;
+
+      await expect(fetchSubject(virtualSubject)).rejects.toThrowError(
+        "This type of Locator can not be processed yet."
+      );
+    });
+  });
+
+  describe("ensured in a given Document by matching predicates", () => {
+    it("should retrieve it if it exists", async () => {
+      const mockContainingDocument = describeDocument().isFoundAt(
+        "https://arbitrary.doc/resource.ttl"
+      );
+      const virtualSubject = describeSubject()
+        .isEnsuredIn(mockContainingDocument)
+        .withRef(
+          "https://mock-vocab.example/#some-predicate",
+          "https://arbitrary-other.doc/resource.ttl#some-object"
+        );
+      mockSubject.getRef.mockReturnValueOnce(
+        "https://arbitrary-other.doc/resource.ttl#some-object"
+      );
+      mockDocument.findSubjects.mockReturnValueOnce([mockSubject]);
+
+      const fetchedSubject = await fetchSubject(virtualSubject);
+
+      expect(fetchedSubject).toEqual(mockSubject);
+      expect(mockDocument.findSubjects.mock.calls.length).toBe(1);
+      expect(mockDocument.findSubjects.mock.calls[0][0]).toBe(
+        "https://mock-vocab.example/#some-predicate"
+      );
+      expect(mockDocument.findSubjects.mock.calls[0][1]).toBe(
+        "https://arbitrary-other.doc/resource.ttl#some-object"
+      );
+    });
+
+    it("should be able to find it when selecting by multiple Predicates", async () => {
+      const mockContainingDocument = describeDocument().isFoundAt(
+        "https://arbitrary.doc/resource.ttl"
+      );
+      const virtualSubject = describeSubject()
+        .isEnsuredIn(mockContainingDocument)
+        .withRef(
+          "https://mock-vocab.example/#some-predicate",
+          "https://arbitrary-other.doc/resource.ttl#some-object"
+        )
+        .withRef(
+          "https://mock-vocab.example/#some-other-predicate",
+          "https://arbitrary-other.doc/resource.ttl#some-other-object"
+        );
+      mockSubject.getRef.mockReturnValueOnce(
+        "https://arbitrary-other.doc/resource.ttl#some-object"
+      );
+      mockSubject.getRef.mockReturnValueOnce(
+        "https://arbitrary-other.doc/resource.ttl#some-other-object"
+      );
+      mockDocument.findSubjects.mockReturnValueOnce([mockSubject]);
+
+      const fetchedSubject = await fetchSubject(virtualSubject);
+
+      expect(fetchedSubject).toEqual(mockSubject);
+      expect(mockDocument.findSubjects.mock.calls.length).toBe(1);
+      expect(mockDocument.findSubjects.mock.calls[0][0]).toBe(
+        "https://mock-vocab.example/#some-predicate"
+      );
+      expect(mockDocument.findSubjects.mock.calls[0][1]).toBe(
+        "https://arbitrary-other.doc/resource.ttl#some-object"
+      );
+    });
+
+    it("should try to create it when only the first predicate matches", async () => {
+      const mockContainingDocument = describeDocument().isFoundAt(
+        "https://arbitrary.doc/resource.ttl"
+      );
+      const virtualSubject = describeSubject()
+        .isEnsuredIn(mockContainingDocument)
+        .withRef(
+          "https://mock-vocab.example/#some-predicate",
+          "https://arbitrary-other.doc/resource.ttl#some-object"
+        )
+        .withRef(
+          "https://mock-vocab.example/#some-other-predicate",
+          "https://arbitrary-other.doc/resource.ttl#some-other-object"
+        );
+      mockSubject.getRef.mockReturnValueOnce(
+        "https://arbitrary-other.doc/resource.ttl#some-object"
+      );
+      mockDocument.findSubjects.mockReturnValueOnce([mockSubject]);
+      const mockNewSubject = { addRef: jest.fn(), asRef: jest.fn() };
+      mockDocument.addSubject.mockReturnValueOnce(mockNewSubject);
+      mockDocument.getSubject.mockReturnValueOnce(mockNewSubject);
+
+      const fetchedSubject = await fetchSubject(virtualSubject);
+
+      expect(fetchedSubject).toEqual(mockNewSubject);
+      expect(mockDocument.findSubjects.mock.calls.length).toBe(1);
+      expect(mockDocument.findSubjects.mock.calls[0][0]).toBe(
+        "https://mock-vocab.example/#some-predicate"
+      );
+      expect(mockDocument.findSubjects.mock.calls[0][1]).toBe(
+        "https://arbitrary-other.doc/resource.ttl#some-object"
+      );
+      expect(mockNewSubject.addRef.mock.calls.length).toBe(2);
+      expect(mockNewSubject.addRef.mock.calls[0][0]).toBe(
+        "https://mock-vocab.example/#some-predicate"
+      );
+      expect(mockNewSubject.addRef.mock.calls[0][1]).toBe(
+        "https://arbitrary-other.doc/resource.ttl#some-object"
+      );
+      expect(mockNewSubject.addRef.mock.calls[1][0]).toBe(
+        "https://mock-vocab.example/#some-other-predicate"
+      );
+      expect(mockNewSubject.addRef.mock.calls[1][1]).toBe(
+        "https://arbitrary-other.doc/resource.ttl#some-other-object"
+      );
+      expect(mockDocument.save.mock.calls.length).toBe(1);
+      expect(mockDocument.save.mock.calls[0][0]).toEqual([mockNewSubject]);
+    });
+
+    it("should try to create it when the first predicate already does not match", async () => {
+      const mockContainingDocument = describeDocument().isFoundAt(
+        "https://arbitrary.doc/resource.ttl"
+      );
+      const virtualSubject = describeSubject()
+        .isEnsuredIn(mockContainingDocument)
+        .withRef(
+          "https://mock-vocab.example/#some-predicate",
+          "https://arbitrary-other.doc/resource.ttl#some-object"
+        )
+        .withRef(
+          "https://mock-vocab.example/#some-other-predicate",
+          "https://arbitrary-other.doc/resource.ttl#some-other-object"
+        );
+      mockSubject.getRef.mockReturnValueOnce(
+        "https://arbitrary-other.doc/resource.ttl#some-"
+      );
+      mockDocument.findSubjects.mockReturnValueOnce([mockSubject]);
+      const mockNewSubject = { addRef: jest.fn(), asRef: jest.fn() };
+      mockDocument.addSubject.mockReturnValueOnce(mockNewSubject);
+      mockDocument.getSubject.mockReturnValueOnce(mockNewSubject);
+
+      const fetchedSubject = await fetchSubject(virtualSubject);
+
+      expect(fetchedSubject).toEqual(mockNewSubject);
+      expect(mockDocument.findSubjects.mock.calls.length).toBe(1);
+      expect(mockDocument.findSubjects.mock.calls[0][0]).toBe(
+        "https://mock-vocab.example/#some-predicate"
+      );
+      expect(mockDocument.findSubjects.mock.calls[0][1]).toBe(
+        "https://arbitrary-other.doc/resource.ttl#some-object"
+      );
+      expect(mockNewSubject.addRef.mock.calls.length).toBe(2);
+      expect(mockNewSubject.addRef.mock.calls[0][0]).toBe(
+        "https://mock-vocab.example/#some-predicate"
+      );
+      expect(mockNewSubject.addRef.mock.calls[0][1]).toBe(
+        "https://arbitrary-other.doc/resource.ttl#some-object"
+      );
+      expect(mockNewSubject.addRef.mock.calls[1][0]).toBe(
+        "https://mock-vocab.example/#some-other-predicate"
+      );
+      expect(mockNewSubject.addRef.mock.calls[1][1]).toBe(
+        "https://arbitrary-other.doc/resource.ttl#some-other-object"
+      );
+      expect(mockDocument.save.mock.calls.length).toBe(1);
+      expect(mockDocument.save.mock.calls[0][0]).toEqual([mockNewSubject]);
+    });
+
+    it("should not be able to find it when the given Document could not be found", async () => {
+      const mockContainingDocument = describeDocument().isFoundAt(
+        "https://arbitrary.doc/resource.ttl"
+      );
+      const virtualSubject = describeSubject()
+        .isEnsuredIn(mockContainingDocument)
+        .withRef(
+          "https://mock-vocab.example/#arbitrary-predicate",
+          "https://arbitrary-other.doc/resource.ttl#arbitrary-object"
+        );
+      const mockVirtualDocument = require.requireMock("./document.ts");
+      mockVirtualDocument.fetchDocument.mockReturnValueOnce(
+        Promise.resolve(null)
+      );
+
+      const fetchedSubject = await fetchSubject(virtualSubject);
+
+      expect(fetchedSubject).toBeNull();
+    });
+
+    it("does not yet support finding Documents without matching Predicates", async () => {
+      const mockContainingDocument = describeDocument().isFoundAt(
+        "https://arbitrary.doc/resource.ttl"
+      );
+      const virtualSubject = describeSubject()
+        .isEnsuredIn(mockContainingDocument)
+        .withRef(
+          "https://mock-vocab.example/#predicate-that-will-be-removed",
+          "https://arbitrary-other.doc/resource.ttl#object-that-will-be-removed"
+        );
+      // The typings disallow creating a VirtualSubject without enumerating the desired Predicates,
+      // but we can manually manipulate the data structure to remove them again:
+      virtualSubject.internal_descriptor.locator.references = [];
+
+      await expect(fetchSubject(virtualSubject)).rejects.toThrowError(
+        "Please specify at least one property to identify this subject with."
+      );
+    });
+  });
+
+  describe("ensured in a given Document by Reference", () => {
+    it("should retrieve it if it exists", async () => {
+      const mockContainingDocument = describeDocument().isFoundAt(
+        "https://arbitrary.doc/resource.ttl"
+      );
+      const virtualSubject = describeSubject()
+        .isEnsuredIn(mockContainingDocument)
+        .asRef("https://arbitrary.doc/resource.ttl#some-subject");
+      mockDocument.getSubject.mockReturnValueOnce(mockSubject);
+
+      const fetchedSubject = await fetchSubject(virtualSubject);
+
+      expect(fetchedSubject).toEqual(mockSubject);
+      expect(mockDocument.getSubject.mock.calls.length).toBe(1);
+      expect(mockDocument.getSubject.mock.calls[0][0]).toBe(
+        "https://arbitrary.doc/resource.ttl#some-subject"
+      );
+    });
+
+    it("should create it if it does not exist yet", async () => {
+      const mockContainingDocument = describeDocument().isFoundAt(
+        "https://arbitrary.doc/resource.ttl"
+      );
+      const virtualSubject = describeSubject()
+        .isEnsuredIn(mockContainingDocument)
+        .asRef("https://arbitrary.doc/resource.ttl#some-subject");
+      mockDocument.getSubject.mockReturnValueOnce(null);
+      mockDocument.asRef.mockReturnValueOnce(
+        "https://arbitrary.doc/resource.ttl"
+      );
+      mockDocument.addSubject.mockReturnValueOnce("Mocked new Subject");
+
+      const fetchedSubject = await fetchSubject(virtualSubject);
+
+      expect(fetchedSubject).toEqual("Mocked new Subject");
+      expect(mockDocument.getSubject.mock.calls.length).toBe(1);
+      expect(mockDocument.getSubject.mock.calls[0][0]).toBe(
+        "https://arbitrary.doc/resource.ttl#some-subject"
+      );
+      expect(mockDocument.addSubject.mock.calls.length).toBe(1);
+      expect(mockDocument.addSubject.mock.calls[0][0]).toEqual({
+        identifier: "some-subject"
+      });
+    });
+
+    it("should not retrieve it if an invalid Locator was given", async () => {
+      const mockContainingDocument = describeDocument().isFoundAt(
+        "https://arbitrary.doc/resource.ttl"
+      );
+      const virtualSubject = describeSubject()
+        .isEnsuredIn(mockContainingDocument)
         .asRef("https://arbitrary.doc/resource.ttl#some-subject");
       // The typings disallow creating a VirtualSubject without a Locator,
       // but we can manually manipulate the data structure to change it:
