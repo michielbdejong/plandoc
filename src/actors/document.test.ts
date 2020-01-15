@@ -1,9 +1,37 @@
 import { describeDocument } from "../virtual/document";
 import { fetchDocument } from "./document";
+import { describeSubject } from "../virtual/subject";
+import { Reference } from "tripledoc";
 
-jest.mock("tripledoc", () => ({
-  fetchDocument: jest.fn().mockReturnValue(Promise.resolve())
-}));
+let mockSubject: { [key: string]: jest.Mock };
+let mockDocument: { [key: string]: jest.Mock };
+function initialiseMocks() {
+  // `jest.mock` is run first by Jest, so any initialisation of mock globals should be done in there.
+  // Thus, this function is called in there. However, we only want to initialise the mocks once so
+  // as not to override their values.
+  if (typeof mockSubject !== "undefined") {
+    return;
+  }
+
+  mockSubject = {
+    getRef: jest
+      .fn()
+      .mockReturnValue("https://arbitrary-doc.com/#arbitrary-subject")
+  };
+  mockDocument = {};
+}
+jest.mock("tripledoc", () => {
+  initialiseMocks();
+  return {
+    fetchDocument: jest.fn().mockReturnValue(Promise.resolve(mockDocument))
+  };
+});
+jest.mock("./subject.ts", () => {
+  initialiseMocks();
+  return {
+    fetchSubject: jest.fn().mockReturnValue(Promise.resolve(mockSubject))
+  };
+});
 
 describe("fetchDocument", () => {
   it("should pass on a direct reference to Tripledoc", () => {
@@ -114,6 +142,67 @@ describe("fetchDocument", () => {
       const aclDoc = await fetchDocument(aclDocument);
 
       expect(aclDoc).toBeNull();
+    });
+  });
+
+  describe("found on a Subject", () => {
+    it("should fetch it if available", async () => {
+      const tripledoc = jest.requireMock("tripledoc");
+      tripledoc.fetchDocument.mockReturnValueOnce(
+        "The Document we are looking for"
+      );
+      mockSubject.getRef.mockReturnValueOnce("https://some.doc/resource.ttl");
+
+      const sourceSubject = describeSubject().isFoundAt(
+        "https://arbitrary.doc/resource.ttl#subject"
+      );
+      const virtualDocument = describeDocument().isFoundOn(
+        sourceSubject,
+        "https://mock-vocab.example/#some-predicate"
+      );
+
+      const retrievedDocument = await fetchDocument(virtualDocument);
+
+      expect(retrievedDocument).toBe("The Document we are looking for");
+      expect(tripledoc.fetchDocument.mock.calls.length).toBe(1);
+      expect(tripledoc.fetchDocument.mock.calls[0][0]).toBe(
+        "https://some.doc/resource.ttl"
+      );
+    });
+
+    it("should return null if the source Subject could not be found", async () => {
+      const mockVirtualSubject = jest.requireMock("./subject.ts");
+      mockVirtualSubject.fetchSubject.mockReturnValueOnce(
+        Promise.resolve(null)
+      );
+
+      const sourceSubject = describeSubject().isFoundAt(
+        "https://arbitrary.doc/resource.ttl#subject"
+      );
+      const virtualDocument = describeDocument().isFoundOn(
+        sourceSubject,
+        "https://mock-vocab.example/#arbitrary-predicate"
+      );
+
+      const retrievedDocument = await fetchDocument(virtualDocument);
+
+      expect(retrievedDocument).toBeNull();
+    });
+
+    it("should return null if the source Subject does not refer to a Document for the given Predicate", async () => {
+      mockSubject.getRef.mockReturnValueOnce(null);
+
+      const sourceSubject = describeSubject().isFoundAt(
+        "https://arbitrary.doc/resource.ttl#subject"
+      );
+      const virtualDocument = describeDocument().isFoundOn(
+        sourceSubject,
+        "https://mock-vocab.example/#arbitrary-predicate"
+      );
+
+      const retrievedDocument = await fetchDocument(virtualDocument);
+
+      expect(retrievedDocument).toBeNull();
     });
   });
 });
