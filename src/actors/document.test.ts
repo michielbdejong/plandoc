@@ -1,7 +1,8 @@
 import { describeDocument } from "../virtual/document";
 import { fetchDocument } from "./document";
 import { describeSubject } from "../virtual/subject";
-import { Reference } from "tripledoc";
+import { Reference, createDocumentInContainer } from "tripledoc";
+import { describeContainer } from "../virtual/container";
 
 let mockSubject: { [key: string]: jest.Mock };
 let mockDocument: { [key: string]: jest.Mock };
@@ -16,20 +17,33 @@ function initialiseMocks() {
   mockSubject = {
     getRef: jest
       .fn()
-      .mockReturnValue("https://arbitrary-doc.com/#arbitrary-subject")
+      .mockReturnValue("https://arbitrary-doc.com/#arbitrary-subject"),
+    setRef: jest.fn(),
+    getDocument: jest.fn(() => mockDocument)
   };
-  mockDocument = {};
+  mockDocument = {
+    save: jest.fn().mockReturnValue(Promise.resolve(mockDocument))
+  };
 }
 jest.mock("tripledoc", () => {
   initialiseMocks();
   return {
-    fetchDocument: jest.fn().mockReturnValue(Promise.resolve(mockDocument))
+    fetchDocument: jest.fn().mockReturnValue(Promise.resolve(mockDocument)),
+    createDocumentInContainer: jest.fn().mockReturnValue(mockDocument)
   };
 });
 jest.mock("./subject.ts", () => {
   initialiseMocks();
   return {
     fetchSubject: jest.fn().mockReturnValue(Promise.resolve(mockSubject))
+  };
+});
+jest.mock("./container.ts", () => {
+  initialiseMocks();
+  return {
+    fetchContainer: jest
+      .fn()
+      .mockReturnValue(Promise.resolve("https://arbitrary.pod/container/"))
   };
 });
 
@@ -203,6 +217,123 @@ describe("fetchDocument", () => {
       const retrievedDocument = await fetchDocument(virtualDocument);
 
       expect(retrievedDocument).toBeNull();
+    });
+  });
+
+  describe("ensured on a Subject", () => {
+    it("should fetch it if available", async () => {
+      const tripledoc = jest.requireMock("tripledoc");
+      tripledoc.fetchDocument.mockReturnValueOnce(
+        "The Document we are looking for"
+      );
+      mockSubject.getRef.mockReturnValueOnce("https://some.doc/resource.ttl");
+
+      const fallbackContainer = describeContainer().isFoundAt(
+        "https://arbitrary.pod"
+      );
+      const sourceSubject = describeSubject().isFoundAt(
+        "https://arbitrary.doc/resource.ttl#subject"
+      );
+      const virtualDocument = describeDocument().isEnsuredOn(
+        sourceSubject,
+        "https://mock-vocab.example/#some-predicate",
+        fallbackContainer
+      );
+
+      const retrievedDocument = await fetchDocument(virtualDocument);
+
+      expect(retrievedDocument).toBe("The Document we are looking for");
+      expect(tripledoc.fetchDocument.mock.calls.length).toBe(1);
+      expect(tripledoc.fetchDocument.mock.calls[0][0]).toBe(
+        "https://some.doc/resource.ttl"
+      );
+    });
+
+    it("should return null if the Container the Document is to be created in could not be found", async () => {
+      const mockVirtualContainer = jest.requireMock("./container.ts");
+      mockVirtualContainer.fetchContainer.mockReturnValueOnce(null);
+      mockSubject.getRef.mockReturnValueOnce(null);
+
+      const fallbackContainer = describeContainer().isFoundAt(
+        "https://arbitrary.pod"
+      );
+      const sourceSubject = describeSubject().isFoundAt(
+        "https://arbitrary.doc/resource.ttl#subject"
+      );
+      const virtualDocument = describeDocument().isEnsuredOn(
+        sourceSubject,
+        "https://mock-vocab.example/#arbitrary-predicate",
+        fallbackContainer
+      );
+
+      const retrievedDocument = await fetchDocument(virtualDocument);
+
+      expect(retrievedDocument).toBeNull();
+    });
+
+    it("should return null if the source Subject could not be found", async () => {
+      const mockVirtualSubject = jest.requireMock("./subject.ts");
+      mockVirtualSubject.fetchSubject.mockReturnValueOnce(
+        Promise.resolve(null)
+      );
+
+      const fallbackContainer = describeContainer().isFoundAt(
+        "https://arbitrary.pod"
+      );
+      const sourceSubject = describeSubject().isFoundAt(
+        "https://arbitrary.doc/resource.ttl#subject"
+      );
+      const virtualDocument = describeDocument().isEnsuredOn(
+        sourceSubject,
+        "https://mock-vocab.example/#arbitrary-predicate",
+        fallbackContainer
+      );
+
+      const retrievedDocument = await fetchDocument(virtualDocument);
+
+      expect(retrievedDocument).toBeNull();
+    });
+
+    it("should create the Document if the source Subject does not yet refer to a Document for the given Predicate", async () => {
+      const tripledoc = require.requireMock("tripledoc");
+      const mockNewDocument: any = {
+        ...mockDocument,
+        asRef: jest.fn(() => "https://some.doc/resource.ttl"),
+        save: jest.fn(() => Promise.resolve(mockNewDocument))
+      };
+      tripledoc.createDocumentInContainer.mockReturnValueOnce(mockNewDocument);
+      const mockVirtualContainer = jest.requireMock("./container.ts");
+      mockVirtualContainer.fetchContainer.mockReturnValueOnce(
+        Promise.resolve("https://some.pod/container/")
+      );
+      mockSubject.getRef.mockReturnValueOnce(null);
+
+      const fallbackContainer = describeContainer().isFoundAt(
+        "https://some.pod/container/"
+      );
+      const sourceSubject = describeSubject().isFoundAt(
+        "https://arbitrary.doc/resource.ttl#subject"
+      );
+      const virtualDocument = describeDocument().isEnsuredOn(
+        sourceSubject,
+        "https://mock-vocab.example/#some-predicate",
+        fallbackContainer
+      );
+
+      const retrievedDocument = await fetchDocument(virtualDocument);
+
+      expect(retrievedDocument).toEqual(mockNewDocument);
+      expect(tripledoc.createDocumentInContainer.mock.calls.length).toBe(1);
+      expect(tripledoc.createDocumentInContainer.mock.calls[0][0]).toBe(
+        "https://some.pod/container/"
+      );
+      expect(mockSubject.setRef.mock.calls.length).toBe(1);
+      expect(mockSubject.setRef.mock.calls[0][0]).toBe(
+        "https://mock-vocab.example/#some-predicate"
+      );
+      expect(mockSubject.setRef.mock.calls[0][1]).toBe(
+        "https://some.doc/resource.ttl"
+      );
     });
   });
 });
