@@ -1,7 +1,6 @@
 import { describeDocument } from "../virtual/document";
 import { fetchDocument } from "./document";
 import { describeSubject } from "../virtual/subject";
-import { Reference, createDocumentInContainer } from "tripledoc";
 import { describeContainer } from "../virtual/container";
 
 let mockSubject: { [key: string]: jest.Mock };
@@ -15,14 +14,16 @@ function initialiseMocks() {
   }
 
   mockSubject = {
-    getRef: jest
-      .fn()
-      .mockReturnValue("https://arbitrary-doc.com/#arbitrary-subject"),
+    getRef: jest.fn(
+      () => "https://arbitrary-doc.com/resource.ttl#arbitrary-subject"
+    ),
     setRef: jest.fn(),
     getDocument: jest.fn(() => mockDocument)
   };
   mockDocument = {
-    save: jest.fn().mockReturnValue(Promise.resolve(mockDocument))
+    save: jest.fn(() => Promise.resolve(mockDocument)),
+    asRef: jest.fn().mockReturnValue("https://arbitrary-doc.com/resource.ttl"),
+    getAclRef: jest.fn(() => "https://arbitrary-doc.com/resource.ttl.acl")
   };
 }
 jest.mock("tripledoc", () => {
@@ -35,7 +36,7 @@ jest.mock("tripledoc", () => {
 jest.mock("./subject.ts", () => {
   initialiseMocks();
   return {
-    fetchSubject: jest.fn().mockReturnValue(Promise.resolve(mockSubject))
+    fetchSubject: jest.fn(() => Promise.resolve(mockSubject))
   };
 });
 jest.mock("./container.ts", () => {
@@ -44,6 +45,13 @@ jest.mock("./container.ts", () => {
     fetchContainer: jest
       .fn()
       .mockReturnValue(Promise.resolve("https://arbitrary.pod/container/"))
+  };
+});
+jest.mock("../services/acl.ts", () => {
+  initialiseMocks();
+  return {
+    ...require.requireActual("../services/acl.ts"),
+    configureAcl: jest.fn()
   };
 });
 
@@ -105,6 +113,16 @@ describe("fetchDocument", () => {
     );
     expect(tripledoc.fetchDocument.mock.calls[1][0]).toBe(
       "https://arbitrary.doc/resource.ttl"
+    );
+  });
+
+  it("should error when the type of Virtual Document is unsupported", async () => {
+    const virtualDocument = {
+      internal_descriptor: { type: "Some unsupported type of Virtual Document" }
+    };
+
+    await expect(fetchDocument(virtualDocument as any)).rejects.toThrowError(
+      "This type of Virtual Document can not be processed yet."
     );
   });
 
@@ -334,6 +352,73 @@ describe("fetchDocument", () => {
       expect(mockSubject.setRef.mock.calls[0][1]).toBe(
         "https://some.doc/resource.ttl"
       );
+    });
+
+    it("should configure its ACL if requested to do so", async () => {
+      const aclService = jest.requireMock("../services/acl.ts");
+      mockSubject.getRef.mockReturnValueOnce(null);
+
+      const fallbackContainer = describeContainer().isFoundAt(
+        "https://arbitrary.pod/container/"
+      );
+      const sourceSubject = describeSubject().isFoundAt(
+        "https://arbitrary.doc/resource.ttl#subject"
+      );
+      const virtualDocument = describeDocument()
+        .isEnsuredOn(
+          sourceSubject,
+          "https://mock-vocab.example/#arbitrary-predicate",
+          fallbackContainer
+        )
+        .isReadableByEveryone();
+
+      await fetchDocument(virtualDocument);
+
+      expect(aclService.configureAcl.mock.calls.length).toBe(1);
+    });
+
+    it("should throw an error if the ACL needs to be configured but no ACL file was referenced", async () => {
+      mockSubject.getRef.mockReturnValueOnce(null);
+      mockDocument.getAclRef.mockReturnValueOnce(null);
+
+      const fallbackContainer = describeContainer().isFoundAt(
+        "https://arbitrary.pod/container/"
+      );
+      const sourceSubject = describeSubject().isFoundAt(
+        "https://arbitrary.doc/resource.ttl#subject"
+      );
+      const virtualDocument = describeDocument()
+        .isEnsuredOn(
+          sourceSubject,
+          "https://mock-vocab.example/#arbitrary-predicate",
+          fallbackContainer
+        )
+        .isReadableByEveryone();
+
+      await expect(fetchDocument(virtualDocument)).rejects.toThrowError(
+        "Could not find a location for the Access Control List of this Document."
+      );
+    });
+
+    it("should not configure its ACL if not requested to do so", async () => {
+      const aclService = jest.requireMock("../services/acl.ts");
+      mockSubject.getRef.mockReturnValueOnce(null);
+
+      const fallbackContainer = describeContainer().isFoundAt(
+        "https://arbitrary.pod/container/"
+      );
+      const sourceSubject = describeSubject().isFoundAt(
+        "https://arbitrary.doc/resource.ttl#subject"
+      );
+      const virtualDocument = describeDocument().isEnsuredOn(
+        sourceSubject,
+        "https://mock-vocab.example/#arbitrary-predicate",
+        fallbackContainer
+      );
+
+      await fetchDocument(virtualDocument);
+
+      expect(aclService.configureAcl.mock.calls.length).toBe(0);
     });
   });
 });

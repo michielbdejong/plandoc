@@ -12,15 +12,10 @@ import { AclSettings } from "../services/acl";
 
 export function describeDocument() {
   return {
-    isFoundAt: (reference: Reference) => isFoundAt(reference),
-    isAclFor: (document: VirtualDocument) => isAclFor(document),
-    isFoundOn: (subject: VirtualSubject, predicate: Reference) =>
-      isFoundOn(subject, predicate),
-    isEnsuredOn: (
-      subject: VirtualSubject,
-      predicate: Reference,
-      fallbackContainer: VirtualContainer
-    ) => isEnsuredOn(subject, predicate, fallbackContainer)
+    isFoundAt: isFoundAt,
+    isAclFor: isAclFor,
+    isFoundOn: isFoundOn,
+    isEnsuredOn: isEnsuredOn
   };
 }
 
