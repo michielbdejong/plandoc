@@ -24,7 +24,7 @@ import {
 } from "../descriptors/subject";
 import { fetchDocument } from "./document";
 
-export async function fetchSubject(
+export async function internal_fetchSubject(
   virtualSubject: VirtualSubject
 ): Promise<TripleSubject | null> {
   if (typeof virtualSubject.promise !== "undefined") {
@@ -62,7 +62,7 @@ const fetchByRef: SubjectFetcher<IsFoundAt> = async virtualSubject => {
 };
 
 const getOnSubject: SubjectFetcher<IsFoundOn> = async virtualSubject => {
-  const sourceSubject = await fetchSubject(
+  const sourceSubject = await internal_fetchSubject(
     virtualSubject.internal_descriptor.subject
   );
   if (sourceSubject === null) {
@@ -78,7 +78,7 @@ const getOnSubject: SubjectFetcher<IsFoundOn> = async virtualSubject => {
 };
 
 const ensureOnSubject: SubjectFetcher<IsEnsuredOn> = async virtualSubject => {
-  const sourceSubject = await fetchSubject(
+  const sourceSubject = await internal_fetchSubject(
     virtualSubject.internal_descriptor.subject
   );
   if (sourceSubject === null) {

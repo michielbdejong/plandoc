@@ -1,4 +1,4 @@
-import { fetchContainer } from "./container";
+import { internal_fetchContainer } from "./container";
 import { describeContainer } from "../virtual/container";
 import { describeSubject } from "../virtual/subject";
 
@@ -30,7 +30,7 @@ jest.mock("tripledoc", () => {
 jest.mock("./subject.ts", () => {
   initialiseMocks();
   return {
-    fetchSubject: jest.fn(() => Promise.resolve(mockSubject))
+    internal_fetchSubject: jest.fn(() => Promise.resolve(mockSubject))
   };
 });
 jest.mock("../services/acl.ts", () => {
@@ -47,7 +47,7 @@ describe("fetchContainer", () => {
       "https://arbitrary.pod/container/"
     );
 
-    const container = await fetchContainer(virtualContainer);
+    const container = await internal_fetchContainer(virtualContainer);
 
     expect(container).toBe("https://arbitrary.pod/container/");
   });
@@ -62,15 +62,17 @@ describe("fetchContainer", () => {
       "https://arbitrary.vocab/#arbitrary-predicate"
     );
 
-    fetchContainer(virtualContainer);
-    fetchContainer(virtualContainer);
+    internal_fetchContainer(virtualContainer);
+    internal_fetchContainer(virtualContainer);
 
-    expect(mockedVirtualSubject.fetchSubject.mock.calls.length).toBe(1);
+    expect(mockedVirtualSubject.internal_fetchSubject.mock.calls.length).toBe(
+      1
+    );
   });
 
   it("should re-use in-progress requests", () => {
     const mockedVirtualSubject = require.requireMock("./subject.ts");
-    mockedVirtualSubject.fetchSubject.mockReturnValueOnce(
+    mockedVirtualSubject.internal_fetchSubject.mockReturnValueOnce(
       new Promise(() => undefined)
     );
     const sourceSubject = describeSubject().isFoundAt(
@@ -81,10 +83,12 @@ describe("fetchContainer", () => {
       "https://arbitrary.vocab/#arbitrary-predicate"
     );
 
-    fetchContainer(virtualContainer);
-    fetchContainer(virtualContainer);
+    internal_fetchContainer(virtualContainer);
+    internal_fetchContainer(virtualContainer);
 
-    expect(mockedVirtualSubject.fetchSubject.mock.calls.length).toBe(1);
+    expect(mockedVirtualSubject.internal_fetchSubject.mock.calls.length).toBe(
+      1
+    );
   });
 
   it("should not share caches over different virtual Documents", () => {
@@ -104,14 +108,16 @@ describe("fetchContainer", () => {
       "https://arbitrary.vocab/#arbitrary-other-predicate"
     );
 
-    fetchContainer(virtualContainer1);
-    fetchContainer(virtualContainer2);
+    internal_fetchContainer(virtualContainer1);
+    internal_fetchContainer(virtualContainer2);
 
-    expect(mockedVirtualSubject.fetchSubject.mock.calls.length).toBe(2);
-    expect(mockedVirtualSubject.fetchSubject.mock.calls[0][0]).toEqual(
+    expect(mockedVirtualSubject.internal_fetchSubject.mock.calls.length).toBe(
+      2
+    );
+    expect(mockedVirtualSubject.internal_fetchSubject.mock.calls[0][0]).toEqual(
       sourceSubject1
     );
-    expect(mockedVirtualSubject.fetchSubject.mock.calls[1][0]).toEqual(
+    expect(mockedVirtualSubject.internal_fetchSubject.mock.calls[1][0]).toEqual(
       sourceSubject2
     );
   });
@@ -123,7 +129,9 @@ describe("fetchContainer", () => {
       }
     };
 
-    await expect(fetchContainer(virtualContainer as any)).rejects.toThrowError(
+    await expect(
+      internal_fetchContainer(virtualContainer as any)
+    ).rejects.toThrowError(
       "This type of Virtual Container can not be processed yet."
     );
   });
@@ -142,7 +150,9 @@ describe("fetchContainer", () => {
         "https://mock-vocab.example/#some-predicate"
       );
 
-      const retrievedContainer = await fetchContainer(virtualContainer);
+      const retrievedContainer = await internal_fetchContainer(
+        virtualContainer
+      );
 
       expect(retrievedContainer).toBe("https://arbitrary.pod/container/");
       expect(mockSubject.getRef.mock.calls.length).toBe(1);
@@ -153,7 +163,7 @@ describe("fetchContainer", () => {
 
     it("should return null if the source Subject could not be found", async () => {
       const mockVirtualSubject = jest.requireMock("./subject.ts");
-      mockVirtualSubject.fetchSubject.mockReturnValueOnce(
+      mockVirtualSubject.internal_fetchSubject.mockReturnValueOnce(
         Promise.resolve(null)
       );
 
@@ -165,7 +175,9 @@ describe("fetchContainer", () => {
         "https://mock-vocab.example/#arbitrary-predicate"
       );
 
-      const retrievedContainer = await fetchContainer(virtualContainer);
+      const retrievedContainer = await internal_fetchContainer(
+        virtualContainer
+      );
 
       expect(retrievedContainer).toBeNull();
     });
@@ -181,7 +193,9 @@ describe("fetchContainer", () => {
         "https://mock-vocab.example/#arbitrary-predicate"
       );
 
-      const retrievedContainer = await fetchContainer(virtualContainer);
+      const retrievedContainer = await internal_fetchContainer(
+        virtualContainer
+      );
 
       expect(retrievedContainer).toBeNull();
     });
@@ -202,7 +216,9 @@ describe("fetchContainer", () => {
         "sub-container"
       );
 
-      const retrievedContainer = await fetchContainer(virtualContainer);
+      const retrievedContainer = await internal_fetchContainer(
+        virtualContainer
+      );
 
       expect(retrievedContainer).toBe(
         "https://some.pod/container/sub-container/"
@@ -227,7 +243,9 @@ describe("fetchContainer", () => {
         "sub-container"
       );
 
-      const retrievedContainer = await fetchContainer(virtualContainer);
+      const retrievedContainer = await internal_fetchContainer(
+        virtualContainer
+      );
 
       expect(retrievedContainer).toBe(
         "https://some.pod/container/sub-container/"
@@ -248,7 +266,9 @@ describe("fetchContainer", () => {
         "sub-container/"
       );
 
-      const retrievedContainer = await fetchContainer(virtualContainer);
+      const retrievedContainer = await internal_fetchContainer(
+        virtualContainer
+      );
 
       expect(retrievedContainer).toBe(
         "https://some.pod/container/sub-container/"
@@ -269,7 +289,9 @@ describe("fetchContainer", () => {
         "/sub-container"
       );
 
-      const retrievedContainer = await fetchContainer(virtualContainer);
+      const retrievedContainer = await internal_fetchContainer(
+        virtualContainer
+      );
 
       expect(retrievedContainer).toBe(
         "https://some.pod/container/sub-container/"
@@ -289,7 +311,9 @@ describe("fetchContainer", () => {
         "sub-container"
       );
 
-      const retrievedContainer = await fetchContainer(virtualContainer);
+      const retrievedContainer = await internal_fetchContainer(
+        virtualContainer
+      );
 
       expect(retrievedContainer).toBeNull();
     });
@@ -311,7 +335,9 @@ describe("fetchContainer", () => {
         "sub-container"
       );
 
-      const retrievedContainer = await fetchContainer(virtualContainer);
+      const retrievedContainer = await internal_fetchContainer(
+        virtualContainer
+      );
 
       expect(retrievedContainer).toBe(
         "https://some.pod/container/sub-container/"
@@ -351,7 +377,7 @@ describe("fetchContainer", () => {
         .isContainedIn(parentContainer, "sub-container")
         .isReadableByEveryone();
 
-      await fetchContainer(virtualContainer);
+      await internal_fetchContainer(virtualContainer);
 
       expect(aclService.configureAcl.mock.calls.length).toBe(1);
     });
@@ -378,7 +404,7 @@ describe("fetchContainer", () => {
         .isContainedIn(parentContainer, "sub-container")
         .isReadableByEveryone();
 
-      await fetchContainer(virtualContainer);
+      await internal_fetchContainer(virtualContainer);
 
       expect(aclService.configureAcl.mock.calls[0][3]).toEqual({
         default: true
@@ -404,7 +430,9 @@ describe("fetchContainer", () => {
         .isContainedIn(parentContainer, "sub-container")
         .isReadableByEveryone();
 
-      await expect(fetchContainer(virtualContainer)).rejects.toThrowError(
+      await expect(
+        internal_fetchContainer(virtualContainer)
+      ).rejects.toThrowError(
         "Could not find a location for the Access Control List of this Container."
       );
     });
@@ -426,7 +454,7 @@ describe("fetchContainer", () => {
         "sub-container"
       );
 
-      await fetchContainer(virtualContainer);
+      await internal_fetchContainer(virtualContainer);
 
       expect(aclService.configureAcl.mock.calls.length).toBe(0);
     });

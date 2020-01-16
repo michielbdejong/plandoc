@@ -14,10 +14,10 @@ import {
   IsContainedIn,
   internal_isIsContainedIn
 } from "../descriptors/container";
-import { fetchSubject } from "./subject";
+import { internal_fetchSubject } from "./subject";
 import { hasAclSettings, configureAcl } from "../services/acl";
 
-export async function fetchContainer(
+export async function internal_fetchContainer(
   virtualContainer: VirtualContainer
   // TODO: Add a TripleContainer to Tripledoc and return it here:
 ): Promise<Reference | null> {
@@ -49,7 +49,7 @@ const fetchByRef: ContainerFetcher<IsFoundAt> = async virtualContainer => {
 };
 
 const getForRef: ContainerFetcher<IsFoundOn> = async virtualContainer => {
-  const subject = await fetchSubject(
+  const subject = await internal_fetchSubject(
     virtualContainer.internal_descriptor.subject
   );
   if (subject === null) {
@@ -63,7 +63,7 @@ const getForRef: ContainerFetcher<IsFoundOn> = async virtualContainer => {
 };
 
 const ensureInContainer: ContainerFetcher<IsContainedIn> = async virtualContainer => {
-  const parentContainer = await fetchContainer(
+  const parentContainer = await internal_fetchContainer(
     virtualContainer.internal_descriptor.container
   );
   if (parentContainer === null) {

@@ -1,5 +1,5 @@
 import { Reference } from "tripledoc";
-import { VirtualSubjectList } from "../virtual/subjectList";
+import { experimental_VirtualSubjectList } from "../virtual/subjectList";
 import { VirtualDocument } from "../virtual/document";
 import { VirtualSubject } from "../virtual/subject";
 
@@ -11,8 +11,8 @@ export interface IsFoundIn {
   references: Array<{ predicate: Reference; object: Reference }>;
 }
 export function internal_isIsFoundIn(
-  virtualSubjectList: VirtualSubjectList
-): virtualSubjectList is VirtualSubjectList<IsFoundIn> {
+  virtualSubjectList: experimental_VirtualSubjectList
+): virtualSubjectList is experimental_VirtualSubjectList<IsFoundIn> {
   return virtualSubjectList.internal_descriptor.type === "IsFoundIn";
 }
 
@@ -22,7 +22,7 @@ export interface IsFoundOn {
   predicate: Reference;
 }
 export function internal_isIsFoundOn(
-  virtualSubjectList: VirtualSubjectList
-): virtualSubjectList is VirtualSubjectList<IsFoundOn> {
+  virtualSubjectList: experimental_VirtualSubjectList
+): virtualSubjectList is experimental_VirtualSubjectList<IsFoundOn> {
   return virtualSubjectList.internal_descriptor.type === "IsFoundOn";
 }

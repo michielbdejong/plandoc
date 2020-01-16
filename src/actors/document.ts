@@ -15,8 +15,8 @@ import {
   IsFoundOn,
   IsEnsuredOn
 } from "../descriptors/document";
-import { fetchSubject } from "./subject";
-import { fetchContainer } from "./container";
+import { internal_fetchSubject } from "./subject";
+import { internal_fetchContainer } from "./container";
 import { hasAclSettings, configureAcl } from "../services/acl";
 
 export async function fetchDocument(
@@ -63,7 +63,9 @@ const getFromAcl: DocumentFetcher<IsAclFor> = async virtualDoc => {
 };
 
 const getForRef: DocumentFetcher<IsFoundOn> = async virtualDoc => {
-  const subject = await fetchSubject(virtualDoc.internal_descriptor.subject);
+  const subject = await internal_fetchSubject(
+    virtualDoc.internal_descriptor.subject
+  );
   if (subject === null) {
     return null;
   }
@@ -77,7 +79,9 @@ const getForRef: DocumentFetcher<IsFoundOn> = async virtualDoc => {
 };
 
 const ensureForRef: DocumentFetcher<IsEnsuredOn> = async virtualDoc => {
-  const subject = await fetchSubject(virtualDoc.internal_descriptor.subject);
+  const subject = await internal_fetchSubject(
+    virtualDoc.internal_descriptor.subject
+  );
   if (subject === null) {
     return null;
   }
@@ -87,7 +91,7 @@ const ensureForRef: DocumentFetcher<IsEnsuredOn> = async virtualDoc => {
     return fetchTripleDocument(reference);
   }
 
-  const container = await fetchContainer(
+  const container = await internal_fetchContainer(
     virtualDoc.internal_descriptor.fallbackContainer
   );
   if (!container) {

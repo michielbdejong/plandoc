@@ -7,14 +7,14 @@ import {
 } from "../descriptors/subjectList";
 import { VirtualSubject } from "./subject";
 
-export function describeSubjectList() {
+export function experimental_describeSubjectList() {
   return {
     isFoundIn: isFoundIn,
     isFoundOn: isFoundOn
   };
 }
 
-export interface VirtualSubjectList<
+export interface experimental_VirtualSubjectList<
   Descriptor extends SubjectListDescriptor = SubjectListDescriptor
 > {
   promise?: Promise<TripleSubject[] | null>;
@@ -25,7 +25,7 @@ export interface VirtualSubjectList<
 }
 
 interface WithReferences<Descriptor extends IsFoundIn>
-  extends VirtualSubjectList<Descriptor> {
+  extends experimental_VirtualSubjectList<Descriptor> {
   withRef: (
     predicate: Reference,
     object: Reference
@@ -66,7 +66,7 @@ function isFoundIn(document: VirtualDocument): WithReferences<IsFoundIn> {
 function isFoundOn(
   subject: VirtualSubject,
   predicate: Reference
-): VirtualSubjectList<IsFoundOn> {
+): experimental_VirtualSubjectList<IsFoundOn> {
   const descriptor: IsFoundOn = {
     type: "IsFoundOn",
     subject: subject,

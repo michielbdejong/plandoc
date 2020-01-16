@@ -1,5 +1,5 @@
 import { fetchDocument as fetchTripleDocument, TripleSubject } from "tripledoc";
-import { VirtualSubjectList } from "../virtual/subjectList";
+import { experimental_VirtualSubjectList } from "../virtual/subjectList";
 import {
   internal_isIsFoundIn,
   SubjectListDescriptor,
@@ -8,10 +8,10 @@ import {
   IsFoundOn
 } from "../descriptors/subjectList";
 import { fetchDocument } from "./document";
-import { fetchSubject } from "./subject";
+import { internal_fetchSubject } from "./subject";
 
-export async function fetchSubjectList(
-  virtualSubjectList: VirtualSubjectList
+export async function experimental_fetchSubjectList(
+  virtualSubjectList: experimental_VirtualSubjectList
 ): Promise<TripleSubject[] | null> {
   if (typeof virtualSubjectList.promise !== "undefined") {
     return virtualSubjectList.promise;
@@ -31,7 +31,7 @@ export async function fetchSubjectList(
 }
 
 type SubjectListFetcher<Descriptor extends SubjectListDescriptor> = (
-  virtualSubject: VirtualSubjectList<Descriptor>
+  virtualSubject: experimental_VirtualSubjectList<Descriptor>
 ) => Promise<TripleSubject[] | null>;
 
 const getWithRefs: SubjectListFetcher<IsFoundIn> = async virtualSubjectList => {
@@ -67,7 +67,7 @@ const getWithRefs: SubjectListFetcher<IsFoundIn> = async virtualSubjectList => {
 };
 
 const getOnSubject: SubjectListFetcher<IsFoundOn> = async virtualSubjectList => {
-  const subject = await fetchSubject(
+  const subject = await internal_fetchSubject(
     virtualSubjectList.internal_descriptor.subject
   );
 

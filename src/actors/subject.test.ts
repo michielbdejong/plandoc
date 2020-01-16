@@ -1,5 +1,5 @@
 import { describeSubject } from "../virtual/subject";
-import { fetchSubject } from "./subject";
+import { internal_fetchSubject } from "./subject";
 import { Reference } from "tripledoc";
 import { describeDocument } from "../virtual/document";
 
@@ -47,7 +47,7 @@ describe("fetchSubject", () => {
       "https://arbitrary.doc/resource.ttl#subject"
     );
 
-    fetchSubject(virtualSubject);
+    internal_fetchSubject(virtualSubject);
 
     expect(tripledoc.fetchDocument.mock.calls.length).toBe(1);
     expect(tripledoc.fetchDocument.mock.calls[0][0]).toBe(
@@ -61,8 +61,8 @@ describe("fetchSubject", () => {
       "https://arbitrary.doc/resource.ttl#subject"
     );
 
-    fetchSubject(virtualSubject);
-    fetchSubject(virtualSubject);
+    internal_fetchSubject(virtualSubject);
+    internal_fetchSubject(virtualSubject);
 
     expect(tripledoc.fetchDocument.mock.calls.length).toBe(1);
   });
@@ -74,8 +74,8 @@ describe("fetchSubject", () => {
       "https://arbitrary.doc/resource.ttl#subject"
     );
 
-    fetchSubject(virtualSubject);
-    fetchSubject(virtualSubject);
+    internal_fetchSubject(virtualSubject);
+    internal_fetchSubject(virtualSubject);
 
     expect(tripledoc.fetchDocument.mock.calls.length).toBe(1);
   });
@@ -89,8 +89,8 @@ describe("fetchSubject", () => {
       "https://arbitrary.doc/resource.ttl#subject"
     );
 
-    fetchSubject(virtualSubject1);
-    fetchSubject(virtualSubject2);
+    internal_fetchSubject(virtualSubject1);
+    internal_fetchSubject(virtualSubject2);
 
     expect(tripledoc.fetchDocument.mock.calls.length).toBe(2);
     expect(tripledoc.fetchDocument.mock.calls[0][0]).toBe(
@@ -106,7 +106,9 @@ describe("fetchSubject", () => {
       internal_descriptor: { type: "Some unsupported type of Virtual Subject" }
     };
 
-    await expect(fetchSubject(virtualSubject as any)).rejects.toThrowError(
+    await expect(
+      internal_fetchSubject(virtualSubject as any)
+    ).rejects.toThrowError(
       "This type of Virtual Subject can not be processed yet."
     );
   });
@@ -135,7 +137,7 @@ describe("fetchSubject", () => {
         "https://mock-vocab.example/#some-predicate"
       );
 
-      const retrievedSubject = await fetchSubject(virtualSubject);
+      const retrievedSubject = await internal_fetchSubject(virtualSubject);
 
       expect(retrievedSubject).toBe("The Subject we are looking for");
       expect(mockOtherSubject.getRef.mock.calls.length).toBe(1);
@@ -155,7 +157,7 @@ describe("fetchSubject", () => {
         "https://mock-vocab.example/#some-predicate"
       );
 
-      const retrievedSubject = await fetchSubject(virtualSubject);
+      const retrievedSubject = await internal_fetchSubject(virtualSubject);
 
       expect(retrievedSubject).toBeNull();
     });
@@ -175,7 +177,7 @@ describe("fetchSubject", () => {
         "https://mock-vocab.example/#some-predicate"
       );
 
-      const retrievedSubject = await fetchSubject(virtualSubject);
+      const retrievedSubject = await internal_fetchSubject(virtualSubject);
 
       expect(retrievedSubject).toBeNull();
     });
@@ -205,7 +207,7 @@ describe("fetchSubject", () => {
         "https://mock-vocab.example/#some-predicate"
       );
 
-      const retrievedSubject = await fetchSubject(virtualSubject);
+      const retrievedSubject = await internal_fetchSubject(virtualSubject);
 
       expect(retrievedSubject).toBe("The Subject we are looking for");
       expect(mockOtherSubject.getRef.mock.calls.length).toBe(1);
@@ -225,7 +227,7 @@ describe("fetchSubject", () => {
         "https://mock-vocab.example/#some-predicate"
       );
 
-      const retrievedSubject = await fetchSubject(virtualSubject);
+      const retrievedSubject = await internal_fetchSubject(virtualSubject);
 
       expect(retrievedSubject).toBeNull();
     });
@@ -254,7 +256,7 @@ describe("fetchSubject", () => {
         "https://mock-vocab.example/#some-predicate"
       );
 
-      const retrievedSubject = await fetchSubject(virtualSubject);
+      const retrievedSubject = await internal_fetchSubject(virtualSubject);
 
       expect(retrievedSubject).toEqual("New Subject in Updated Doc");
       expect(mockOtherSubject.addRef.mock.calls.length).toBe(1);
@@ -285,7 +287,7 @@ describe("fetchSubject", () => {
       );
       mockDocument.findSubjects.mockReturnValueOnce([mockSubject]);
 
-      const fetchedSubject = await fetchSubject(virtualSubject);
+      const fetchedSubject = await internal_fetchSubject(virtualSubject);
 
       expect(fetchedSubject).toEqual(mockSubject);
       expect(mockDocument.findSubjects.mock.calls.length).toBe(1);
@@ -319,7 +321,7 @@ describe("fetchSubject", () => {
       );
       mockDocument.findSubjects.mockReturnValueOnce([mockSubject]);
 
-      const fetchedSubject = await fetchSubject(virtualSubject);
+      const fetchedSubject = await internal_fetchSubject(virtualSubject);
 
       expect(fetchedSubject).toEqual(mockSubject);
       expect(mockDocument.findSubjects.mock.calls.length).toBe(1);
@@ -350,7 +352,7 @@ describe("fetchSubject", () => {
       );
       mockDocument.findSubjects.mockReturnValueOnce([mockSubject]);
 
-      const fetchedSubject = await fetchSubject(virtualSubject);
+      const fetchedSubject = await internal_fetchSubject(virtualSubject);
 
       expect(fetchedSubject).toBeNull();
       expect(mockDocument.findSubjects.mock.calls.length).toBe(1);
@@ -381,7 +383,7 @@ describe("fetchSubject", () => {
       );
       mockDocument.findSubjects.mockReturnValueOnce([mockSubject]);
 
-      const fetchedSubject = await fetchSubject(virtualSubject);
+      const fetchedSubject = await internal_fetchSubject(virtualSubject);
 
       expect(fetchedSubject).toBeNull();
       expect(mockDocument.findSubjects.mock.calls.length).toBe(1);
@@ -408,7 +410,7 @@ describe("fetchSubject", () => {
         Promise.resolve(null)
       );
 
-      const fetchedSubject = await fetchSubject(virtualSubject);
+      const fetchedSubject = await internal_fetchSubject(virtualSubject);
 
       expect(fetchedSubject).toBeNull();
     });
@@ -427,7 +429,7 @@ describe("fetchSubject", () => {
       // but we can manually manipulate the data structure to remove them again:
       virtualSubject.internal_descriptor.locator.references = [];
 
-      await expect(fetchSubject(virtualSubject)).rejects.toThrowError(
+      await expect(internal_fetchSubject(virtualSubject)).rejects.toThrowError(
         "Please specify at least one property to identify this subject with."
       );
     });
@@ -443,7 +445,7 @@ describe("fetchSubject", () => {
         .asRef("https://arbitrary.doc/resource.ttl#some-subject");
       mockDocument.getSubject.mockReturnValueOnce(mockSubject);
 
-      const fetchedSubject = await fetchSubject(virtualSubject);
+      const fetchedSubject = await internal_fetchSubject(virtualSubject);
 
       expect(fetchedSubject).toEqual(mockSubject);
       expect(mockDocument.getSubject.mock.calls.length).toBe(1);
@@ -461,7 +463,7 @@ describe("fetchSubject", () => {
         .asRef("https://arbitrary.doc/resource.ttl#some-subject");
       mockDocument.getSubject.mockReturnValueOnce(null);
 
-      const fetchedSubject = await fetchSubject(virtualSubject);
+      const fetchedSubject = await internal_fetchSubject(virtualSubject);
 
       expect(fetchedSubject).toBeNull();
       expect(mockDocument.getSubject.mock.calls.length).toBe(1);
@@ -483,7 +485,7 @@ describe("fetchSubject", () => {
         arbitrary: "invalid Locator"
       } as any;
 
-      await expect(fetchSubject(virtualSubject)).rejects.toThrowError(
+      await expect(internal_fetchSubject(virtualSubject)).rejects.toThrowError(
         "This type of Locator can not be processed yet."
       );
     });
@@ -505,7 +507,7 @@ describe("fetchSubject", () => {
       );
       mockDocument.findSubjects.mockReturnValueOnce([mockSubject]);
 
-      const fetchedSubject = await fetchSubject(virtualSubject);
+      const fetchedSubject = await internal_fetchSubject(virtualSubject);
 
       expect(fetchedSubject).toEqual(mockSubject);
       expect(mockDocument.findSubjects.mock.calls.length).toBe(1);
@@ -539,7 +541,7 @@ describe("fetchSubject", () => {
       );
       mockDocument.findSubjects.mockReturnValueOnce([mockSubject]);
 
-      const fetchedSubject = await fetchSubject(virtualSubject);
+      const fetchedSubject = await internal_fetchSubject(virtualSubject);
 
       expect(fetchedSubject).toEqual(mockSubject);
       expect(mockDocument.findSubjects.mock.calls.length).toBe(1);
@@ -573,7 +575,7 @@ describe("fetchSubject", () => {
       mockDocument.addSubject.mockReturnValueOnce(mockNewSubject);
       mockDocument.getSubject.mockReturnValueOnce(mockNewSubject);
 
-      const fetchedSubject = await fetchSubject(virtualSubject);
+      const fetchedSubject = await internal_fetchSubject(virtualSubject);
 
       expect(fetchedSubject).toEqual(mockNewSubject);
       expect(mockDocument.findSubjects.mock.calls.length).toBe(1);
@@ -622,7 +624,7 @@ describe("fetchSubject", () => {
       mockDocument.addSubject.mockReturnValueOnce(mockNewSubject);
       mockDocument.getSubject.mockReturnValueOnce(mockNewSubject);
 
-      const fetchedSubject = await fetchSubject(virtualSubject);
+      const fetchedSubject = await internal_fetchSubject(virtualSubject);
 
       expect(fetchedSubject).toEqual(mockNewSubject);
       expect(mockDocument.findSubjects.mock.calls.length).toBe(1);
@@ -664,7 +666,7 @@ describe("fetchSubject", () => {
         Promise.resolve(null)
       );
 
-      const fetchedSubject = await fetchSubject(virtualSubject);
+      const fetchedSubject = await internal_fetchSubject(virtualSubject);
 
       expect(fetchedSubject).toBeNull();
     });
@@ -683,7 +685,7 @@ describe("fetchSubject", () => {
       // but we can manually manipulate the data structure to remove them again:
       virtualSubject.internal_descriptor.locator.references = [];
 
-      await expect(fetchSubject(virtualSubject)).rejects.toThrowError(
+      await expect(internal_fetchSubject(virtualSubject)).rejects.toThrowError(
         "Please specify at least one property to identify this subject with."
       );
     });
@@ -699,7 +701,7 @@ describe("fetchSubject", () => {
         .asRef("https://arbitrary.doc/resource.ttl#some-subject");
       mockDocument.getSubject.mockReturnValueOnce(mockSubject);
 
-      const fetchedSubject = await fetchSubject(virtualSubject);
+      const fetchedSubject = await internal_fetchSubject(virtualSubject);
 
       expect(fetchedSubject).toEqual(mockSubject);
       expect(mockDocument.getSubject.mock.calls.length).toBe(1);
@@ -721,7 +723,7 @@ describe("fetchSubject", () => {
       );
       mockDocument.addSubject.mockReturnValueOnce("Mocked new Subject");
 
-      const fetchedSubject = await fetchSubject(virtualSubject);
+      const fetchedSubject = await internal_fetchSubject(virtualSubject);
 
       expect(fetchedSubject).toEqual("Mocked new Subject");
       expect(mockDocument.getSubject.mock.calls.length).toBe(1);
@@ -747,7 +749,7 @@ describe("fetchSubject", () => {
         arbitrary: "invalid Locator"
       } as any;
 
-      await expect(fetchSubject(virtualSubject)).rejects.toThrowError(
+      await expect(internal_fetchSubject(virtualSubject)).rejects.toThrowError(
         "This type of Locator can not be processed yet."
       );
     });

@@ -36,13 +36,13 @@ jest.mock("tripledoc", () => {
 jest.mock("./subject.ts", () => {
   initialiseMocks();
   return {
-    fetchSubject: jest.fn(() => Promise.resolve(mockSubject))
+    internal_fetchSubject: jest.fn(() => Promise.resolve(mockSubject))
   };
 });
 jest.mock("./container.ts", () => {
   initialiseMocks();
   return {
-    fetchContainer: jest
+    internal_fetchContainer: jest
       .fn()
       .mockReturnValue(Promise.resolve("https://arbitrary.pod/container/"))
   };
@@ -204,7 +204,7 @@ describe("fetchDocument", () => {
 
     it("should return null if the source Subject could not be found", async () => {
       const mockVirtualSubject = jest.requireMock("./subject.ts");
-      mockVirtualSubject.fetchSubject.mockReturnValueOnce(
+      mockVirtualSubject.internal_fetchSubject.mockReturnValueOnce(
         Promise.resolve(null)
       );
 
@@ -269,7 +269,7 @@ describe("fetchDocument", () => {
 
     it("should return null if the Container the Document is to be created in could not be found", async () => {
       const mockVirtualContainer = jest.requireMock("./container.ts");
-      mockVirtualContainer.fetchContainer.mockReturnValueOnce(null);
+      mockVirtualContainer.internal_fetchContainer.mockReturnValueOnce(null);
       mockSubject.getRef.mockReturnValueOnce(null);
 
       const fallbackContainer = describeContainer().isFoundAt(
@@ -291,7 +291,7 @@ describe("fetchDocument", () => {
 
     it("should return null if the source Subject could not be found", async () => {
       const mockVirtualSubject = jest.requireMock("./subject.ts");
-      mockVirtualSubject.fetchSubject.mockReturnValueOnce(
+      mockVirtualSubject.internal_fetchSubject.mockReturnValueOnce(
         Promise.resolve(null)
       );
 
@@ -321,7 +321,7 @@ describe("fetchDocument", () => {
       };
       tripledoc.createDocumentInContainer.mockReturnValueOnce(mockNewDocument);
       const mockVirtualContainer = jest.requireMock("./container.ts");
-      mockVirtualContainer.fetchContainer.mockReturnValueOnce(
+      mockVirtualContainer.internal_fetchContainer.mockReturnValueOnce(
         Promise.resolve("https://some.pod/container/")
       );
       mockSubject.getRef.mockReturnValueOnce(null);
