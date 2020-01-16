@@ -71,10 +71,24 @@ const ensureInContainer: ContainerFetcher<IsContainedIn> = async virtualContaine
   }
 
   const containerRef =
+    // Remove trailing slashes from the parent Container:
     parentContainer.replace(/\/$/, "") +
     "/" +
-    virtualContainer.internal_descriptor.name.replace(/\/$/, "") +
+    // Remove leading and trailing slashes from the name:
+    virtualContainer.internal_descriptor.name
+      .replace(/^\//, "")
+      .replace(/\/$/, "") +
     "/";
+
+  // If the requested Container already exists, return it:
+  try {
+    await fetchTripleDocument(containerRef);
+    // No error thrown, so the Container exists:
+    return containerRef;
+  } catch (e) {
+    // Swallow the error; we're going to create the Container instead.
+  }
+
   const dummyFileRef = containerRef + ".dummy";
 
   await createDocument(dummyFileRef).save();
