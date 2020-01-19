@@ -48,6 +48,94 @@ describe("configureAcl", () => {
     expect(mockedTripledoc.createDocument.mock.calls.length).toBe(0);
   });
 
+  it("should be able to set up multiple types of permissions", async () => {
+    const mockSubject1 = {
+      ...mockSubject,
+      setRef: jest.fn(),
+      addRef: jest.fn()
+    };
+    const mockSubject2 = {
+      ...mockSubject,
+      setRef: jest.fn(),
+      addRef: jest.fn()
+    };
+    const mockSubject3 = {
+      ...mockSubject,
+      setRef: jest.fn(),
+      addRef: jest.fn()
+    };
+    mockDocument.addSubject.mockReturnValueOnce(mockSubject1);
+    mockDocument.addSubject.mockReturnValueOnce(mockSubject2);
+    mockDocument.addSubject.mockReturnValueOnce(mockSubject3);
+
+    await configureAcl(
+      "https://some.pod/document.ttl",
+      "https://some.pod/document.ttl.acl",
+      {
+        public: {
+          append: true
+        },
+        agents: {
+          "https://some.pod/webid.ttl": {
+            control: true
+          }
+        },
+        origins: {
+          "https://some.app": {
+            "https://some.pod/webid.ttl": {
+              read: true
+            }
+          }
+        }
+      }
+    );
+
+    // Public ACL settings
+    expect(mockSubject1.setRef.mock.calls.length).toBe(3);
+    expect(mockSubject1.setRef.mock.calls[0][0]).toBe(rdf.type);
+    expect(mockSubject1.setRef.mock.calls[0][1]).toBe(acl.Authorization);
+    expect(mockSubject1.setRef.mock.calls[1][0]).toBe(acl.accessTo);
+    expect(mockSubject1.setRef.mock.calls[1][1]).toBe(
+      "https://some.pod/document.ttl"
+    );
+    expect(mockSubject1.setRef.mock.calls[2][0]).toBe(acl.agentClass);
+    expect(mockSubject1.setRef.mock.calls[2][1]).toBe(foaf.Agent);
+    expect(mockSubject1.addRef.mock.calls[0][0]).toBe(acl.mode);
+    expect(mockSubject1.addRef.mock.calls[0][1]).toBe(acl.Append);
+
+    // An agent-specific ACL
+    expect(mockSubject2.setRef.mock.calls.length).toBe(3);
+    expect(mockSubject2.setRef.mock.calls[0][0]).toBe(rdf.type);
+    expect(mockSubject2.setRef.mock.calls[0][1]).toBe(acl.Authorization);
+    expect(mockSubject2.setRef.mock.calls[1][0]).toBe(acl.accessTo);
+    expect(mockSubject2.setRef.mock.calls[1][1]).toBe(
+      "https://some.pod/document.ttl"
+    );
+    expect(mockSubject2.setRef.mock.calls[2][0]).toBe(acl.agent);
+    expect(mockSubject2.setRef.mock.calls[2][1]).toBe(
+      "https://some.pod/webid.ttl"
+    );
+    expect(mockSubject2.addRef.mock.calls[0][0]).toBe(acl.mode);
+    expect(mockSubject2.addRef.mock.calls[0][1]).toBe(acl.Control);
+
+    // An agent-origin combination ACL
+    expect(mockSubject3.setRef.mock.calls.length).toBe(4);
+    expect(mockSubject3.setRef.mock.calls[0][0]).toBe(rdf.type);
+    expect(mockSubject3.setRef.mock.calls[0][1]).toBe(acl.Authorization);
+    expect(mockSubject3.setRef.mock.calls[1][0]).toBe(acl.accessTo);
+    expect(mockSubject3.setRef.mock.calls[1][1]).toBe(
+      "https://some.pod/document.ttl"
+    );
+    expect(mockSubject3.setRef.mock.calls[2][0]).toBe(acl.origin);
+    expect(mockSubject3.setRef.mock.calls[2][1]).toBe("https://some.app");
+    expect(mockSubject3.setRef.mock.calls[3][0]).toBe(acl.agent);
+    expect(mockSubject3.setRef.mock.calls[3][1]).toBe(
+      "https://some.pod/webid.ttl"
+    );
+    expect(mockSubject3.addRef.mock.calls[0][0]).toBe(acl.mode);
+    expect(mockSubject3.addRef.mock.calls[0][1]).toBe(acl.Read);
+  });
+
   describe("public ACL settings", () => {
     it("should be able to make a resource publicly readable in a new ACL file", async () => {
       await configureAcl(
