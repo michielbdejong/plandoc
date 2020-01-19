@@ -53,8 +53,12 @@ export async function configureAcl(
   aclRef: Reference,
   aclSettings: AclSettings,
   options: Partial<AclConfigOptions> = {}
-): Promise<TripleDocument> {
+): Promise<TripleDocument | null> {
   let aclDoc: TripleDocument | LocalTripleDocument;
+  if (!hasAclSettings(aclSettings)) {
+    return null;
+  }
+
   try {
     aclDoc = await fetchTripleDocument(aclRef);
   } catch (e) {
@@ -80,7 +84,7 @@ export async function configureAcl(
         });
       authSubject =
         potentialSubjects.length === 1
-          ? potentialSubjects[1]
+          ? potentialSubjects[0]
           : aclDoc.addSubject();
     } else {
       authSubject = aclDoc.addSubject();
@@ -96,17 +100,25 @@ export async function configureAcl(
       authSubject.addRef(acl.defaultForNew, documentRef);
     }
 
-    if (publicAclSettings.read) {
+    if (publicAclSettings.read === true) {
       authSubject.addRef(acl.mode, acl.Read);
+    } else if (publicAclSettings.read === false) {
+      authSubject.removeRef(acl.mode, acl.Read);
     }
-    if (publicAclSettings.append) {
+    if (publicAclSettings.append === true) {
       authSubject.addRef(acl.mode, acl.Append);
+    } else if (publicAclSettings.append === false) {
+      authSubject.removeRef(acl.mode, acl.Append);
     }
-    if (publicAclSettings.write) {
+    if (publicAclSettings.write === true) {
       authSubject.addRef(acl.mode, acl.Write);
+    } else if (publicAclSettings.write === false) {
+      authSubject.removeRef(acl.mode, acl.Write);
     }
-    if (publicAclSettings.control) {
+    if (publicAclSettings.control === true) {
       authSubject.addRef(acl.mode, acl.Control);
+    } else if (publicAclSettings.control === false) {
+      authSubject.removeRef(acl.mode, acl.Control);
     }
   }
 
@@ -127,7 +139,7 @@ export async function configureAcl(
           });
         authSubject =
           potentialSubjects.length === 1
-            ? potentialSubjects[1]
+            ? potentialSubjects[0]
             : aclDoc.addSubject();
       } else {
         authSubject = aclDoc.addSubject();
@@ -143,17 +155,25 @@ export async function configureAcl(
         authSubject.addRef(acl.defaultForNew, documentRef);
       }
 
-      if (agentAclSettings[agent].read) {
+      if (agentAclSettings[agent].read === true) {
         authSubject.addRef(acl.mode, acl.Read);
+      } else if (agentAclSettings[agent].read === false) {
+        authSubject.removeRef(acl.mode, acl.Read);
       }
-      if (agentAclSettings[agent].append) {
+      if (agentAclSettings[agent].append === true) {
         authSubject.addRef(acl.mode, acl.Append);
+      } else if (agentAclSettings[agent].append === false) {
+        authSubject.removeRef(acl.mode, acl.Append);
       }
-      if (agentAclSettings[agent].write) {
+      if (agentAclSettings[agent].write === true) {
         authSubject.addRef(acl.mode, acl.Write);
+      } else if (agentAclSettings[agent].write === false) {
+        authSubject.removeRef(acl.mode, acl.Write);
       }
-      if (agentAclSettings[agent].control) {
+      if (agentAclSettings[agent].control === true) {
         authSubject.addRef(acl.mode, acl.Control);
+      } else if (agentAclSettings[agent].control === false) {
+        authSubject.removeRef(acl.mode, acl.Control);
       }
     });
   }
@@ -175,7 +195,7 @@ export async function configureAcl(
             });
           authSubject =
             potentialSubjects.length === 1
-              ? potentialSubjects[1]
+              ? potentialSubjects[0]
               : aclDoc.addSubject();
         } else {
           authSubject = aclDoc.addSubject();
@@ -192,17 +212,25 @@ export async function configureAcl(
           authSubject.addRef(acl.defaultForNew, documentRef);
         }
 
-        if (originAclSettings[origin][agent].read) {
+        if (originAclSettings[origin][agent].read === true) {
           authSubject.addRef(acl.mode, acl.Read);
+        } else if (originAclSettings[origin][agent].read === false) {
+          authSubject.removeRef(acl.mode, acl.Read);
         }
-        if (originAclSettings[origin][agent].append) {
+        if (originAclSettings[origin][agent].append === true) {
           authSubject.addRef(acl.mode, acl.Append);
+        } else if (originAclSettings[origin][agent].append === false) {
+          authSubject.removeRef(acl.mode, acl.Append);
         }
-        if (originAclSettings[origin][agent].write) {
+        if (originAclSettings[origin][agent].write === true) {
           authSubject.addRef(acl.mode, acl.Write);
+        } else if (originAclSettings[origin][agent].write === false) {
+          authSubject.removeRef(acl.mode, acl.Write);
         }
-        if (originAclSettings[origin][agent].control) {
+        if (originAclSettings[origin][agent].control === true) {
           authSubject.addRef(acl.mode, acl.Control);
+        } else if (originAclSettings[origin][agent].control === false) {
+          authSubject.removeRef(acl.mode, acl.Control);
         }
       });
     });
