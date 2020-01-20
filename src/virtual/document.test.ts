@@ -16,9 +16,12 @@ it("should be able to create a configuration object that specificies a combinati
       "https://arbitrary.vocab/#predicate",
       fallbackContainer
     )
-    .isReadableByEveryone()
-    .isAppendableByAgent("https://some.pod/webid.ttl")
-    .isControllableByOrigin("https://some.app", "https://some.pod/webid.ttl");
+    .experimental_isReadableByEveryone()
+    .experimental_isAppendableByAgent("https://some.pod/webid.ttl")
+    .experimental_isControllableByOrigin(
+      "https://some.app",
+      "https://some.pod/webid.ttl"
+    );
 
   expect(configuration.internal_descriptor.acl).toEqual({
     public: {
@@ -51,13 +54,13 @@ it("should intialise the ACL configuration object if it is inadvertently undefin
   // Obviously people should never do this, but in case they do:
   delete incompleteConfiguration.internal_descriptor.acl;
 
-  const completePublicConfiguration = incompleteConfiguration.isReadableByEveryone();
+  const completePublicConfiguration = incompleteConfiguration.experimental_isReadableByEveryone();
 
-  const completeAgentConfiguration = incompleteConfiguration.isAppendableByAgent(
+  const completeAgentConfiguration = incompleteConfiguration.experimental_isAppendableByAgent(
     "https://some.pod/webid.ttl"
   );
 
-  const completeOriginConfiguration = incompleteConfiguration.isControllableByOrigin(
+  const completeOriginConfiguration = incompleteConfiguration.experimental_isControllableByOrigin(
     "https://some.app",
     "https://some.pod/webid.ttl"
   );
@@ -96,7 +99,7 @@ describe("Configuring public ACL settings", () => {
         "https://arbitrary.vocab/#predicate",
         fallbackContainer
       )
-      .isReadableByEveryone();
+      .experimental_isReadableByEveryone();
 
     expect(configuration.internal_descriptor.acl).toEqual({
       public: { read: true }
@@ -117,7 +120,7 @@ describe("Configuring public ACL settings", () => {
         "https://arbitrary.vocab/#predicate",
         fallbackContainer
       )
-      .isAppendableByEveryone();
+      .experimental_isAppendableByEveryone();
 
     expect(configuration.internal_descriptor.acl).toEqual({
       public: { append: true }
@@ -138,7 +141,7 @@ describe("Configuring public ACL settings", () => {
         "https://arbitrary.vocab/#predicate",
         fallbackContainer
       )
-      .isWritableByEveryone();
+      .experimental_isWritableByEveryone();
 
     expect(configuration.internal_descriptor.acl).toEqual({
       public: { write: true }
@@ -159,7 +162,7 @@ describe("Configuring public ACL settings", () => {
         "https://arbitrary.vocab/#predicate",
         fallbackContainer
       )
-      .isControllableByEveryone();
+      .experimental_isControllableByEveryone();
 
     expect(configuration.internal_descriptor.acl).toEqual({
       public: { control: true }
@@ -180,8 +183,8 @@ describe("Configuring public ACL settings", () => {
         "https://arbitrary.vocab/#predicate",
         fallbackContainer
       )
-      .isWritableByEveryone()
-      .isControllableByEveryone();
+      .experimental_isWritableByEveryone()
+      .experimental_isControllableByEveryone();
 
     expect(configuration.internal_descriptor.acl).toEqual({
       public: { write: true, control: true }
@@ -204,7 +207,7 @@ describe("Configuring agent-specific ACL settings", () => {
         "https://arbitrary.vocab/#predicate",
         fallbackContainer
       )
-      .isReadableByAgent("https://some.pod/webid.ttl");
+      .experimental_isReadableByAgent("https://some.pod/webid.ttl");
 
     expect(configuration.internal_descriptor.acl).toEqual({
       agents: { "https://some.pod/webid.ttl": { read: true } }
@@ -225,7 +228,7 @@ describe("Configuring agent-specific ACL settings", () => {
         "https://arbitrary.vocab/#predicate",
         fallbackContainer
       )
-      .isAppendableByAgent("https://some.pod/webid.ttl");
+      .experimental_isAppendableByAgent("https://some.pod/webid.ttl");
 
     expect(configuration.internal_descriptor.acl).toEqual({
       agents: { "https://some.pod/webid.ttl": { append: true } }
@@ -246,7 +249,7 @@ describe("Configuring agent-specific ACL settings", () => {
         "https://arbitrary.vocab/#predicate",
         fallbackContainer
       )
-      .isWritableByAgent("https://some.pod/webid.ttl");
+      .experimental_isWritableByAgent("https://some.pod/webid.ttl");
 
     expect(configuration.internal_descriptor.acl).toEqual({
       agents: { "https://some.pod/webid.ttl": { write: true } }
@@ -267,7 +270,7 @@ describe("Configuring agent-specific ACL settings", () => {
         "https://arbitrary.vocab/#predicate",
         fallbackContainer
       )
-      .isControllableByAgent("https://some.pod/webid.ttl");
+      .experimental_isControllableByAgent("https://some.pod/webid.ttl");
 
     expect(configuration.internal_descriptor.acl).toEqual({
       agents: { "https://some.pod/webid.ttl": { control: true } }
@@ -288,8 +291,8 @@ describe("Configuring agent-specific ACL settings", () => {
         "https://arbitrary.vocab/#predicate",
         fallbackContainer
       )
-      .isWritableByAgent("https://some.pod/webid.ttl")
-      .isControllableByAgent("https://some.pod/webid.ttl");
+      .experimental_isWritableByAgent("https://some.pod/webid.ttl")
+      .experimental_isControllableByAgent("https://some.pod/webid.ttl");
 
     expect(configuration.internal_descriptor.acl).toEqual({
       agents: { "https://some.pod/webid.ttl": { write: true, control: true } }
@@ -310,8 +313,8 @@ describe("Configuring agent-specific ACL settings", () => {
         "https://arbitrary.vocab/#predicate",
         fallbackContainer
       )
-      .isReadableByAgent("https://some.pod/webid.ttl")
-      .isAppendableByAgent("https://some-other.pod/webid.ttl");
+      .experimental_isReadableByAgent("https://some.pod/webid.ttl")
+      .experimental_isAppendableByAgent("https://some-other.pod/webid.ttl");
 
     expect(configuration.internal_descriptor.acl).toEqual({
       agents: {
@@ -337,7 +340,10 @@ describe("Configuring origin-specific ACL settings", () => {
         "https://arbitrary.vocab/#predicate",
         fallbackContainer
       )
-      .isReadableByOrigin("https://some.app", "https://some.pod/webid.ttl");
+      .experimental_isReadableByOrigin(
+        "https://some.app",
+        "https://some.pod/webid.ttl"
+      );
 
     expect(configuration.internal_descriptor.acl).toEqual({
       origins: {
@@ -360,7 +366,10 @@ describe("Configuring origin-specific ACL settings", () => {
         "https://arbitrary.vocab/#predicate",
         fallbackContainer
       )
-      .isAppendableByOrigin("https://some.app", "https://some.pod/webid.ttl");
+      .experimental_isAppendableByOrigin(
+        "https://some.app",
+        "https://some.pod/webid.ttl"
+      );
 
     expect(configuration.internal_descriptor.acl).toEqual({
       origins: {
@@ -383,7 +392,10 @@ describe("Configuring origin-specific ACL settings", () => {
         "https://arbitrary.vocab/#predicate",
         fallbackContainer
       )
-      .isWritableByOrigin("https://some.app", "https://some.pod/webid.ttl");
+      .experimental_isWritableByOrigin(
+        "https://some.app",
+        "https://some.pod/webid.ttl"
+      );
 
     expect(configuration.internal_descriptor.acl).toEqual({
       origins: {
@@ -406,7 +418,10 @@ describe("Configuring origin-specific ACL settings", () => {
         "https://arbitrary.vocab/#predicate",
         fallbackContainer
       )
-      .isControllableByOrigin("https://some.app", "https://some.pod/webid.ttl");
+      .experimental_isControllableByOrigin(
+        "https://some.app",
+        "https://some.pod/webid.ttl"
+      );
 
     expect(configuration.internal_descriptor.acl).toEqual({
       origins: {
@@ -429,8 +444,14 @@ describe("Configuring origin-specific ACL settings", () => {
         "https://arbitrary.vocab/#predicate",
         fallbackContainer
       )
-      .isReadableByOrigin("https://some.app", "https://some.pod/webid.ttl")
-      .isControllableByOrigin("https://some.app", "https://some.pod/webid.ttl");
+      .experimental_isReadableByOrigin(
+        "https://some.app",
+        "https://some.pod/webid.ttl"
+      )
+      .experimental_isControllableByOrigin(
+        "https://some.app",
+        "https://some.pod/webid.ttl"
+      );
 
     expect(configuration.internal_descriptor.acl).toEqual({
       origins: {
@@ -455,12 +476,15 @@ describe("Configuring origin-specific ACL settings", () => {
         "https://arbitrary.vocab/#predicate",
         fallbackContainer
       )
-      .isReadableByOrigin("https://some.app", "https://some.pod/webid.ttl")
-      .isAppendableByOrigin(
+      .experimental_isReadableByOrigin(
+        "https://some.app",
+        "https://some.pod/webid.ttl"
+      )
+      .experimental_isAppendableByOrigin(
         "https://some.app",
         "https://some.pod/other-webid.ttl"
       )
-      .isControllableByOrigin(
+      .experimental_isControllableByOrigin(
         "https://some-other.app",
         "https://some.pod/webid.ttl"
       );

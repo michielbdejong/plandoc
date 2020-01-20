@@ -370,7 +370,7 @@ describe("fetchDocument", () => {
           "https://mock-vocab.example/#arbitrary-predicate",
           fallbackContainer
         )
-        .isReadableByEveryone();
+        .experimental_isReadableByEveryone();
 
       await fetchDocument(virtualDocument);
 
@@ -393,7 +393,7 @@ describe("fetchDocument", () => {
           "https://mock-vocab.example/#arbitrary-predicate",
           fallbackContainer
         )
-        .isReadableByEveryone();
+        .experimental_isReadableByEveryone();
 
       await expect(fetchDocument(virtualDocument)).rejects.toThrowError(
         "Could not find a location for the Access Control List of this Document."

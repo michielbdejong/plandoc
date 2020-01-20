@@ -62,27 +62,35 @@ export function isContainedIn(
 }
 
 interface ContainedVirtualContainer extends VirtualContainer<IsContainedIn> {
-  isReadableByEveryone: () => ContainedVirtualContainer;
-  isAppendableByEveryone: () => ContainedVirtualContainer;
-  isWritableByEveryone: () => ContainedVirtualContainer;
-  isControllableByEveryone: () => ContainedVirtualContainer;
-  isReadableByAgent: (agent: Reference) => ContainedVirtualContainer;
-  isAppendableByAgent: (agent: Reference) => ContainedVirtualContainer;
-  isWritableByAgent: (agent: Reference) => ContainedVirtualContainer;
-  isControllableByAgent: (agent: Reference) => ContainedVirtualContainer;
-  isReadableByOrigin: (
+  experimental_isReadableByEveryone: () => ContainedVirtualContainer;
+  experimental_isAppendableByEveryone: () => ContainedVirtualContainer;
+  experimental_isWritableByEveryone: () => ContainedVirtualContainer;
+  experimental_isControllableByEveryone: () => ContainedVirtualContainer;
+  experimental_isReadableByAgent: (
+    agent: Reference
+  ) => ContainedVirtualContainer;
+  experimental_isAppendableByAgent: (
+    agent: Reference
+  ) => ContainedVirtualContainer;
+  experimental_isWritableByAgent: (
+    agent: Reference
+  ) => ContainedVirtualContainer;
+  experimental_isControllableByAgent: (
+    agent: Reference
+  ) => ContainedVirtualContainer;
+  experimental_isReadableByOrigin: (
     origin: Reference,
     agent: Reference
   ) => ContainedVirtualContainer;
-  isAppendableByOrigin: (
+  experimental_isAppendableByOrigin: (
     origin: Reference,
     agent: Reference
   ) => ContainedVirtualContainer;
-  isWritableByOrigin: (
+  experimental_isWritableByOrigin: (
     origin: Reference,
     agent: Reference
   ) => ContainedVirtualContainer;
-  isControllableByOrigin: (
+  experimental_isControllableByOrigin: (
     origin: Reference,
     agent: Reference
   ) => ContainedVirtualContainer;
@@ -92,18 +100,36 @@ function generateContainedVirtualContainer(
 ): ContainedVirtualContainer {
   return {
     internal_descriptor: descriptor,
-    isReadableByEveryone: generateSetPublicAcl(descriptor, "read"),
-    isAppendableByEveryone: generateSetPublicAcl(descriptor, "append"),
-    isWritableByEveryone: generateSetPublicAcl(descriptor, "write"),
-    isControllableByEveryone: generateSetPublicAcl(descriptor, "control"),
-    isReadableByAgent: generateSetAgentAcl(descriptor, "read"),
-    isAppendableByAgent: generateSetAgentAcl(descriptor, "append"),
-    isWritableByAgent: generateSetAgentAcl(descriptor, "write"),
-    isControllableByAgent: generateSetAgentAcl(descriptor, "control"),
-    isReadableByOrigin: generateSetOriginAcl(descriptor, "read"),
-    isAppendableByOrigin: generateSetOriginAcl(descriptor, "append"),
-    isWritableByOrigin: generateSetOriginAcl(descriptor, "write"),
-    isControllableByOrigin: generateSetOriginAcl(descriptor, "control")
+    experimental_isReadableByEveryone: generateSetPublicAcl(descriptor, "read"),
+    experimental_isAppendableByEveryone: generateSetPublicAcl(
+      descriptor,
+      "append"
+    ),
+    experimental_isWritableByEveryone: generateSetPublicAcl(
+      descriptor,
+      "write"
+    ),
+    experimental_isControllableByEveryone: generateSetPublicAcl(
+      descriptor,
+      "control"
+    ),
+    experimental_isReadableByAgent: generateSetAgentAcl(descriptor, "read"),
+    experimental_isAppendableByAgent: generateSetAgentAcl(descriptor, "append"),
+    experimental_isWritableByAgent: generateSetAgentAcl(descriptor, "write"),
+    experimental_isControllableByAgent: generateSetAgentAcl(
+      descriptor,
+      "control"
+    ),
+    experimental_isReadableByOrigin: generateSetOriginAcl(descriptor, "read"),
+    experimental_isAppendableByOrigin: generateSetOriginAcl(
+      descriptor,
+      "append"
+    ),
+    experimental_isWritableByOrigin: generateSetOriginAcl(descriptor, "write"),
+    experimental_isControllableByOrigin: generateSetOriginAcl(
+      descriptor,
+      "control"
+    )
   };
 }
 

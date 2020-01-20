@@ -375,7 +375,7 @@ describe("fetchContainer", () => {
       );
       const virtualContainer = describeContainer()
         .isContainedIn(parentContainer, "sub-container")
-        .isReadableByEveryone();
+        .experimental_isReadableByEveryone();
 
       await internal_fetchContainer(virtualContainer);
 
@@ -402,7 +402,7 @@ describe("fetchContainer", () => {
       );
       const virtualContainer = describeContainer()
         .isContainedIn(parentContainer, "sub-container")
-        .isReadableByEveryone();
+        .experimental_isReadableByEveryone();
 
       await internal_fetchContainer(virtualContainer);
 
@@ -428,7 +428,7 @@ describe("fetchContainer", () => {
       );
       const virtualContainer = describeContainer()
         .isContainedIn(parentContainer, "sub-container")
-        .isReadableByEveryone();
+        .experimental_isReadableByEveryone();
 
       await expect(
         internal_fetchContainer(virtualContainer)
