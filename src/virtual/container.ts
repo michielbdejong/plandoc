@@ -12,7 +12,7 @@ export function describeContainer() {
   return {
     isFoundAt: isFoundAt,
     isFoundOn: isFoundOn,
-    isContainedIn: isContainedIn
+    experimental_isContainedIn: isContainedIn
   };
 }
 

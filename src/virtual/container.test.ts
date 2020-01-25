@@ -6,7 +6,7 @@ it("should be able to create a configuration object that specificies a combinati
   );
 
   const configuration = describeContainer()
-    .isContainedIn(parentContainer, "child-container")
+    .experimental_isContainedIn(parentContainer, "child-container")
     .experimental_isReadableByEveryone()
     .experimental_isAppendableByAgent("https://some.pod/webid.ttl")
     .experimental_isControllableByOrigin(
@@ -34,7 +34,7 @@ it("should intialise the ACL configuration object if it is inadvertently undefin
     "https://arbitrary.pod/container/"
   );
 
-  const incompleteConfiguration = describeContainer().isContainedIn(
+  const incompleteConfiguration = describeContainer().experimental_isContainedIn(
     parentContainer,
     "child-container"
   );
@@ -78,7 +78,7 @@ describe("Configuring public ACL settings", () => {
     );
 
     const configuration = describeContainer()
-      .isContainedIn(parentContainer, "child-container")
+      .experimental_isContainedIn(parentContainer, "child-container")
       .experimental_isReadableByEveryone();
 
     expect(configuration.internal_descriptor.acl).toEqual({
@@ -92,7 +92,7 @@ describe("Configuring public ACL settings", () => {
     );
 
     const configuration = describeContainer()
-      .isContainedIn(parentContainer, "child-container")
+      .experimental_isContainedIn(parentContainer, "child-container")
       .experimental_isAppendableByEveryone();
 
     expect(configuration.internal_descriptor.acl).toEqual({
@@ -106,7 +106,7 @@ describe("Configuring public ACL settings", () => {
     );
 
     const configuration = describeContainer()
-      .isContainedIn(parentContainer, "child-container")
+      .experimental_isContainedIn(parentContainer, "child-container")
       .experimental_isWritableByEveryone();
 
     expect(configuration.internal_descriptor.acl).toEqual({
@@ -120,7 +120,7 @@ describe("Configuring public ACL settings", () => {
     );
 
     const configuration = describeContainer()
-      .isContainedIn(parentContainer, "child-container")
+      .experimental_isContainedIn(parentContainer, "child-container")
       .experimental_isControllableByEveryone();
 
     expect(configuration.internal_descriptor.acl).toEqual({
@@ -134,7 +134,7 @@ describe("Configuring public ACL settings", () => {
     );
 
     const configuration = describeContainer()
-      .isContainedIn(parentContainer, "child-container")
+      .experimental_isContainedIn(parentContainer, "child-container")
       .experimental_isWritableByEveryone()
       .experimental_isControllableByEveryone();
 
@@ -151,7 +151,7 @@ describe("Configuring agent-specific ACL settings", () => {
     );
 
     const configuration = describeContainer()
-      .isContainedIn(parentContainer, "child-container")
+      .experimental_isContainedIn(parentContainer, "child-container")
       .experimental_isReadableByAgent("https://some.pod/webid.ttl");
 
     expect(configuration.internal_descriptor.acl).toEqual({
@@ -165,7 +165,7 @@ describe("Configuring agent-specific ACL settings", () => {
     );
 
     const configuration = describeContainer()
-      .isContainedIn(parentContainer, "child-container")
+      .experimental_isContainedIn(parentContainer, "child-container")
       .experimental_isAppendableByAgent("https://some.pod/webid.ttl");
 
     expect(configuration.internal_descriptor.acl).toEqual({
@@ -179,7 +179,7 @@ describe("Configuring agent-specific ACL settings", () => {
     );
 
     const configuration = describeContainer()
-      .isContainedIn(parentContainer, "child-container")
+      .experimental_isContainedIn(parentContainer, "child-container")
       .experimental_isWritableByAgent("https://some.pod/webid.ttl");
 
     expect(configuration.internal_descriptor.acl).toEqual({
@@ -193,7 +193,7 @@ describe("Configuring agent-specific ACL settings", () => {
     );
 
     const configuration = describeContainer()
-      .isContainedIn(parentContainer, "child-container")
+      .experimental_isContainedIn(parentContainer, "child-container")
       .experimental_isControllableByAgent("https://some.pod/webid.ttl");
 
     expect(configuration.internal_descriptor.acl).toEqual({
@@ -207,7 +207,7 @@ describe("Configuring agent-specific ACL settings", () => {
     );
 
     const configuration = describeContainer()
-      .isContainedIn(parentContainer, "child-container")
+      .experimental_isContainedIn(parentContainer, "child-container")
       .experimental_isWritableByAgent("https://some.pod/webid.ttl")
       .experimental_isControllableByAgent("https://some.pod/webid.ttl");
 
@@ -222,7 +222,7 @@ describe("Configuring agent-specific ACL settings", () => {
     );
 
     const configuration = describeContainer()
-      .isContainedIn(parentContainer, "child-container")
+      .experimental_isContainedIn(parentContainer, "child-container")
       .experimental_isReadableByAgent("https://some.pod/webid.ttl")
       .experimental_isAppendableByAgent("https://some-other.pod/webid.ttl");
 
@@ -242,7 +242,7 @@ describe("Configuring origin-specific ACL settings", () => {
     );
 
     const configuration = describeContainer()
-      .isContainedIn(parentContainer, "child-container")
+      .experimental_isContainedIn(parentContainer, "child-container")
       .experimental_isReadableByOrigin(
         "https://some.app",
         "https://some.pod/webid.ttl"
@@ -261,7 +261,7 @@ describe("Configuring origin-specific ACL settings", () => {
     );
 
     const configuration = describeContainer()
-      .isContainedIn(parentContainer, "child-container")
+      .experimental_isContainedIn(parentContainer, "child-container")
       .experimental_isAppendableByOrigin(
         "https://some.app",
         "https://some.pod/webid.ttl"
@@ -280,7 +280,7 @@ describe("Configuring origin-specific ACL settings", () => {
     );
 
     const configuration = describeContainer()
-      .isContainedIn(parentContainer, "child-container")
+      .experimental_isContainedIn(parentContainer, "child-container")
       .experimental_isWritableByOrigin(
         "https://some.app",
         "https://some.pod/webid.ttl"
@@ -299,7 +299,7 @@ describe("Configuring origin-specific ACL settings", () => {
     );
 
     const configuration = describeContainer()
-      .isContainedIn(parentContainer, "child-container")
+      .experimental_isContainedIn(parentContainer, "child-container")
       .experimental_isControllableByOrigin(
         "https://some.app",
         "https://some.pod/webid.ttl"
@@ -318,7 +318,7 @@ describe("Configuring origin-specific ACL settings", () => {
     );
 
     const configuration = describeContainer()
-      .isContainedIn(parentContainer, "child-container")
+      .experimental_isContainedIn(parentContainer, "child-container")
       .experimental_isReadableByOrigin(
         "https://some.app",
         "https://some.pod/webid.ttl"
@@ -343,7 +343,7 @@ describe("Configuring origin-specific ACL settings", () => {
     );
 
     const configuration = describeContainer()
-      .isContainedIn(parentContainer, "child-container")
+      .experimental_isContainedIn(parentContainer, "child-container")
       .experimental_isReadableByOrigin(
         "https://some.app",
         "https://some.pod/webid.ttl"

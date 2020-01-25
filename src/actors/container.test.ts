@@ -211,7 +211,7 @@ describe("fetchContainer", () => {
       const parentContainer = describeContainer().isFoundAt(
         "https://some.pod/container/"
       );
-      const virtualContainer = describeContainer().isContainedIn(
+      const virtualContainer = describeContainer().experimental_isContainedIn(
         parentContainer,
         "sub-container"
       );
@@ -238,7 +238,7 @@ describe("fetchContainer", () => {
       const parentContainer = describeContainer().isFoundAt(
         "https://some.pod/container"
       );
-      const virtualContainer = describeContainer().isContainedIn(
+      const virtualContainer = describeContainer().experimental_isContainedIn(
         parentContainer,
         "sub-container"
       );
@@ -261,7 +261,7 @@ describe("fetchContainer", () => {
       const parentContainer = describeContainer().isFoundAt(
         "https://some.pod/container"
       );
-      const virtualContainer = describeContainer().isContainedIn(
+      const virtualContainer = describeContainer().experimental_isContainedIn(
         parentContainer,
         "sub-container/"
       );
@@ -284,7 +284,7 @@ describe("fetchContainer", () => {
       const parentContainer = describeContainer().isFoundAt(
         "https://some.pod/container"
       );
-      const virtualContainer = describeContainer().isContainedIn(
+      const virtualContainer = describeContainer().experimental_isContainedIn(
         parentContainer,
         "/sub-container"
       );
@@ -306,7 +306,7 @@ describe("fetchContainer", () => {
       // non-existing Container:
       mockInvalidParentContainer.internal_descriptor.reference = null as any;
 
-      const virtualContainer = describeContainer().isContainedIn(
+      const virtualContainer = describeContainer().experimental_isContainedIn(
         mockInvalidParentContainer as any,
         "sub-container"
       );
@@ -330,7 +330,7 @@ describe("fetchContainer", () => {
       const parentContainer = describeContainer().isFoundAt(
         "https://some.pod/container/"
       );
-      const virtualContainer = describeContainer().isContainedIn(
+      const virtualContainer = describeContainer().experimental_isContainedIn(
         parentContainer,
         "sub-container"
       );
@@ -374,7 +374,7 @@ describe("fetchContainer", () => {
         "https://arbitrary.pod/container/"
       );
       const virtualContainer = describeContainer()
-        .isContainedIn(parentContainer, "sub-container")
+        .experimental_isContainedIn(parentContainer, "sub-container")
         .experimental_isReadableByEveryone();
 
       await internal_fetchContainer(virtualContainer);
@@ -401,7 +401,7 @@ describe("fetchContainer", () => {
         "https://arbitrary.pod/container/"
       );
       const virtualContainer = describeContainer()
-        .isContainedIn(parentContainer, "sub-container")
+        .experimental_isContainedIn(parentContainer, "sub-container")
         .experimental_isReadableByEveryone();
 
       await internal_fetchContainer(virtualContainer);
@@ -427,7 +427,7 @@ describe("fetchContainer", () => {
         "https://arbitrary.pod/container/"
       );
       const virtualContainer = describeContainer()
-        .isContainedIn(parentContainer, "sub-container")
+        .experimental_isContainedIn(parentContainer, "sub-container")
         .experimental_isReadableByEveryone();
 
       await expect(
@@ -449,7 +449,7 @@ describe("fetchContainer", () => {
       const parentContainer = describeContainer().isFoundAt(
         "https://arbitrary.pod/container/"
       );
-      const virtualContainer = describeContainer().isContainedIn(
+      const virtualContainer = describeContainer().experimental_isContainedIn(
         parentContainer,
         "sub-container"
       );
