@@ -38,9 +38,27 @@ export async function fetchDocument(
         new Error("This type of Virtual Document can not be processed yet.")
       );
 
-  virtualDoc.promise = promise;
+  const wrappedPromise = promise.then(fetchedDocument => {
+    if (fetchedDocument !== null) {
+      // Update the cached Promise to return the updated Document when accessed again:
+      const wrappedSave: typeof fetchedDocument.save = subjects => {
+        const savePromise = fetchedDocument.save(subjects);
+        virtualDoc.promise = savePromise;
+        return savePromise;
+      };
 
-  return promise;
+      return {
+        ...fetchedDocument,
+        save: wrappedSave
+      };
+    }
+
+    return null;
+  });
+
+  virtualDoc.promise = wrappedPromise;
+
+  return wrappedPromise;
 }
 
 type DocumentFetcher<Descriptor extends DocumentDescriptor> = (

@@ -95,6 +95,21 @@ describe("fetchDocument", () => {
     expect(tripledoc.fetchDocument.mock.calls.length).toBe(1);
   });
 
+  it("should update the cache after saving a Document", async () => {
+    mockDocument.save.mockReturnValueOnce(
+      Promise.resolve("Mock saved Document")
+    );
+    const virtualDocument = describeDocument().isFoundAt(
+      "https://arbitrary.doc/resource.ttl"
+    );
+
+    const document = await fetchDocument(virtualDocument);
+    await document?.save();
+    const documentFromCache = await fetchDocument(virtualDocument);
+
+    expect(documentFromCache).toBe("Mock saved Document");
+  });
+
   it("should not share caches over different virtual Documents", () => {
     const tripledoc = jest.requireMock("tripledoc");
     const virtualDocument1 = describeDocument().isFoundAt(
@@ -136,11 +151,15 @@ describe("fetchDocument", () => {
       tripledoc.fetchDocument.mockReturnValueOnce({
         getAclRef: () => "https://arbitrary.doc/resource.ttl.acl"
       });
-      tripledoc.fetchDocument.mockReturnValueOnce("Mocked ACL Document");
+      const mockAclDoc = {
+        ...mockDocument,
+        asRef: () => "Some Ref that identifies the mock ACL doc"
+      };
+      tripledoc.fetchDocument.mockReturnValueOnce(mockAclDoc);
 
       const aclDoc = await fetchDocument(aclDocument);
 
-      expect(aclDoc).toEqual("Mocked ACL Document");
+      expect(aclDoc?.asRef()).toBe("Some Ref that identifies the mock ACL doc");
       expect(tripledoc.fetchDocument.mock.calls.length).toBe(2);
       expect(tripledoc.fetchDocument.mock.calls[0][0]).toBe(
         "https://arbitrary.doc/resource.ttl"
@@ -180,9 +199,10 @@ describe("fetchDocument", () => {
   describe("found on a Subject", () => {
     it("should fetch it if available", async () => {
       const tripledoc = jest.requireMock("tripledoc");
-      tripledoc.fetchDocument.mockReturnValueOnce(
-        "The Document we are looking for"
-      );
+      tripledoc.fetchDocument.mockReturnValueOnce({
+        ...mockDocument,
+        asRef: () => "Some Ref identifying the Document we are looking for"
+      });
       mockSubject.getRef.mockReturnValueOnce("https://some.doc/resource.ttl");
 
       const sourceSubject = describeSubject().isFoundAt(
@@ -195,7 +215,9 @@ describe("fetchDocument", () => {
 
       const retrievedDocument = await fetchDocument(virtualDocument);
 
-      expect(retrievedDocument).toBe("The Document we are looking for");
+      expect(retrievedDocument?.asRef()).toBe(
+        "Some Ref identifying the Document we are looking for"
+      );
       expect(tripledoc.fetchDocument.mock.calls.length).toBe(1);
       expect(tripledoc.fetchDocument.mock.calls[0][0]).toBe(
         "https://some.doc/resource.ttl"
@@ -241,9 +263,10 @@ describe("fetchDocument", () => {
   describe("ensured on a Subject", () => {
     it("should fetch it if available", async () => {
       const tripledoc = jest.requireMock("tripledoc");
-      tripledoc.fetchDocument.mockReturnValueOnce(
-        "The Document we are looking for"
-      );
+      tripledoc.fetchDocument.mockReturnValueOnce({
+        ...mockDocument,
+        asRef: () => "Some Ref identifying the Document we are looking for"
+      });
       mockSubject.getRef.mockReturnValueOnce("https://some.doc/resource.ttl");
 
       const fallbackContainer = describeContainer().isFoundAt(
@@ -260,7 +283,9 @@ describe("fetchDocument", () => {
 
       const retrievedDocument = await fetchDocument(virtualDocument);
 
-      expect(retrievedDocument).toBe("The Document we are looking for");
+      expect(retrievedDocument?.asRef()).toBe(
+        "Some Ref identifying the Document we are looking for"
+      );
       expect(tripledoc.fetchDocument.mock.calls.length).toBe(1);
       expect(tripledoc.fetchDocument.mock.calls[0][0]).toBe(
         "https://some.doc/resource.ttl"
@@ -340,7 +365,9 @@ describe("fetchDocument", () => {
 
       const retrievedDocument = await fetchDocument(virtualDocument);
 
-      expect(retrievedDocument).toEqual(mockNewDocument);
+      expect(retrievedDocument?.asRef()).toEqual(
+        "https://some.doc/resource.ttl"
+      );
       expect(tripledoc.createDocumentInContainer.mock.calls.length).toBe(1);
       expect(tripledoc.createDocumentInContainer.mock.calls[0][0]).toBe(
         "https://some.pod/container/"
