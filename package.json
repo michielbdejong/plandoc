@@ -4,7 +4,8 @@
   "description": "A declarative, composable data manipulation library for Solid",
   "scripts": {
     "test": "jest",
-    "build": "rollup --config rollup.config.js"
+    "build": "rollup --config rollup.config.js",
+    "docs": "rm -r api_docs; typedoc --theme markdown --hideSources --hideProjectTitle --hideBreadcrumbs --options typedoc.json --out api_docs; cp README.md api_docs/INTRO.md; echo \"\n#API\" >> api_docs/INTRO.md; concat-md api_docs > README-with-api.md;"
   },
   "main": "dist/index.js",
   "module": "dist/index.es.js",
@@ -35,6 +36,7 @@
   "devDependencies": {
     "@types/jest": "^24.0.23",
     "@types/solid-auth-client": "^2.3.1",
+    "concat-md": "^0.3.2",
     "husky": ">=1",
     "jest": "^24.9.0",
     "jest-junit": "^10.0.0",
@@ -44,6 +46,8 @@
     "rollup-plugin-typescript2": "^0.25.3",
     "solid-auth-client": "^2.4.1",
     "ts-jest": "^24.2.0",
+    "typedoc": "^0.16.9",
+    "typedoc-plugin-markdown": "^2.2.16",
     "typescript": "^3.7.3"
   },
   "keywords": [
