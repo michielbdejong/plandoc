@@ -16,7 +16,7 @@ import { AclSettings } from "../services/acl";
  */
 export function describeContainer() {
   return {
-    isFoundAt: isFoundAt,
+    experimental_isFoundAt: isFoundAt,
     isFoundOn: isFoundOn,
     experimental_isContainedIn: isContainedIn
   };
@@ -39,6 +39,7 @@ export interface VirtualContainer<
 /**
  * Describe a Container for which you know the IRI.
  *
+ * @ignore Experimental API.
  * @param reference IRI of the desired Container.
  */
 export function isFoundAt(reference: Reference): VirtualContainer<IsFoundAt> {

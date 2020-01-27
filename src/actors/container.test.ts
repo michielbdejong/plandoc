@@ -43,7 +43,7 @@ jest.mock("../services/acl.ts", () => {
 
 describe("fetchContainer", () => {
   it("should directly return direct references", async () => {
-    const virtualContainer = describeContainer().isFoundAt(
+    const virtualContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
     );
 
@@ -208,7 +208,7 @@ describe("fetchContainer", () => {
         Promise.resolve("Arbitrary return value that does not throw.")
       );
 
-      const parentContainer = describeContainer().isFoundAt(
+      const parentContainer = describeContainer().experimental_isFoundAt(
         "https://some.pod/container/"
       );
       const virtualContainer = describeContainer().experimental_isContainedIn(
@@ -235,7 +235,7 @@ describe("fetchContainer", () => {
         Promise.resolve("Arbitrary return value that does not throw.")
       );
 
-      const parentContainer = describeContainer().isFoundAt(
+      const parentContainer = describeContainer().experimental_isFoundAt(
         "https://some.pod/container"
       );
       const virtualContainer = describeContainer().experimental_isContainedIn(
@@ -258,7 +258,7 @@ describe("fetchContainer", () => {
         Promise.resolve("Arbitrary return value that does not throw.")
       );
 
-      const parentContainer = describeContainer().isFoundAt(
+      const parentContainer = describeContainer().experimental_isFoundAt(
         "https://some.pod/container"
       );
       const virtualContainer = describeContainer().experimental_isContainedIn(
@@ -281,7 +281,7 @@ describe("fetchContainer", () => {
         Promise.resolve("Arbitrary return value that does not throw.")
       );
 
-      const parentContainer = describeContainer().isFoundAt(
+      const parentContainer = describeContainer().experimental_isFoundAt(
         "https://some.pod/container"
       );
       const virtualContainer = describeContainer().experimental_isContainedIn(
@@ -299,7 +299,7 @@ describe("fetchContainer", () => {
     });
 
     it("should return null if the parent Container could not be found", async () => {
-      const mockInvalidParentContainer = describeContainer().isFoundAt(
+      const mockInvalidParentContainer = describeContainer().experimental_isFoundAt(
         "Ref that will be removed again."
       );
       // This should not be produced using describeContainer(), but it tricks it into return a
@@ -327,7 +327,7 @@ describe("fetchContainer", () => {
         )
       );
 
-      const parentContainer = describeContainer().isFoundAt(
+      const parentContainer = describeContainer().experimental_isFoundAt(
         "https://some.pod/container/"
       );
       const virtualContainer = describeContainer().experimental_isContainedIn(
@@ -370,7 +370,7 @@ describe("fetchContainer", () => {
         })
       );
 
-      const parentContainer = describeContainer().isFoundAt(
+      const parentContainer = describeContainer().experimental_isFoundAt(
         "https://arbitrary.pod/container/"
       );
       const virtualContainer = describeContainer()
@@ -397,7 +397,7 @@ describe("fetchContainer", () => {
         })
       );
 
-      const parentContainer = describeContainer().isFoundAt(
+      const parentContainer = describeContainer().experimental_isFoundAt(
         "https://arbitrary.pod/container/"
       );
       const virtualContainer = describeContainer()
@@ -423,7 +423,7 @@ describe("fetchContainer", () => {
         Promise.resolve({ getAclRef: () => null })
       );
 
-      const parentContainer = describeContainer().isFoundAt(
+      const parentContainer = describeContainer().experimental_isFoundAt(
         "https://arbitrary.pod/container/"
       );
       const virtualContainer = describeContainer()
@@ -446,7 +446,7 @@ describe("fetchContainer", () => {
         )
       );
 
-      const parentContainer = describeContainer().isFoundAt(
+      const parentContainer = describeContainer().experimental_isFoundAt(
         "https://arbitrary.pod/container/"
       );
       const virtualContainer = describeContainer().experimental_isContainedIn(

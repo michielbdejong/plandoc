@@ -275,7 +275,7 @@ describe("fetchDocument", () => {
       });
       mockSubject.getRef.mockReturnValueOnce("https://some.doc/resource.ttl");
 
-      const fallbackContainer = describeContainer().isFoundAt(
+      const fallbackContainer = describeContainer().experimental_isFoundAt(
         "https://arbitrary.pod"
       );
       const sourceSubject = describeSubject().isFoundAt(
@@ -303,7 +303,7 @@ describe("fetchDocument", () => {
       mockVirtualContainer.internal_fetchContainer.mockReturnValueOnce(null);
       mockSubject.getRef.mockReturnValueOnce(null);
 
-      const fallbackContainer = describeContainer().isFoundAt(
+      const fallbackContainer = describeContainer().experimental_isFoundAt(
         "https://arbitrary.pod"
       );
       const sourceSubject = describeSubject().isFoundAt(
@@ -326,7 +326,7 @@ describe("fetchDocument", () => {
         Promise.resolve(null)
       );
 
-      const fallbackContainer = describeContainer().isFoundAt(
+      const fallbackContainer = describeContainer().experimental_isFoundAt(
         "https://arbitrary.pod"
       );
       const sourceSubject = describeSubject().isFoundAt(
@@ -357,7 +357,7 @@ describe("fetchDocument", () => {
       );
       mockSubject.getRef.mockReturnValueOnce(null);
 
-      const fallbackContainer = describeContainer().isFoundAt(
+      const fallbackContainer = describeContainer().experimental_isFoundAt(
         "https://some.pod/container/"
       );
       const sourceSubject = describeSubject().isFoundAt(
@@ -391,7 +391,7 @@ describe("fetchDocument", () => {
       const aclService = jest.requireMock("../services/acl.ts");
       mockSubject.getRef.mockReturnValueOnce(null);
 
-      const fallbackContainer = describeContainer().isFoundAt(
+      const fallbackContainer = describeContainer().experimental_isFoundAt(
         "https://arbitrary.pod/container/"
       );
       const sourceSubject = describeSubject().isFoundAt(
@@ -414,7 +414,7 @@ describe("fetchDocument", () => {
       mockSubject.getRef.mockReturnValueOnce(null);
       mockDocument.getAclRef.mockReturnValueOnce(null);
 
-      const fallbackContainer = describeContainer().isFoundAt(
+      const fallbackContainer = describeContainer().experimental_isFoundAt(
         "https://arbitrary.pod/container/"
       );
       const sourceSubject = describeSubject().isFoundAt(
@@ -437,7 +437,7 @@ describe("fetchDocument", () => {
       const aclService = jest.requireMock("../services/acl.ts");
       mockSubject.getRef.mockReturnValueOnce(null);
 
-      const fallbackContainer = describeContainer().isFoundAt(
+      const fallbackContainer = describeContainer().experimental_isFoundAt(
         "https://arbitrary.pod/container/"
       );
       const sourceSubject = describeSubject().isFoundAt(

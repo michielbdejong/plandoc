@@ -6,7 +6,7 @@ it("should be able to create a configuration object that specificies a combinati
   const containingSubject = describeSubject().isFoundAt(
     "https://arbitrary.pod/resource.ttl#subject"
   );
-  const fallbackContainer = describeContainer().isFoundAt(
+  const fallbackContainer = describeContainer().experimental_isFoundAt(
     "https://arbitrary.pod/container/"
   );
 
@@ -42,7 +42,7 @@ it("should intialise the ACL configuration object if it is inadvertently undefin
   const containingSubject = describeSubject().isFoundAt(
     "https://arbitrary.pod/resource.ttl#subject"
   );
-  const fallbackContainer = describeContainer().isFoundAt(
+  const fallbackContainer = describeContainer().experimental_isFoundAt(
     "https://arbitrary.pod/container/"
   );
 
@@ -89,7 +89,7 @@ describe("Configuring public ACL settings", () => {
     const containingSubject = describeSubject().isFoundAt(
       "https://arbitrary.pod/resource.ttl#subject"
     );
-    const fallbackContainer = describeContainer().isFoundAt(
+    const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
     );
 
@@ -110,7 +110,7 @@ describe("Configuring public ACL settings", () => {
     const containingSubject = describeSubject().isFoundAt(
       "https://arbitrary.pod/resource.ttl#subject"
     );
-    const fallbackContainer = describeContainer().isFoundAt(
+    const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
     );
 
@@ -131,7 +131,7 @@ describe("Configuring public ACL settings", () => {
     const containingSubject = describeSubject().isFoundAt(
       "https://arbitrary.pod/resource.ttl#subject"
     );
-    const fallbackContainer = describeContainer().isFoundAt(
+    const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
     );
 
@@ -152,7 +152,7 @@ describe("Configuring public ACL settings", () => {
     const containingSubject = describeSubject().isFoundAt(
       "https://arbitrary.pod/resource.ttl#subject"
     );
-    const fallbackContainer = describeContainer().isFoundAt(
+    const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
     );
 
@@ -173,7 +173,7 @@ describe("Configuring public ACL settings", () => {
     const containingSubject = describeSubject().isFoundAt(
       "https://arbitrary.pod/resource.ttl#subject"
     );
-    const fallbackContainer = describeContainer().isFoundAt(
+    const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
     );
 
@@ -197,7 +197,7 @@ describe("Configuring agent-specific ACL settings", () => {
     const containingSubject = describeSubject().isFoundAt(
       "https://arbitrary.pod/resource.ttl#subject"
     );
-    const fallbackContainer = describeContainer().isFoundAt(
+    const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
     );
 
@@ -218,7 +218,7 @@ describe("Configuring agent-specific ACL settings", () => {
     const containingSubject = describeSubject().isFoundAt(
       "https://arbitrary.pod/resource.ttl#subject"
     );
-    const fallbackContainer = describeContainer().isFoundAt(
+    const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
     );
 
@@ -239,7 +239,7 @@ describe("Configuring agent-specific ACL settings", () => {
     const containingSubject = describeSubject().isFoundAt(
       "https://arbitrary.pod/resource.ttl#subject"
     );
-    const fallbackContainer = describeContainer().isFoundAt(
+    const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
     );
 
@@ -260,7 +260,7 @@ describe("Configuring agent-specific ACL settings", () => {
     const containingSubject = describeSubject().isFoundAt(
       "https://arbitrary.pod/resource.ttl#subject"
     );
-    const fallbackContainer = describeContainer().isFoundAt(
+    const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
     );
 
@@ -281,7 +281,7 @@ describe("Configuring agent-specific ACL settings", () => {
     const containingSubject = describeSubject().isFoundAt(
       "https://arbitrary.pod/resource.ttl#subject"
     );
-    const fallbackContainer = describeContainer().isFoundAt(
+    const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
     );
 
@@ -303,7 +303,7 @@ describe("Configuring agent-specific ACL settings", () => {
     const containingSubject = describeSubject().isFoundAt(
       "https://arbitrary.pod/resource.ttl#subject"
     );
-    const fallbackContainer = describeContainer().isFoundAt(
+    const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
     );
 
@@ -330,7 +330,7 @@ describe("Configuring origin-specific ACL settings", () => {
     const containingSubject = describeSubject().isFoundAt(
       "https://arbitrary.pod/resource.ttl#subject"
     );
-    const fallbackContainer = describeContainer().isFoundAt(
+    const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
     );
 
@@ -356,7 +356,7 @@ describe("Configuring origin-specific ACL settings", () => {
     const containingSubject = describeSubject().isFoundAt(
       "https://arbitrary.pod/resource.ttl#subject"
     );
-    const fallbackContainer = describeContainer().isFoundAt(
+    const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
     );
 
@@ -382,7 +382,7 @@ describe("Configuring origin-specific ACL settings", () => {
     const containingSubject = describeSubject().isFoundAt(
       "https://arbitrary.pod/resource.ttl#subject"
     );
-    const fallbackContainer = describeContainer().isFoundAt(
+    const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
     );
 
@@ -408,7 +408,7 @@ describe("Configuring origin-specific ACL settings", () => {
     const containingSubject = describeSubject().isFoundAt(
       "https://arbitrary.pod/resource.ttl#subject"
     );
-    const fallbackContainer = describeContainer().isFoundAt(
+    const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
     );
 
@@ -434,7 +434,7 @@ describe("Configuring origin-specific ACL settings", () => {
     const containingSubject = describeSubject().isFoundAt(
       "https://arbitrary.pod/resource.ttl#subject"
     );
-    const fallbackContainer = describeContainer().isFoundAt(
+    const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
     );
 
@@ -466,7 +466,7 @@ describe("Configuring origin-specific ACL settings", () => {
     const containingSubject = describeSubject().isFoundAt(
       "https://arbitrary.pod/resource.ttl#subject"
     );
-    const fallbackContainer = describeContainer().isFoundAt(
+    const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
     );
 
