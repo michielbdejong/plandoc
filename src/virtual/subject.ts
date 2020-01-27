@@ -100,6 +100,9 @@ function isEnsuredOn(
   };
 }
 
+/**
+ * @ignore Internal API.
+ */
 function generateIsFoundIn_WithRef_VirtualSubject(
   descriptor:
     | IsFoundIn<WithRefLocator>
@@ -128,6 +131,9 @@ function generateIsFoundIn_WithRef_VirtualSubject(
     return subjectWithRefAdder;
   };
 }
+/**
+ * @ignore Internal API.
+ */
 function generateIsFoundIn_AsRef_VirtualSubject(
   bareDescriptor: Omit<IsFoundIn<SubjectLocator>, "locator">
 ): (reference: Reference) => IsFoundIn_AsRef_VirtualSubject {
@@ -143,6 +149,9 @@ function generateIsFoundIn_AsRef_VirtualSubject(
     };
   };
 }
+/**
+ * @ignore Internal data structure.
+ */
 interface IsFoundIn_WithRef_VirtualSubject
   extends VirtualSubject<IsFoundIn<WithRefLocator>> {
   withRef: (
@@ -150,7 +159,13 @@ interface IsFoundIn_WithRef_VirtualSubject
     object: Reference
   ) => IsFoundIn_WithRef_VirtualSubject;
 }
+/**
+ * @ignore Internal data structure.
+ */
 type IsFoundIn_AsRef_VirtualSubject = VirtualSubject<IsFoundIn<AsRefLocator>>;
+/**
+ * @ignore Internal data structure.
+ */
 interface IsFoundIn_Bare_VirtualSubject {
   internal_descriptor: Omit<IsFoundIn<SubjectLocator>, "locator">;
   withRef: (
@@ -159,6 +174,12 @@ interface IsFoundIn_Bare_VirtualSubject {
   ) => IsFoundIn_WithRef_VirtualSubject;
   asRef: (reference: Reference) => IsFoundIn_AsRef_VirtualSubject;
 }
+
+/**
+ * Describe a Subject that is contained in a given Document.
+ *
+ * @param document [[VirtualDocument]] describing the Document that contains to this Subject.
+ */
 function isFoundIn(document: VirtualDocument): IsFoundIn_Bare_VirtualSubject {
   const bareDescriptor: Omit<IsFoundIn<SubjectLocator>, "locator"> = {
     type: "IsFoundIn",
@@ -171,6 +192,9 @@ function isFoundIn(document: VirtualDocument): IsFoundIn_Bare_VirtualSubject {
   };
 }
 
+/**
+ * @ignore Internal API.
+ */
 function generateIsEnsuredIn_WithRef_VirtualSubject(
   descriptor:
     | IsEnsuredIn<WithRefLocator>
@@ -199,6 +223,9 @@ function generateIsEnsuredIn_WithRef_VirtualSubject(
     return subjectWithRefAdder;
   };
 }
+/**
+ * @ignore Internal API.
+ */
 function generateIsEnsuredIn_AsRef_VirtualSubject(
   bareDescriptor: Omit<IsEnsuredIn<SubjectLocator>, "locator">
 ): (reference: Reference) => IsEnsuredIn_AsRef_VirtualSubject {
@@ -214,6 +241,9 @@ function generateIsEnsuredIn_AsRef_VirtualSubject(
     };
   };
 }
+/**
+ * @ignore Internal data structure.
+ */
 interface IsEnsuredIn_WithRef_VirtualSubject
   extends VirtualSubject<IsEnsuredIn<WithRefLocator>> {
   withRef: (
@@ -221,9 +251,15 @@ interface IsEnsuredIn_WithRef_VirtualSubject
     object: Reference
   ) => IsEnsuredIn_WithRef_VirtualSubject;
 }
+/**
+ * @ignore Internal data structure.
+ */
 type IsEnsuredIn_AsRef_VirtualSubject = VirtualSubject<
   IsEnsuredIn<AsRefLocator>
 >;
+/**
+ * @ignore Internal data structure.
+ */
 interface IsEnsuredIn_Bare_VirtualSubject {
   internal_descriptor: Omit<IsEnsuredIn<SubjectLocator>, "locator">;
   withRef: (
@@ -232,6 +268,12 @@ interface IsEnsuredIn_Bare_VirtualSubject {
   ) => IsEnsuredIn_WithRef_VirtualSubject;
   asRef: (reference: Reference) => IsEnsuredIn_AsRef_VirtualSubject;
 }
+
+/**
+ * Describe a Subject that should be contained in a given Document.
+ *
+ * @param document [[VirtualDocument]] describing the Document that should contain this Subject.
+ */
 function isEnsuredIn(
   document: VirtualDocument
 ): IsEnsuredIn_Bare_VirtualSubject {

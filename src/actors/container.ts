@@ -48,6 +48,9 @@ export async function internal_fetchContainer(
   return promise;
 }
 
+/**
+ * @ignore Internal data structure.
+ */
 type ContainerFetcher<Descriptor extends ContainerDescriptor> = (
   virtualContainer: VirtualContainer<Descriptor>
 ) => Promise<Reference | null>;
@@ -70,6 +73,9 @@ const getForRef: ContainerFetcher<IsFoundOn> = async virtualContainer => {
   return reference;
 };
 
+/**
+ * @ignore Internal API.
+ */
 const ensureInContainer: ContainerFetcher<IsContainedIn> = async virtualContainer => {
   const parentContainer = await internal_fetchContainer(
     virtualContainer.internal_descriptor.container

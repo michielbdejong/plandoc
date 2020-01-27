@@ -9,6 +9,9 @@ import {
 } from "tripledoc";
 import { acl, foaf, rdf } from "rdf-namespaces";
 
+/**
+ * @ignore Experimental API.
+ */
 export interface AclSettings {
   public?: {
     read?: boolean;
@@ -36,6 +39,9 @@ export interface AclSettings {
   };
 }
 
+/**
+ * @ignore Internal API.
+ */
 export function hasAclSettings(aclSettings: AclSettings): boolean {
   return (
     aclSettings.public !== undefined ||
@@ -44,10 +50,16 @@ export function hasAclSettings(aclSettings: AclSettings): boolean {
   );
 }
 
+/**
+ * @ignore Internal data structure.
+ */
 type AclConfigOptions = {
   /** Assuming [[documentRef]] is a Container, whether these settings should also apply to its children */
   default: boolean;
 };
+/**
+ * @ignore Internal API.
+ */
 export async function configureAcl(
   documentRef: Reference,
   aclRef: Reference,

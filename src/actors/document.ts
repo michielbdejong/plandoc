@@ -69,14 +69,23 @@ export async function fetchDocument(
   return wrappedPromise;
 }
 
+/**
+ * @ignore Internal data structure.
+ */
 type DocumentFetcher<Descriptor extends DocumentDescriptor> = (
   virtualDoc: VirtualDocument<Descriptor>
 ) => Promise<TripleDocument | null>;
 
+/**
+ * @ignore Internal API.
+ */
 const fetchByRef: DocumentFetcher<IsFoundAt> = async virtualDoc => {
   return fetchTripleDocument(virtualDoc.internal_descriptor.reference);
 };
 
+/**
+ * @ignore Internal API.
+ */
 const getFromAcl: DocumentFetcher<IsAclFor> = async virtualDoc => {
   const mainDocument = await fetchDocument(
     virtualDoc.internal_descriptor.document
@@ -88,6 +97,9 @@ const getFromAcl: DocumentFetcher<IsAclFor> = async virtualDoc => {
   return await fetchTripleDocument(aclRef);
 };
 
+/**
+ * @ignore Internal API.
+ */
 const getForRef: DocumentFetcher<IsFoundOn> = async virtualDoc => {
   const subject = await internal_fetchSubject(
     virtualDoc.internal_descriptor.subject
@@ -104,6 +116,9 @@ const getForRef: DocumentFetcher<IsFoundOn> = async virtualDoc => {
   return fetchTripleDocument(reference);
 };
 
+/**
+ * @ignore Internal API.
+ */
 const ensureForRef: DocumentFetcher<IsEnsuredOn> = async virtualDoc => {
   const subject = await internal_fetchSubject(
     virtualDoc.internal_descriptor.subject

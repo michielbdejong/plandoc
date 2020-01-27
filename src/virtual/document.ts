@@ -114,6 +114,9 @@ export function isEnsuredOn(
   return generateEnsuredVirtualDocument(descriptor);
 }
 
+/**
+ * @ignore Internal data structure for  experimental API's.
+ */
 interface EnsuredVirtualDocument extends VirtualDocument<IsEnsuredOn> {
   experimental_isReadableByEveryone: () => EnsuredVirtualDocument;
   experimental_isAppendableByEveryone: () => EnsuredVirtualDocument;
@@ -144,6 +147,9 @@ interface EnsuredVirtualDocument extends VirtualDocument<IsEnsuredOn> {
     agent: Reference
   ) => EnsuredVirtualDocument;
 }
+/**
+ * @ignore Internal API.
+ */
 function generateEnsuredVirtualDocument(
   descriptor: IsEnsuredOn
 ): EnsuredVirtualDocument {
@@ -182,6 +188,9 @@ function generateEnsuredVirtualDocument(
   };
 }
 
+/**
+ * @ignore Internal API.
+ */
 function generateSetOriginAcl(
   descriptor: IsEnsuredOn,
   accessMode: "read" | "append" | "write" | "control"
@@ -201,6 +210,9 @@ function generateSetOriginAcl(
   };
 }
 
+/**
+ * @ignore Internal API.
+ */
 function generateSetAgentAcl(
   descriptor: IsEnsuredOn,
   accessMode: "read" | "append" | "write" | "control"
@@ -219,6 +231,9 @@ function generateSetAgentAcl(
   };
 }
 
+/**
+ * @ignore Internal API.
+ */
 function generateSetPublicAcl(
   descriptor: IsEnsuredOn,
   accessMode: "read" | "append" | "write" | "control"

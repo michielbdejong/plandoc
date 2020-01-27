@@ -130,6 +130,9 @@ interface ContainedVirtualContainer extends VirtualContainer<IsContainedIn> {
     agent: Reference
   ) => ContainedVirtualContainer;
 }
+/**
+ * @ignore Internal API.
+ */
 function generateContainedVirtualContainer(
   descriptor: IsContainedIn
 ): ContainedVirtualContainer {

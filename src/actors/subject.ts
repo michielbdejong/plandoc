@@ -58,6 +58,9 @@ export async function internal_fetchSubject(
   return promise;
 }
 
+/**
+ * @ignore Internal data structure.
+ */
 type SubjectFetcher<Descriptor extends SubjectDescriptor> = (
   virtualSubject: VirtualSubject<Descriptor>
 ) => Promise<TripleSubject | null>;
@@ -69,6 +72,9 @@ const fetchByRef: SubjectFetcher<IsFoundAt> = async virtualSubject => {
   return document.getSubject(virtualSubject.internal_descriptor.reference);
 };
 
+/**
+ * @ignore Internal API.
+ */
 const getOnSubject: SubjectFetcher<IsFoundOn> = async virtualSubject => {
   const sourceSubject = await internal_fetchSubject(
     virtualSubject.internal_descriptor.subject
@@ -85,6 +91,9 @@ const getOnSubject: SubjectFetcher<IsFoundOn> = async virtualSubject => {
   return sourceSubject.getDocument().getSubject(subjectRef);
 };
 
+/**
+ * @ignore Internal API.
+ */
 const ensureOnSubject: SubjectFetcher<IsEnsuredOn> = async virtualSubject => {
   const sourceSubject = await internal_fetchSubject(
     virtualSubject.internal_descriptor.subject
@@ -110,6 +119,9 @@ const ensureOnSubject: SubjectFetcher<IsEnsuredOn> = async virtualSubject => {
   return updatedDoc.getSubject(newSubject.asRef());
 };
 
+/**
+ * @ignore Internal API.
+ */
 const getWithRefs: SubjectFetcher<IsFoundIn<
   SubjectLocator
 >> = async virtualSubject => {
@@ -130,6 +142,9 @@ const getWithRefs: SubjectFetcher<IsFoundIn<
   throw new Error("This type of Locator can not be processed yet.");
 };
 
+/**
+ * @ignore Internal API.
+ */
 function getWithRefsFromDoc(
   document: TripleDocument,
   locator: WithRefLocator
@@ -160,6 +175,9 @@ function getWithRefsFromDoc(
 
   return matchingSubjects[0];
 }
+/**
+ * @ignore Internal API.
+ */
 function getAsRefFromDoc(
   document: TripleDocument,
   locator: AsRefLocator
@@ -167,6 +185,9 @@ function getAsRefFromDoc(
   return document.getSubject(locator.reference);
 }
 
+/**
+ * @ignore Internal API.
+ */
 const ensureWithRefs: SubjectFetcher<IsEnsuredIn<
   SubjectLocator
 >> = async virtualSubject => {
@@ -186,6 +207,9 @@ const ensureWithRefs: SubjectFetcher<IsEnsuredIn<
   }
   throw new Error("This type of Locator can not be processed yet.");
 };
+/**
+ * @ignore Internal API.
+ */
 async function ensureWithRefsInDoc(
   document: TripleDocument,
   locator: WithRefLocator
@@ -222,6 +246,9 @@ async function ensureWithRefsInDoc(
   const updatedDocument = await document.save([newSubject]);
   return updatedDocument.getSubject(newSubject.asRef());
 }
+/**
+ * @ignore Internal API.
+ */
 function ensureAsRefInDoc(
   document: TripleDocument,
   locator: AsRefLocator
