@@ -24,6 +24,14 @@ import {
 } from "../descriptors/subject";
 import { fetchDocument } from "./document";
 
+/**
+ * Fetch the given Subject.
+ *
+ * Performs the HTTP requests needed to fetch the Subject described by `virtualSubject`.
+ *
+ * @ignore Experimental API.
+ * @param virtualSubject [[VirtualSubject]] that is to be fetched.
+ */
 export async function internal_fetchSubject(
   virtualSubject: VirtualSubject
 ): Promise<TripleSubject | null> {

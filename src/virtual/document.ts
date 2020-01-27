@@ -10,15 +10,24 @@ import {
 } from "../descriptors/document";
 import { AclSettings } from "../services/acl";
 
+/**
+ * Construct a [[VirtualDocument]].
+ *
+ * This function allows you to programmatically construct a [[VirtualDocument]] by chaining
+ * together a number of functions.
+ */
 export function describeDocument() {
   return {
     isFoundAt: isFoundAt,
-    isAclFor: isAclFor,
     isFoundOn: isFoundOn,
-    isEnsuredOn: isEnsuredOn
+    isEnsuredOn: isEnsuredOn,
+    experimental_isAclFor: isAclFor
   };
 }
 
+/**
+ * A representation of how to get to a given Document.
+ */
 export interface VirtualDocument<
   Descriptor extends DocumentDescriptor = DocumentDescriptor
 > {
@@ -29,6 +38,11 @@ export interface VirtualDocument<
   internal_descriptor: Descriptor;
 }
 
+/**
+ * Describe a Document for which you know the IRI.
+ *
+ * @param reference IRI of the desired Document.
+ */
 export function isFoundAt(reference: Reference): VirtualDocument<IsFoundAt> {
   return {
     internal_descriptor: {
@@ -38,6 +52,12 @@ export function isFoundAt(reference: Reference): VirtualDocument<IsFoundAt> {
   };
 }
 
+/**
+ * Describe a Document that acts as the ACL Document for a given other Document.
+ *
+ * @ignore Experimental API.
+ * @param document [[VirtualDocument]] describing the Document this is the ACL Document for.
+ */
 export function isAclFor(document: VirtualDocument): VirtualDocument<IsAclFor> {
   return {
     internal_descriptor: {
@@ -47,6 +67,12 @@ export function isAclFor(document: VirtualDocument): VirtualDocument<IsAclFor> {
   };
 }
 
+/**
+ * Describe a Document that is referred to by a given Subject.
+ *
+ * @param subject [[VirtualSubject]] describing the Subject that points to this Document.
+ * @param predicate Predicate that is used on `subject` to point to this Document.
+ */
 export function isFoundOn(
   subject: VirtualSubject,
   predicate: Reference
@@ -60,6 +86,18 @@ export function isFoundOn(
   };
 }
 
+/**
+ * Describe a Document that should be referred to by a given Subject.
+ *
+ * If the given Subject does not refer to a Document yet for the given Predicate, a new Document
+ * will be created inside [[isEnsuredOn.fallbackContainer]] and added to the given Subject for the
+ * given Predicate.
+ *
+ * @param subject [[VirtualSubject]] describing the Subject that points to this Document.
+ * @param predicate Predicate that is used on `subject` to point to this Document.
+ * @param fallbackContainer [[VirtualContainer]] describing the Container in which the Document
+ *                          should be created if it does not exist yet.
+ */
 export function isEnsuredOn(
   subject: VirtualSubject,
   predicate: Reference,

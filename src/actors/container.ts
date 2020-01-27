@@ -17,6 +17,14 @@ import {
 import { internal_fetchSubject } from "./subject";
 import { hasAclSettings, configureAcl } from "../services/acl";
 
+/**
+ * Fetch the given Container.
+ *
+ * Performs the HTTP requests needed to fetch the Container described by `virtualContainer`.
+ *
+ * @ignore Experimental API.
+ * @param virtualContainer [[VirtualContainer]] that is to be fetched.
+ */
 export async function internal_fetchContainer(
   virtualContainer: VirtualContainer
   // TODO: Add a TripleContainer to Tripledoc and return it here:

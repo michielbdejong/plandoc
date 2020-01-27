@@ -147,7 +147,9 @@ describe("fetchDocument", () => {
       const sourceDocument = describeDocument().isFoundAt(
         "https://arbitrary.doc/resource.ttl"
       );
-      const aclDocument = describeDocument().isAclFor(sourceDocument);
+      const aclDocument = describeDocument().experimental_isAclFor(
+        sourceDocument
+      );
       tripledoc.fetchDocument.mockReturnValueOnce({
         getAclRef: () => "https://arbitrary.doc/resource.ttl.acl"
       });
@@ -174,7 +176,9 @@ describe("fetchDocument", () => {
       const sourceDocument = describeDocument().isFoundAt(
         "https://arbitrary.doc/resource.ttl"
       );
-      const aclDocument = describeDocument().isAclFor(sourceDocument);
+      const aclDocument = describeDocument().experimental_isAclFor(
+        sourceDocument
+      );
       tripledoc.fetchDocument.mockReturnValueOnce(null);
 
       const aclDoc = await fetchDocument(aclDocument);
@@ -187,7 +191,9 @@ describe("fetchDocument", () => {
       const sourceDocument = describeDocument().isFoundAt(
         "https://arbitrary.doc/resource.ttl"
       );
-      const aclDocument = describeDocument().isAclFor(sourceDocument);
+      const aclDocument = describeDocument().experimental_isAclFor(
+        sourceDocument
+      );
       tripledoc.fetchDocument.mockReturnValueOnce({ getAclRef: () => null });
 
       const aclDoc = await fetchDocument(aclDocument);

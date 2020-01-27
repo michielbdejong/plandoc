@@ -8,6 +8,12 @@ import {
 } from "../descriptors/container";
 import { AclSettings } from "../services/acl";
 
+/**
+ * Construct a [[VirtualContainer]].
+ *
+ * This function allows you to programmatically construct a [[VirtualContainer]] by chaining
+ * together a number of functions.
+ */
 export function describeContainer() {
   return {
     isFoundAt: isFoundAt,
@@ -16,6 +22,9 @@ export function describeContainer() {
   };
 }
 
+/**
+ * A representation of how to get to a given Container.
+ */
 export interface VirtualContainer<
   Descriptor extends ContainerDescriptor = ContainerDescriptor
 > {
@@ -27,6 +36,11 @@ export interface VirtualContainer<
   internal_descriptor: Descriptor;
 }
 
+/**
+ * Describe a Container for which you know the IRI.
+ *
+ * @param reference IRI of the desired Container.
+ */
 export function isFoundAt(reference: Reference): VirtualContainer<IsFoundAt> {
   return {
     internal_descriptor: {
@@ -36,6 +50,12 @@ export function isFoundAt(reference: Reference): VirtualContainer<IsFoundAt> {
   };
 }
 
+/**
+ * Describe a Container that is referred to by a given Subject.
+ *
+ * @param subject [[VirtualSubject]] describing the Subject that points to this Container.
+ * @param predicate Predicate that is used on `subject` to point to this Container.
+ */
 export function isFoundOn(
   subject: VirtualSubject,
   predicate: Reference
@@ -49,6 +69,16 @@ export function isFoundOn(
   };
 }
 
+/**
+ * Describe a Container that should be contained in another Container.
+ *
+ * If a Container by the given name does not exist yet in the given Container, it will be created on
+ * the fly.
+ *
+ * @ignore Still an experimental API.
+ * @param container [[VirtualContainer]] that contains this Container.
+ * @param name The name this Container should have inside the given Container.
+ */
 export function isContainedIn(
   container: VirtualContainer,
   name: string
@@ -61,6 +91,11 @@ export function isContainedIn(
   });
 }
 
+/**
+ * A [[VirtualContainer]] that can be further restricted to have certain Access Control restrictions.
+ *
+ * @ignore Experimental API.
+ */
 interface ContainedVirtualContainer extends VirtualContainer<IsContainedIn> {
   experimental_isReadableByEveryone: () => ContainedVirtualContainer;
   experimental_isAppendableByEveryone: () => ContainedVirtualContainer;

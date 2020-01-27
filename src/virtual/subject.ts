@@ -12,6 +12,12 @@ import {
   IsEnsuredOn
 } from "../descriptors/subject";
 
+/**
+ * Construct a [[VirtualSubject]].
+ *
+ * This function allows you to programmatically construct a [[VirtualSubject]] by chaining
+ * together a number of functions.
+ */
 export function describeSubject() {
   return {
     isFoundAt: isFoundAt,
@@ -22,6 +28,9 @@ export function describeSubject() {
   };
 }
 
+/**
+ * A representation of how to get to a given Subject.
+ */
 export interface VirtualSubject<
   Descriptor extends SubjectDescriptor = SubjectDescriptor
 > {
@@ -32,6 +41,11 @@ export interface VirtualSubject<
   internal_descriptor: Descriptor;
 }
 
+/**
+ * Describe a Subject for which you know the IRI.
+ *
+ * @param reference IRI of the desired Subject.
+ */
 function isFoundAt(reference: Reference): VirtualSubject<IsFoundAt> {
   const descriptor: IsFoundAt = {
     reference: reference,
@@ -42,6 +56,12 @@ function isFoundAt(reference: Reference): VirtualSubject<IsFoundAt> {
   };
 }
 
+/**
+ * Describe a Subject that is referred to by a given other Subject.
+ *
+ * @param subject [[VirtualSubject]] describing the Subject that points to this Subject.
+ * @param predicate Predicate that is used on `subject` to point to this Subject.
+ */
 function isFoundOn(
   subject: VirtualSubject,
   predicate: Reference
@@ -56,6 +76,16 @@ function isFoundOn(
   };
 }
 
+/**
+ * Describe a Subject that should be referred to by a given other Subject.
+ *
+ * If the given Subject does not refer to another Subject yet for the given Predicate, a new Subject
+ * will be created inside that Subject's containing Document and added to the given Subject for the
+ * given Predicate.
+ *
+ * @param subject [[VirtualSubject]] describing the Subject that points to this Subject.
+ * @param predicate Predicate that is used on `subject` to point to this Subject.
+ */
 function isEnsuredOn(
   subject: VirtualSubject,
   predicate: Reference

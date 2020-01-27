@@ -19,6 +19,14 @@ import { internal_fetchSubject } from "./subject";
 import { internal_fetchContainer } from "./container";
 import { hasAclSettings, configureAcl } from "../services/acl";
 
+/**
+ * Fetch the given Document.
+ *
+ * Performs the HTTP requests needed to fetch the Document described by `virtualDoc`.
+ *
+ * @param virtualDoc A [[VirtualDocument]] describing the Document you want to fetch
+ * @returns A TripleDocument representing the contents of `virtualDoc` on the server.
+ */
 export async function fetchDocument(
   virtualDoc: VirtualDocument
 ): Promise<TripleDocument | null> {
