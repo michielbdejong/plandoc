@@ -3691,11 +3691,6 @@ rc@^1.2.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-rdf-namespaces@^1.3.0:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/rdf-namespaces/-/rdf-namespaces-1.6.0.tgz#12bdf166e24fba17970e5ed1a39024d8fc1d52e7"
-  integrity sha512-YB2IAr3F+STs+wT75H6xx2Tf2qRA/mn3XtqYqkIVK4r0gOyJCUxkZQMNaXA4pI9tv9cHKynW56HXI+dEYFxdeQ==
-
 rdf-namespaces@^1.8.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/rdf-namespaces/-/rdf-namespaces-1.8.0.tgz#f2e09abfb0d1972305719b2081fcb131c20aab5a"
@@ -4496,17 +4491,16 @@ tr46@^1.0.1:
   dependencies:
     punycode "^2.1.0"
 
-tripledoc@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/tripledoc/-/tripledoc-4.0.1.tgz#7d4d4d5c566fcbd1c1ae8b7e3f48eb8ea22f29a4"
-  integrity sha512-+V2Sy0N3XUnrR+JlkII7Vj5vSxjD2Iia/FTJrr0tF/1ANpk32ivfhuWuwy/QwpC34f6yHyV4efilEAMmdAsJJA==
+tripledoc@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/tripledoc/-/tripledoc-4.1.0.tgz#6e25791de0083b872aa797e2c0bf1317df5ca8f0"
+  integrity sha512-l9RECWtYiipCFtYphSgeRhgjKKwFiEaflwMNQWPj/SjDR4QoN3RkCxBEIuCJoFRgYQITvro4qUMsYtu7ZD3uRQ==
   dependencies:
     "@types/http-link-header" "^1.0.0"
     "@types/n3" "^1.1.1"
     "@types/solid-auth-client" "^2.3.1"
     http-link-header "^1.0.2"
     n3 "^1.2.1"
-    rdf-namespaces "^1.3.0"
 
 ts-jest@^24.2.0:
   version "24.2.0"
