@@ -55,11 +55,11 @@ The desired [TripleDocument](https://vincenttunru.gitlab.io/tripledoc/docs/api/i
 Used to describe the route to a certain Document.
 
 ```typescript
-import { describeDocument } from 'plandoc';
-import { solid } from 'rdf-namespaces;
+import { describeDocument } from "plandoc";
+import { solid } from "rdf-namespaces";
 
 // When you know the IRI of the Document:
-describeDocument().isFoundAt('https://vincentt.inrupt.net/profile/card');
+describeDocument().isFoundAt("https://vincentt.inrupt.net/profile/card");
 
 // When a given Subject (`subject`, described by a VirtualSubject) should contain a specific
 // Predicate that refers to the desired Document. If it does not, this will result in null:
@@ -77,11 +77,11 @@ describeDocument.isEnsuredOn(subject, solid.publicTypeIndex, container);
 Used to describe the route to a certain Subject. This is primarily useful if this Subject is part of [the route to a Document](#describedocument).
 
 ```typescript
-import { describeSubject } from 'plandoc';
-import { vcard, rdf, solid } from 'rdf-namespaces;
+import { describeSubject } from "plandoc";
+import { vcard, rdf, solid } from "rdf-namespaces";
 
 // When you know the IRI of the Subject:
-describeSubject().isFoundAt('https://vincentt.inrupt.net/profile/card#me');
+describeSubject().isFoundAt("https://vincentt.inrupt.net/profile/card#me");
 
 // When a given Subject (`subject`, described by a VirtualSubject) should contain a specific
 // Predicate that refers to the desired Subject. If it does not, this will result in null:
@@ -98,7 +98,7 @@ describeSubject.isEnsuredOn(subject, vcard.hasAddress);
 describeSubject
   .isFoundIn(document)
   .withRef(rdf.type, solid.TypeRegistration)
-  .withRef(solid.forClass, 'http://www.w3.org/2002/01/bookmark#Bookmark');
+  .withRef(solid.forClass, "http://www.w3.org/2002/01/bookmark#Bookmark");
 
 // When a given Document (`document`, described by a VirtualDocument) should contain a Subject with
 // one or more given properties. If it does not, the Subject will then be created in that Document
@@ -106,7 +106,7 @@ describeSubject
 describeSubject
   .isEnsuredIn(document)
   .withRef(rdf.type, solid.TypeRegistration)
-  .withRef(solid.forClass, 'http://www.w3.org/2002/01/bookmark#Bookmark');
+  .withRef(solid.forClass, "http://www.w3.org/2002/01/bookmark#Bookmark");
 ```
 
 ### `describeContainer()`
@@ -114,8 +114,8 @@ describeSubject
 Used to describe the route to a certain Container. This is primarily useful if this Container is part of [the route to a Document](#describedocument).
 
 ```typescript
-import { describeContainer } from 'plandoc';
-import { space } from 'rdf-namespaces;
+import { describeContainer } from "plandoc";
+import { space } from "rdf-namespaces";
 
 // When a given Subject (`subject`, described by a VirtualSubject) should contain a specific
 // Predicate that refers to the desired Container. If it does not, this will result in null:
