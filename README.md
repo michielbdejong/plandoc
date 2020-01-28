@@ -98,7 +98,7 @@ describeSubject.isEnsuredOn(subject, vcard.hasAddress);
 describeSubject
   .isFoundIn(document)
   .withRef(rdf.type, solid.TypeRegistration)
-  .withRef(solid.forClass, 'http://www.w3.org/2002/01/bookmark#Bookmark;);
+  .withRef(solid.forClass, 'http://www.w3.org/2002/01/bookmark#Bookmark');
 
 // When a given Document (`document`, described by a VirtualDocument) should contain a Subject with
 // one or more given properties. If it does not, the Subject will then be created in that Document
@@ -106,7 +106,7 @@ describeSubject
 describeSubject
   .isEnsuredIn(document)
   .withRef(rdf.type, solid.TypeRegistration)
-  .withRef(solid.forClass, 'http://www.w3.org/2002/01/bookmark#Bookmark;);
+  .withRef(solid.forClass, 'http://www.w3.org/2002/01/bookmark#Bookmark');
 ```
 
 ### `describeContainer()`
