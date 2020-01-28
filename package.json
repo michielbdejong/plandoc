@@ -29,7 +29,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "rdf-namespaces": "^1.8.0",
     "tripledoc": "^4.0.1"
   },
   "devDependencies": {
@@ -40,6 +39,7 @@
     "jest-junit": "^10.0.0",
     "lint-staged": ">=8",
     "prettier": "^1.19.1",
+    "rdf-namespaces": "^1.8.0",
     "rollup": "^1.27.11",
     "rollup-plugin-typescript2": "^0.25.3",
     "solid-auth-client": "^2.4.1",

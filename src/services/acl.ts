@@ -7,7 +7,25 @@ import {
   isSavedToPod,
   TripleSubject
 } from "tripledoc";
-import { acl, foaf, rdf } from "rdf-namespaces";
+
+// Common vocab IRI's inlined to avoid inadvertently bundling a full copy of rdf-namespaces
+// in projects that do not have a bundler/tree-shaking set up.
+const acl = {
+  Authorization: "http://www.w3.org/ns/auth/acl#Authorization",
+  Read: "http://www.w3.org/ns/auth/acl#Read",
+  Append: "http://www.w3.org/ns/auth/acl#Append",
+  Write: "http://www.w3.org/ns/auth/acl#Write",
+  Control: "http://www.w3.org/ns/auth/acl#Control",
+  accessTo: "http://www.w3.org/ns/auth/acl#accessTo",
+  agent: "http://www.w3.org/ns/auth/acl#agent",
+  agentClass: "http://www.w3.org/ns/auth/acl#agentClass",
+  default__workaround: "http://www.w3.org/ns/auth/acl#default",
+  defaultForNew: "http://www.w3.org/ns/auth/acl#defaultForNew",
+  mode: "http://www.w3.org/ns/auth/acl#mode",
+  origin: "http://www.w3.org/ns/auth/acl#origin"
+};
+const foaf = { Agent: "http://xmlns.com/foaf/0.1/Agent" };
+const rdf = { type: "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" };
 
 /**
  * @ignore Experimental API.
