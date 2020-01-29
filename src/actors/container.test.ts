@@ -59,7 +59,7 @@ describe("fetchContainer", () => {
     );
     const virtualContainer = describeContainer().isFoundOn(
       sourceSubject,
-      "https://arbitrary.vocab/#arbitrary-predicate"
+      "https://arbitrary.vocab/#predicate"
     );
 
     internal_fetchContainer(virtualContainer);
@@ -80,7 +80,7 @@ describe("fetchContainer", () => {
     );
     const virtualContainer = describeContainer().isFoundOn(
       sourceSubject,
-      "https://arbitrary.vocab/#arbitrary-predicate"
+      "https://arbitrary.vocab/#predicate"
     );
 
     internal_fetchContainer(virtualContainer);
@@ -98,14 +98,14 @@ describe("fetchContainer", () => {
     );
     const virtualContainer1 = describeContainer().isFoundOn(
       sourceSubject1,
-      "https://arbitrary.vocab/#arbitrary-predicate"
+      "https://arbitrary.vocab/#predicate"
     );
     const sourceSubject2 = describeSubject().isFoundAt(
       "https://some.pod/document.ttl#subject2"
     );
     const virtualContainer2 = describeContainer().isFoundOn(
       sourceSubject2,
-      "https://arbitrary.vocab/#arbitrary-other-predicate"
+      "https://arbitrary.vocab/#other-predicate"
     );
 
     internal_fetchContainer(virtualContainer1);
@@ -143,11 +143,11 @@ describe("fetchContainer", () => {
       );
 
       const sourceSubject = describeSubject().isFoundAt(
-        "https://arbitrary.doc/resource.ttl#subject"
+        "https://arbitrary.doc/document.ttl#subject"
       );
       const virtualContainer = describeContainer().isFoundOn(
         sourceSubject,
-        "https://mock-vocab.example/#some-predicate"
+        "https://arbitrary.vocab/#predicate"
       );
 
       const retrievedContainer = await internal_fetchContainer(
@@ -157,7 +157,7 @@ describe("fetchContainer", () => {
       expect(retrievedContainer).toBe("https://arbitrary.pod/container/");
       expect(mockSubject.getRef.mock.calls.length).toBe(1);
       expect(mockSubject.getRef.mock.calls[0][0]).toBe(
-        "https://mock-vocab.example/#some-predicate"
+        "https://arbitrary.vocab/#predicate"
       );
     });
 
@@ -168,11 +168,11 @@ describe("fetchContainer", () => {
       );
 
       const sourceSubject = describeSubject().isFoundAt(
-        "https://arbitrary.doc/resource.ttl#subject"
+        "https://arbitrary.doc/document.ttl#subject"
       );
       const virtualContainer = describeContainer().isFoundOn(
         sourceSubject,
-        "https://mock-vocab.example/#arbitrary-predicate"
+        "https://arbitrary.vocab/#predicate"
       );
 
       const retrievedContainer = await internal_fetchContainer(
@@ -186,11 +186,11 @@ describe("fetchContainer", () => {
       mockSubject.getRef.mockReturnValueOnce(null);
 
       const sourceSubject = describeSubject().isFoundAt(
-        "https://arbitrary.doc/resource.ttl#subject"
+        "https://arbitrary.doc/document.ttl#subject"
       );
       const virtualContainer = describeContainer().isFoundOn(
         sourceSubject,
-        "https://mock-vocab.example/#arbitrary-predicate"
+        "https://arbitrary.vocab/#predicate"
       );
 
       const retrievedContainer = await internal_fetchContainer(

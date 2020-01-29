@@ -5,10 +5,10 @@ import { serialise } from "./serialise";
 
 it("should be able serialise a simple Virtual Document", () => {
   const virtualDocument = describeDocument().isFoundAt(
-    "https://some.pod/resource.ttl"
+    "https://some.pod/document.ttl"
   );
   expect(serialise(virtualDocument)).toEqual({
-    reference: "https://some.pod/resource.ttl",
+    reference: "https://some.pod/document.ttl",
     type: "IsFoundAt"
   });
 });
@@ -25,10 +25,10 @@ it("should be able serialise a simple Virtual Container", () => {
 
 it("should be able serialise a simple Virtual Subject", () => {
   const virtualSubject = describeSubject().isFoundAt(
-    "https://some.pod/resource.ttl#subject"
+    "https://some.pod/document.ttl#subject"
   );
   expect(serialise(virtualSubject)).toEqual({
-    reference: "https://some.pod/resource.ttl#subject",
+    reference: "https://some.pod/document.ttl#subject",
     type: "IsFoundAt"
   });
 });
@@ -38,7 +38,7 @@ it("should be able serialise a complex, nested Virtual Document", () => {
     "https://some.pod/container/"
   );
   const virtualSubject = describeSubject().isFoundAt(
-    "https://some.pod/resource.ttl#subject"
+    "https://some.pod/document.ttl#subject"
   );
   const virtualDocument = describeDocument().isEnsuredOn(
     virtualSubject,
@@ -53,7 +53,7 @@ it("should be able serialise a complex, nested Virtual Document", () => {
     },
     predicate: "https://some.ontology/#predicate",
     subject: {
-      reference: "https://some.pod/resource.ttl#subject",
+      reference: "https://some.pod/document.ttl#subject",
       type: "IsFoundAt"
     },
     type: "IsEnsuredOn"

@@ -4,7 +4,7 @@ import { describeContainer } from "./container";
 
 it("should be able to create a configuration object that specificies a combination of ACL rules", () => {
   const containingSubject = describeSubject().isFoundAt(
-    "https://arbitrary.pod/resource.ttl#subject"
+    "https://arbitrary.pod/document.ttl#subject"
   );
   const fallbackContainer = describeContainer().experimental_isFoundAt(
     "https://arbitrary.pod/container/"
@@ -40,7 +40,7 @@ it("should be able to create a configuration object that specificies a combinati
 
 it("should intialise the ACL configuration object if it is inadvertently undefined", () => {
   const containingSubject = describeSubject().isFoundAt(
-    "https://arbitrary.pod/resource.ttl#subject"
+    "https://arbitrary.pod/document.ttl#subject"
   );
   const fallbackContainer = describeContainer().experimental_isFoundAt(
     "https://arbitrary.pod/container/"
@@ -87,7 +87,7 @@ it("should intialise the ACL configuration object if it is inadvertently undefin
 describe("Configuring public ACL settings", () => {
   it("should be able to create a configuration object that specificies public Read permissions", () => {
     const containingSubject = describeSubject().isFoundAt(
-      "https://arbitrary.pod/resource.ttl#subject"
+      "https://arbitrary.pod/document.ttl#subject"
     );
     const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
@@ -108,7 +108,7 @@ describe("Configuring public ACL settings", () => {
 
   it("should be able to create a configuration object that specificies public Append permissions", () => {
     const containingSubject = describeSubject().isFoundAt(
-      "https://arbitrary.pod/resource.ttl#subject"
+      "https://arbitrary.pod/document.ttl#subject"
     );
     const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
@@ -129,7 +129,7 @@ describe("Configuring public ACL settings", () => {
 
   it("should be able to create a configuration object that specificies public Write permissions", () => {
     const containingSubject = describeSubject().isFoundAt(
-      "https://arbitrary.pod/resource.ttl#subject"
+      "https://arbitrary.pod/document.ttl#subject"
     );
     const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
@@ -150,7 +150,7 @@ describe("Configuring public ACL settings", () => {
 
   it("should be able to create a configuration object that specificies public Control permissions", () => {
     const containingSubject = describeSubject().isFoundAt(
-      "https://arbitrary.pod/resource.ttl#subject"
+      "https://arbitrary.pod/document.ttl#subject"
     );
     const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
@@ -171,7 +171,7 @@ describe("Configuring public ACL settings", () => {
 
   it("should be able to create a configuration object that specificies a combination of public permissions", () => {
     const containingSubject = describeSubject().isFoundAt(
-      "https://arbitrary.pod/resource.ttl#subject"
+      "https://arbitrary.pod/document.ttl#subject"
     );
     const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
@@ -195,7 +195,7 @@ describe("Configuring public ACL settings", () => {
 describe("Configuring agent-specific ACL settings", () => {
   it("should be able to create a configuration object that specificies agent-specific Read permissions", () => {
     const containingSubject = describeSubject().isFoundAt(
-      "https://arbitrary.pod/resource.ttl#subject"
+      "https://arbitrary.pod/document.ttl#subject"
     );
     const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
@@ -216,7 +216,7 @@ describe("Configuring agent-specific ACL settings", () => {
 
   it("should be able to create a configuration object that specificies agent-specific Append permissions", () => {
     const containingSubject = describeSubject().isFoundAt(
-      "https://arbitrary.pod/resource.ttl#subject"
+      "https://arbitrary.pod/document.ttl#subject"
     );
     const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
@@ -237,7 +237,7 @@ describe("Configuring agent-specific ACL settings", () => {
 
   it("should be able to create a configuration object that specificies agent-specific Write permissions", () => {
     const containingSubject = describeSubject().isFoundAt(
-      "https://arbitrary.pod/resource.ttl#subject"
+      "https://arbitrary.pod/document.ttl#subject"
     );
     const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
@@ -258,7 +258,7 @@ describe("Configuring agent-specific ACL settings", () => {
 
   it("should be able to create a configuration object that specificies agent-specific Control permissions", () => {
     const containingSubject = describeSubject().isFoundAt(
-      "https://arbitrary.pod/resource.ttl#subject"
+      "https://arbitrary.pod/document.ttl#subject"
     );
     const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
@@ -279,7 +279,7 @@ describe("Configuring agent-specific ACL settings", () => {
 
   it("should be able to create a configuration object that specificies a combination of agent-specific permissions", () => {
     const containingSubject = describeSubject().isFoundAt(
-      "https://arbitrary.pod/resource.ttl#subject"
+      "https://arbitrary.pod/document.ttl#subject"
     );
     const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
@@ -301,7 +301,7 @@ describe("Configuring agent-specific ACL settings", () => {
 
   it("should be able to create a configuration object that specificies agent-specific permissions for different agents", () => {
     const containingSubject = describeSubject().isFoundAt(
-      "https://arbitrary.pod/resource.ttl#subject"
+      "https://arbitrary.pod/document.ttl#subject"
     );
     const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
@@ -328,7 +328,7 @@ describe("Configuring agent-specific ACL settings", () => {
 describe("Configuring origin-specific ACL settings", () => {
   it("should be able to create a configuration object that specificies origin-specific Read permissions", () => {
     const containingSubject = describeSubject().isFoundAt(
-      "https://arbitrary.pod/resource.ttl#subject"
+      "https://arbitrary.pod/document.ttl#subject"
     );
     const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
@@ -354,7 +354,7 @@ describe("Configuring origin-specific ACL settings", () => {
 
   it("should be able to create a configuration object that specificies origin-specific Append permissions", () => {
     const containingSubject = describeSubject().isFoundAt(
-      "https://arbitrary.pod/resource.ttl#subject"
+      "https://arbitrary.pod/document.ttl#subject"
     );
     const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
@@ -380,7 +380,7 @@ describe("Configuring origin-specific ACL settings", () => {
 
   it("should be able to create a configuration object that specificies origin-specific Write permissions", () => {
     const containingSubject = describeSubject().isFoundAt(
-      "https://arbitrary.pod/resource.ttl#subject"
+      "https://arbitrary.pod/document.ttl#subject"
     );
     const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
@@ -406,7 +406,7 @@ describe("Configuring origin-specific ACL settings", () => {
 
   it("should be able to create a configuration object that specificies origin-specific Control permissions", () => {
     const containingSubject = describeSubject().isFoundAt(
-      "https://arbitrary.pod/resource.ttl#subject"
+      "https://arbitrary.pod/document.ttl#subject"
     );
     const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
@@ -432,7 +432,7 @@ describe("Configuring origin-specific ACL settings", () => {
 
   it("should be able to create a configuration object that specificies a combination of origin-specific permissions", () => {
     const containingSubject = describeSubject().isFoundAt(
-      "https://arbitrary.pod/resource.ttl#subject"
+      "https://arbitrary.pod/document.ttl#subject"
     );
     const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"
@@ -464,7 +464,7 @@ describe("Configuring origin-specific ACL settings", () => {
 
   it("should be able to create a configuration object that specificies a origin-specific permissions for different origins", () => {
     const containingSubject = describeSubject().isFoundAt(
-      "https://arbitrary.pod/resource.ttl#subject"
+      "https://arbitrary.pod/document.ttl#subject"
     );
     const fallbackContainer = describeContainer().experimental_isFoundAt(
       "https://arbitrary.pod/container/"

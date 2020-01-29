@@ -14,16 +14,14 @@ function initialiseMocks() {
   }
 
   mockSubject = {
-    getRef: jest.fn(
-      () => "https://arbitrary-doc.com/resource.ttl#arbitrary-subject"
-    ),
+    getRef: jest.fn(() => "https://arbitrary.pod/document.ttl#subject"),
     setRef: jest.fn(),
     getDocument: jest.fn(() => mockDocument)
   };
   mockDocument = {
     save: jest.fn(() => Promise.resolve(mockDocument)),
-    asRef: jest.fn().mockReturnValue("https://arbitrary-doc.com/resource.ttl"),
-    getAclRef: jest.fn(() => "https://arbitrary-doc.com/resource.ttl.acl")
+    asRef: jest.fn().mockReturnValue("https://arbitrary.pod/document.ttl"),
+    getAclRef: jest.fn(() => "https://arbitrary.pod/document.ttl.acl")
   };
 }
 jest.mock("tripledoc", () => {
@@ -59,21 +57,21 @@ describe("fetchDocument", () => {
   it("should pass on a direct reference to Tripledoc", () => {
     const tripledoc = jest.requireMock("tripledoc");
     const virtualDocument = describeDocument().isFoundAt(
-      "https://arbitrary.doc/resource.ttl"
+      "https://some.pod/document.ttl"
     );
 
     fetchDocument(virtualDocument);
 
     expect(tripledoc.fetchDocument.mock.calls.length).toBe(1);
     expect(tripledoc.fetchDocument.mock.calls[0][0]).toBe(
-      "https://arbitrary.doc/resource.ttl"
+      "https://some.pod/document.ttl"
     );
   });
 
   it("should re-use cached responses", () => {
     const tripledoc = jest.requireMock("tripledoc");
     const virtualDocument = describeDocument().isFoundAt(
-      "https://arbitrary.doc/resource.ttl"
+      "https://arbitrary.pod/document.ttl"
     );
 
     fetchDocument(virtualDocument);
@@ -86,7 +84,7 @@ describe("fetchDocument", () => {
     const tripledoc = jest.requireMock("tripledoc");
     tripledoc.fetchDocument.mockReturnValueOnce(new Promise(() => undefined));
     const virtualDocument = describeDocument().isFoundAt(
-      "https://arbitrary.doc/resource.ttl"
+      "https://arbitrary.pod/document.ttl"
     );
 
     fetchDocument(virtualDocument);
@@ -100,7 +98,7 @@ describe("fetchDocument", () => {
       Promise.resolve("Mock saved Document")
     );
     const virtualDocument = describeDocument().isFoundAt(
-      "https://arbitrary.doc/resource.ttl"
+      "https://arbitrary.pod/document.ttl"
     );
 
     const document = await fetchDocument(virtualDocument);
@@ -113,10 +111,10 @@ describe("fetchDocument", () => {
   it("should not share caches over different virtual Documents", () => {
     const tripledoc = jest.requireMock("tripledoc");
     const virtualDocument1 = describeDocument().isFoundAt(
-      "https://arbitrary.doc/resource.ttl"
+      "https://some.pod/document.ttl"
     );
     const virtualDocument2 = describeDocument().isFoundAt(
-      "https://arbitrary.doc/resource.ttl"
+      "https://some.pod/document.ttl"
     );
 
     fetchDocument(virtualDocument1);
@@ -124,10 +122,10 @@ describe("fetchDocument", () => {
 
     expect(tripledoc.fetchDocument.mock.calls.length).toBe(2);
     expect(tripledoc.fetchDocument.mock.calls[0][0]).toBe(
-      "https://arbitrary.doc/resource.ttl"
+      "https://some.pod/document.ttl"
     );
     expect(tripledoc.fetchDocument.mock.calls[1][0]).toBe(
-      "https://arbitrary.doc/resource.ttl"
+      "https://some.pod/document.ttl"
     );
   });
 
@@ -145,13 +143,13 @@ describe("fetchDocument", () => {
     it("should fetch it if available", async () => {
       const tripledoc = jest.requireMock("tripledoc");
       const sourceDocument = describeDocument().isFoundAt(
-        "https://arbitrary.doc/resource.ttl"
+        "https://some.pod/document.ttl"
       );
       const aclDocument = describeDocument().experimental_isAclFor(
         sourceDocument
       );
       tripledoc.fetchDocument.mockReturnValueOnce({
-        getAclRef: () => "https://arbitrary.doc/resource.ttl.acl"
+        getAclRef: () => "https://some.pod/document.ttl.acl"
       });
       const mockAclDoc = {
         ...mockDocument,
@@ -164,17 +162,17 @@ describe("fetchDocument", () => {
       expect(aclDoc?.asRef()).toBe("Some Ref that identifies the mock ACL doc");
       expect(tripledoc.fetchDocument.mock.calls.length).toBe(2);
       expect(tripledoc.fetchDocument.mock.calls[0][0]).toBe(
-        "https://arbitrary.doc/resource.ttl"
+        "https://some.pod/document.ttl"
       );
       expect(tripledoc.fetchDocument.mock.calls[1][0]).toBe(
-        "https://arbitrary.doc/resource.ttl.acl"
+        "https://some.pod/document.ttl.acl"
       );
     });
 
     it("should return null if the source Document does not exist", async () => {
       const tripledoc = jest.requireMock("tripledoc");
       const sourceDocument = describeDocument().isFoundAt(
-        "https://arbitrary.doc/resource.ttl"
+        "https://arbitrary.pod/document.ttl"
       );
       const aclDocument = describeDocument().experimental_isAclFor(
         sourceDocument
@@ -189,7 +187,7 @@ describe("fetchDocument", () => {
     it("should return null if the source Document does not refer to an ACL file", async () => {
       const tripledoc = jest.requireMock("tripledoc");
       const sourceDocument = describeDocument().isFoundAt(
-        "https://arbitrary.doc/resource.ttl"
+        "https://arbitrary.pod/document.ttl"
       );
       const aclDocument = describeDocument().experimental_isAclFor(
         sourceDocument
@@ -209,14 +207,14 @@ describe("fetchDocument", () => {
         ...mockDocument,
         asRef: () => "Some Ref identifying the Document we are looking for"
       });
-      mockSubject.getRef.mockReturnValueOnce("https://some.doc/resource.ttl");
+      mockSubject.getRef.mockReturnValueOnce("https://some.pod/document.ttl");
 
       const sourceSubject = describeSubject().isFoundAt(
-        "https://arbitrary.doc/resource.ttl#subject"
+        "https://arbitrary.pod/document.ttl#subject"
       );
       const virtualDocument = describeDocument().isFoundOn(
         sourceSubject,
-        "https://mock-vocab.example/#some-predicate"
+        "https://arbitrary.vocab/#predicate"
       );
 
       const retrievedDocument = await fetchDocument(virtualDocument);
@@ -226,7 +224,7 @@ describe("fetchDocument", () => {
       );
       expect(tripledoc.fetchDocument.mock.calls.length).toBe(1);
       expect(tripledoc.fetchDocument.mock.calls[0][0]).toBe(
-        "https://some.doc/resource.ttl"
+        "https://some.pod/document.ttl"
       );
     });
 
@@ -237,11 +235,11 @@ describe("fetchDocument", () => {
       );
 
       const sourceSubject = describeSubject().isFoundAt(
-        "https://arbitrary.doc/resource.ttl#subject"
+        "https://arbitrary.pod/document.ttl#subject"
       );
       const virtualDocument = describeDocument().isFoundOn(
         sourceSubject,
-        "https://mock-vocab.example/#arbitrary-predicate"
+        "https://arbitrary.vocab/#predicate"
       );
 
       const retrievedDocument = await fetchDocument(virtualDocument);
@@ -253,11 +251,11 @@ describe("fetchDocument", () => {
       mockSubject.getRef.mockReturnValueOnce(null);
 
       const sourceSubject = describeSubject().isFoundAt(
-        "https://arbitrary.doc/resource.ttl#subject"
+        "https://arbitrary.pod/document.ttl#subject"
       );
       const virtualDocument = describeDocument().isFoundOn(
         sourceSubject,
-        "https://mock-vocab.example/#arbitrary-predicate"
+        "https://arbitrary.vocab/#predicate"
       );
 
       const retrievedDocument = await fetchDocument(virtualDocument);
@@ -273,17 +271,17 @@ describe("fetchDocument", () => {
         ...mockDocument,
         asRef: () => "Some Ref identifying the Document we are looking for"
       });
-      mockSubject.getRef.mockReturnValueOnce("https://some.doc/resource.ttl");
+      mockSubject.getRef.mockReturnValueOnce("https://some.pod/document.ttl");
 
       const fallbackContainer = describeContainer().experimental_isFoundAt(
-        "https://arbitrary.pod"
+        "https://arbitrary.pod/container/"
       );
       const sourceSubject = describeSubject().isFoundAt(
-        "https://arbitrary.doc/resource.ttl#subject"
+        "https://arbitrary.pod/document.ttl#subject"
       );
       const virtualDocument = describeDocument().isEnsuredOn(
         sourceSubject,
-        "https://mock-vocab.example/#some-predicate",
+        "https://arbitrary.vocab/#predicate",
         fallbackContainer
       );
 
@@ -294,7 +292,7 @@ describe("fetchDocument", () => {
       );
       expect(tripledoc.fetchDocument.mock.calls.length).toBe(1);
       expect(tripledoc.fetchDocument.mock.calls[0][0]).toBe(
-        "https://some.doc/resource.ttl"
+        "https://some.pod/document.ttl"
       );
     });
 
@@ -304,14 +302,14 @@ describe("fetchDocument", () => {
       mockSubject.getRef.mockReturnValueOnce(null);
 
       const fallbackContainer = describeContainer().experimental_isFoundAt(
-        "https://arbitrary.pod"
+        "https://arbitrary.pod/container/"
       );
       const sourceSubject = describeSubject().isFoundAt(
-        "https://arbitrary.doc/resource.ttl#subject"
+        "https://arbitrary.pod/document.ttl#subject"
       );
       const virtualDocument = describeDocument().isEnsuredOn(
         sourceSubject,
-        "https://mock-vocab.example/#arbitrary-predicate",
+        "https://arbitrary.vocab/#predicate",
         fallbackContainer
       );
 
@@ -327,14 +325,14 @@ describe("fetchDocument", () => {
       );
 
       const fallbackContainer = describeContainer().experimental_isFoundAt(
-        "https://arbitrary.pod"
+        "https://arbitrary.pod/container/"
       );
       const sourceSubject = describeSubject().isFoundAt(
-        "https://arbitrary.doc/resource.ttl#subject"
+        "https://arbitrary.pod/document.ttl#subject"
       );
       const virtualDocument = describeDocument().isEnsuredOn(
         sourceSubject,
-        "https://mock-vocab.example/#arbitrary-predicate",
+        "https://arbitrary.vocab/#predicate",
         fallbackContainer
       );
 
@@ -347,7 +345,7 @@ describe("fetchDocument", () => {
       const tripledoc = require.requireMock("tripledoc");
       const mockNewDocument: any = {
         ...mockDocument,
-        asRef: jest.fn(() => "https://some.doc/resource.ttl"),
+        asRef: jest.fn(() => "https://some.pod/document.ttl"),
         save: jest.fn(() => Promise.resolve(mockNewDocument))
       };
       tripledoc.createDocumentInContainer.mockReturnValueOnce(mockNewDocument);
@@ -361,18 +359,18 @@ describe("fetchDocument", () => {
         "https://some.pod/container/"
       );
       const sourceSubject = describeSubject().isFoundAt(
-        "https://arbitrary.doc/resource.ttl#subject"
+        "https://arbitrary.pod/document.ttl#subject"
       );
       const virtualDocument = describeDocument().isEnsuredOn(
         sourceSubject,
-        "https://mock-vocab.example/#some-predicate",
+        "https://arbitrary.vocab/#predicate",
         fallbackContainer
       );
 
       const retrievedDocument = await fetchDocument(virtualDocument);
 
       expect(retrievedDocument?.asRef()).toEqual(
-        "https://some.doc/resource.ttl"
+        "https://some.pod/document.ttl"
       );
       expect(tripledoc.createDocumentInContainer.mock.calls.length).toBe(1);
       expect(tripledoc.createDocumentInContainer.mock.calls[0][0]).toBe(
@@ -380,10 +378,10 @@ describe("fetchDocument", () => {
       );
       expect(mockSubject.setRef.mock.calls.length).toBe(1);
       expect(mockSubject.setRef.mock.calls[0][0]).toBe(
-        "https://mock-vocab.example/#some-predicate"
+        "https://arbitrary.vocab/#predicate"
       );
       expect(mockSubject.setRef.mock.calls[0][1]).toBe(
-        "https://some.doc/resource.ttl"
+        "https://some.pod/document.ttl"
       );
     });
 
@@ -395,12 +393,12 @@ describe("fetchDocument", () => {
         "https://arbitrary.pod/container/"
       );
       const sourceSubject = describeSubject().isFoundAt(
-        "https://arbitrary.doc/resource.ttl#subject"
+        "https://arbitrary.pod/document.ttl#subject"
       );
       const virtualDocument = describeDocument()
         .isEnsuredOn(
           sourceSubject,
-          "https://mock-vocab.example/#arbitrary-predicate",
+          "https://arbitrary.vocab/#predicate",
           fallbackContainer
         )
         .experimental_isReadableByEveryone();
@@ -418,12 +416,12 @@ describe("fetchDocument", () => {
         "https://arbitrary.pod/container/"
       );
       const sourceSubject = describeSubject().isFoundAt(
-        "https://arbitrary.doc/resource.ttl#subject"
+        "https://arbitrary.pod/document.ttl#subject"
       );
       const virtualDocument = describeDocument()
         .isEnsuredOn(
           sourceSubject,
-          "https://mock-vocab.example/#arbitrary-predicate",
+          "https://arbitrary.vocab/#predicate",
           fallbackContainer
         )
         .experimental_isReadableByEveryone();
@@ -441,11 +439,11 @@ describe("fetchDocument", () => {
         "https://arbitrary.pod/container/"
       );
       const sourceSubject = describeSubject().isFoundAt(
-        "https://arbitrary.doc/resource.ttl#subject"
+        "https://arbitrary.pod/document.ttl#subject"
       );
       const virtualDocument = describeDocument().isEnsuredOn(
         sourceSubject,
-        "https://mock-vocab.example/#arbitrary-predicate",
+        "https://arbitrary.vocab/#predicate",
         fallbackContainer
       );
 
