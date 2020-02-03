@@ -243,7 +243,10 @@ async function ensureWithRefsInDoc(
     newSubject.addRef(reference.predicate, reference.object)
   );
 
-  const updatedDocument = await document.save([newSubject]);
+  const rootSubject = document.getSubject(document.asRef());
+  rootSubject.addRef("http://purl.org/dc/terms/references", newSubject.asRef());
+
+  const updatedDocument = await document.save([newSubject, rootSubject]);
   return updatedDocument.getSubject(newSubject.asRef());
 }
 /**

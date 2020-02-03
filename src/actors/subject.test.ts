@@ -2,6 +2,7 @@ import { describeSubject } from "../virtual/subject";
 import { internal_fetchSubject } from "./subject";
 import { Reference } from "tripledoc";
 import { describeDocument } from "../virtual/document";
+import { dct } from "rdf-namespaces";
 
 let mockSubject: { [key: string]: jest.Mock };
 let mockDocument: { [key: string]: jest.Mock };
@@ -571,8 +572,13 @@ describe("fetchSubject", () => {
         "https://some-other.pod/document.ttl#object"
       );
       mockDocument.findSubjects.mockReturnValueOnce([mockSubject]);
-      const mockNewSubject = { addRef: jest.fn(), asRef: jest.fn() };
+      const mockNewSubject = {
+        addRef: jest.fn(),
+        asRef: jest.fn(() => "New Subject Ref")
+      };
       mockDocument.addSubject.mockReturnValueOnce(mockNewSubject);
+      const mockRootSubject = { addRef: jest.fn() };
+      mockDocument.getSubject.mockReturnValueOnce(mockRootSubject);
       mockDocument.getSubject.mockReturnValueOnce(mockNewSubject);
 
       const fetchedSubject = await internal_fetchSubject(virtualSubject);
@@ -598,8 +604,15 @@ describe("fetchSubject", () => {
       expect(mockNewSubject.addRef.mock.calls[1][1]).toBe(
         "https://some-other.pod/document.ttl#other-object"
       );
+      expect(mockRootSubject.addRef.mock.calls[0]).toEqual([
+        dct.references,
+        "New Subject Ref"
+      ]);
       expect(mockDocument.save.mock.calls.length).toBe(1);
-      expect(mockDocument.save.mock.calls[0][0]).toEqual([mockNewSubject]);
+      expect(mockDocument.save.mock.calls[0][0]).toEqual([
+        mockNewSubject,
+        mockRootSubject
+      ]);
     });
 
     it("should try to create it when the first predicate already does not match", async () => {
@@ -617,8 +630,13 @@ describe("fetchSubject", () => {
           "https://some-other.pod/document.ttl#other-object"
         );
       mockDocument.findSubjects.mockReturnValueOnce([mockSubject]);
-      const mockNewSubject = { addRef: jest.fn(), asRef: jest.fn() };
+      const mockNewSubject = {
+        addRef: jest.fn(),
+        asRef: jest.fn(() => "New Subject Ref")
+      };
       mockDocument.addSubject.mockReturnValueOnce(mockNewSubject);
+      const mockRootSubject = { addRef: jest.fn() };
+      mockDocument.getSubject.mockReturnValueOnce(mockRootSubject);
       mockDocument.getSubject.mockReturnValueOnce(mockNewSubject);
 
       const fetchedSubject = await internal_fetchSubject(virtualSubject);
@@ -644,8 +662,15 @@ describe("fetchSubject", () => {
       expect(mockNewSubject.addRef.mock.calls[1][1]).toBe(
         "https://some-other.pod/document.ttl#other-object"
       );
+      expect(mockRootSubject.addRef.mock.calls[0]).toEqual([
+        dct.references,
+        "New Subject Ref"
+      ]);
       expect(mockDocument.save.mock.calls.length).toBe(1);
-      expect(mockDocument.save.mock.calls[0][0]).toEqual([mockNewSubject]);
+      expect(mockDocument.save.mock.calls[0][0]).toEqual([
+        mockNewSubject,
+        mockRootSubject
+      ]);
     });
 
     it("should not be able to find it when the given Document could not be found", async () => {
