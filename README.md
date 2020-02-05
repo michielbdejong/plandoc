@@ -2,11 +2,11 @@
 
 Easily locate and manipulate [RDF](https://en.wikipedia.org/wiki/Resource_Description_Framework) Documents on [Solid](https://solidproject.org) Pods.
 
-One challenge when writing Solid apps is to make sure that the [Documents](https://solidproject.org/for-developers/apps/first-app/2-understanding-solid) you need actually exist before reading from or writing to them. For example, if you want to [track notes](https://solidproject.org/for-developers/apps/first-app/4-data-model), you will have to check whether a notes Document can be found from the user's Public Type Index, and if not present, you will have to create one first.
+One challenge when writing Solid apps is to make sure that the [Documents](https://solidproject.org/for-developers/apps/first-app/2-understanding-solid) you need actually exist before reading from or writing to them. For example, if you want to [track notes](https://solidproject.org/for-developers/apps/first-app/4-data-model), you will have to check whether a notes Document can be found from the user's Public Type Index, and if it is not present yet, you will have to create one first.
 
-Plandoc makes this a breeze: you describe the expect route to a Document once, and then call a single function to initialise that Document.
+Plandoc makes this a breeze: you describe the expected route to a Document once, and then call a single function to initialise that Document and all the Documents required to get to it.
 
-Plandoc wraps and exposes [Tripledoc](https://vincenttunru.gitlab.io/tripledoc/), and is recommended to be used in combination with the package [rdf-namespaces](https://www.npmjs.com/package/rdf-namespaces).
+Plandoc wraps and exposes [Tripledoc](https://vincenttunru.gitlab.io/tripledoc/), and works well in combination with the package [rdf-namespaces](https://www.npmjs.com/package/rdf-namespaces).
 
 ## Installation
 
@@ -20,19 +20,41 @@ npm install plandoc solid-auth-client
 import { fetchDocument, describeSubject, describeDocument } from "plandoc";
 import { solid } from "rdf-namespaces";
 
-const profile = describeSubject().isFoundAt(
-  "https://vincentt.inrupt.net/profile/card#me"
-);
+const profile = describeSubject()
+  .isFoundAt("https://vincentt.inrupt.net/profile/card#me");
 
-const publicTypeIndex = describeDocument().isFoundOn(
-  profile,
-  solid.publicTypeIndex
-);
+const publicTypeIndex = describeDocument()
+  .isFoundOn(profile, solid.publicTypeIndex);
 
 async function fetchPublicTypeIndex() {
   const pti = await fetchDocument(publicTypeIndex);
 
   /* Do things with the public type index */
+}
+
+const notesTypeRegistration = describeSubject()
+  .isEnsuredIn(publicTypeIndex)
+  .withRef(rdf.type, solid.TypeRegistration)
+  .withRef(solid.forClass, schema.TextDigitalDocument); 
+
+const storage = describeContainer()
+  .isFoundOn(profile, space.storage);
+
+const notesDocument = describeDocument()
+  .isEnsuredOn(notesTypeRegistration, solid.instance, storage);
+
+async function fetchNotesDocument() {
+  const notes = await fetchDocument(notesDocument);
+
+  /*
+    Do things with the notes Document.
+    Note that if that Document did not exist yet,
+    it will be created in the user's storage location,
+    and a reference to it will be added to the public
+    type index.
+    Also note that if the type index was fetched
+    before, it will not be fetched again.
+   */
 }
 ```
 
