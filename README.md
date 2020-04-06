@@ -141,7 +141,7 @@ import { space } from "rdf-namespaces";
 
 // When a given Subject (`subject`, described by a VirtualSubject) should contain a specific
 // Predicate that refers to the desired Container. If it does not, this will result in null:
-describeSubject.isFoundOn(subject, space.storage);
+describeContainer.isFoundOn(subject, space.storage);
 ```
 
 ## Changelog

@@ -4,6 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html
 
 ## [Unreleased]
 
+### Bugs fixed
+
+- The documentation of `describeContainer` referred to `describeSubject` instead.
+
 ## [1.0.0] - 2020-02-05
 
 ### New features
