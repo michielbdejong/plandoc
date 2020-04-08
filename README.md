@@ -1,5 +1,7 @@
 # plandoc
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/michielbdejong/plandoc.svg)](https://greenkeeper.io/)
+
 Easily locate and manipulate [RDF](https://en.wikipedia.org/wiki/Resource_Description_Framework) Documents on [Solid](https://solidproject.org) Pods.
 
 One challenge when writing Solid apps is to make sure that the [Documents](https://solidproject.org/for-developers/apps/first-app/2-understanding-solid) you need actually exist before reading from or writing to them. For example, if you want to [track notes](https://solidproject.org/for-developers/apps/first-app/4-data-model), you will have to check whether a notes Document can be found from the user's Public Type Index, and if it is not present yet, you will have to create one first.
