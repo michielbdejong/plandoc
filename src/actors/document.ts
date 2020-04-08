@@ -1,7 +1,8 @@
 import {
   TripleDocument,
   fetchDocument as fetchTripleDocument,
-  createDocumentInContainer
+  createDocumentInContainer,
+  LocalTripleDocumentWithRef
 } from "tripledoc";
 import { VirtualDocument } from "../virtual/document";
 import {
@@ -147,7 +148,7 @@ const ensureForRef: DocumentFetcher<IsEnsuredOn> = async virtualDoc => {
     savedDocument.asRef()
   );
   const subjectDoc = subject.getDocument();
-  await subjectDoc.save([subject]);
+  await (subjectDoc as LocalTripleDocumentWithRef).save([subject]);
 
   if (hasAclSettings(virtualDoc.internal_descriptor.acl)) {
     const aclRef = savedDocument.getAclRef();

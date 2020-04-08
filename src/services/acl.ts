@@ -1,7 +1,7 @@
 import {
   Reference,
   TripleDocument,
-  LocalTripleDocument,
+  LocalTripleDocumentWithRef,
   fetchDocument as fetchTripleDocument,
   createDocument,
   isSavedToPod,
@@ -84,7 +84,7 @@ export async function configureAcl(
   aclSettings: AclSettings,
   options: Partial<AclConfigOptions> = {}
 ): Promise<TripleDocument | null> {
-  let aclDoc: TripleDocument | LocalTripleDocument;
+  let aclDoc: TripleDocument | LocalTripleDocumentWithRef;
   if (!hasAclSettings(aclSettings)) {
     return null;
   }
@@ -104,7 +104,7 @@ export async function configureAcl(
   if (publicAclSettings !== undefined) {
     let authSubject: TripleSubject;
     if (isSavedToPod(aclDoc)) {
-      const potentialSubjects = aclDoc
+      const potentialSubjects = (aclDoc as TripleDocument)
         .findSubjects(acl.accessTo, documentRef)
         .filter(potentialSubject => {
           return (
@@ -157,7 +157,7 @@ export async function configureAcl(
     Object.keys(agentAclSettings).forEach(agent => {
       let authSubject: TripleSubject;
       if (isSavedToPod(aclDoc)) {
-        const potentialSubjects = aclDoc
+        const potentialSubjects = (aclDoc as TripleDocument)
           .findSubjects(acl.accessTo, documentRef)
           .filter(potentialSubject => {
             return (
@@ -214,7 +214,7 @@ export async function configureAcl(
       Object.keys(originAclSettings[origin]).forEach(agent => {
         let authSubject: TripleSubject;
         if (isSavedToPod(aclDoc)) {
-          const potentialSubjects = aclDoc
+          const potentialSubjects = (aclDoc as TripleDocument)
             .findSubjects(acl.accessTo, documentRef)
             .filter(potentialSubject => {
               return (

@@ -1,6 +1,6 @@
 export {
   BareTripleDocument,
-  LocalTripleDocument,
+  LocalTripleDocumentWithRef,
   TripleDocument,
   TripleSubject,
   LiteralTypes,

@@ -1,7 +1,8 @@
 import {
   fetchDocument as fetchTripleDocument,
   TripleSubject,
-  TripleDocument
+  TripleDocument,
+  LocalTripleDocumentWithRef
 } from "tripledoc";
 import { VirtualSubject } from "../virtual/subject";
 import {
@@ -88,7 +89,7 @@ const getOnSubject: SubjectFetcher<IsFoundOn> = async virtualSubject => {
   if (subjectRef === null) {
     return null;
   }
-  return sourceSubject.getDocument().getSubject(subjectRef);
+  return (sourceSubject.getDocument() as TripleDocument).getSubject(subjectRef);
 };
 
 /**
@@ -105,7 +106,9 @@ const ensureOnSubject: SubjectFetcher<IsEnsuredOn> = async virtualSubject => {
     virtualSubject.internal_descriptor.predicate
   );
   if (typeof subjectRef === "string") {
-    return sourceSubject.getDocument().getSubject(subjectRef);
+    return (sourceSubject.getDocument() as TripleDocument).getSubject(
+      subjectRef
+    );
   }
 
   // No Subject is listed, so add a new one:
@@ -115,7 +118,10 @@ const ensureOnSubject: SubjectFetcher<IsEnsuredOn> = async virtualSubject => {
     virtualSubject.internal_descriptor.predicate,
     newSubject.asRef()
   );
-  const updatedDoc = await sourceDoc.save([sourceSubject, newSubject]);
+  const updatedDoc = await (sourceDoc as LocalTripleDocumentWithRef).save([
+    sourceSubject,
+    newSubject
+  ]);
   return updatedDoc.getSubject(newSubject.asRef());
 };
 
